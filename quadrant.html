@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>能力立方图 · 三维定位 5 款 AI 智能体（可旋转）</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  /* ============ 三维立方图页专用样式 ============ */
+  .q-wrap{ max-width:1160px; margin:0 auto; padding:36px 28px 72px; }
+
+  /* 页面头改用全站统一的 .page-head（左对齐） */
+
+  /* 三维说明卡 */
+  .dims{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:26px 0 6px; }
+  .dim{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; }
+  .dim .d-k{ font-family:var(--mono); font-size:10.5px; letter-spacing:1px; color:var(--brand); display:block; margin-bottom:6px; }
+  .dim .d-t{ font-size:15px; font-weight:700; margin:0 0 6px; }
+  .dim .d-d{ font-size:12.5px; color:var(--ink-2); margin:0; line-height:1.65; }
+  .dim .d-s{ font-family:var(--mono); font-size:11px; color:var(--ink-3); margin-top:8px; display:block; }
+
+  /* 控制面板 */
+  .ctrl{
+    display:flex; flex-direction:column; gap:11px;
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:16px 20px 14px; margin:22px 0 12px;
+    box-shadow:0 14px 34px -26px rgba(31,45,61,.45);
+  }
+  .ctrl-row{ display:flex; flex-wrap:wrap; gap:12px 16px; align-items:flex-end; }
+  .ctrl-lab{
+    font-family:var(--mono); font-size:10px; letter-spacing:1.4px; color:var(--ink-3);
+    padding-bottom:9px; min-width:42px; flex-shrink:0;
+  }
+  .ctrl .fld{ display:flex; flex-direction:column; gap:6px; }
+  .ctrl label{ font-family:var(--mono); font-size:10px; letter-spacing:1px; color:var(--ink-3); }
+  .ctrl select{
+    font-family:var(--sans); font-size:13px; font-weight:600; color:var(--ink);
+    background:var(--solid); border:1px solid var(--line); border-radius:10px;
+    padding:8px 12px; min-width:126px; cursor:pointer;
+    transition:border-color .18s ease;
+  }
+  .ctrl select:hover{ border-color:rgba(47,125,168,.42); }
+  .btn-group{ display:flex; gap:8px; flex-wrap:wrap; }
+  .ctrl button{
+    font-family:var(--sans); font-size:12.5px; font-weight:600; padding:8px 14px;
+    border-radius:999px; cursor:pointer; white-space:nowrap;
+    background:var(--brand-bg); color:var(--brand-dk); border:1px solid rgba(47,125,168,.18);
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+  }
+  .ctrl button:hover{ transform:translateY(-1px); box-shadow:0 9px 20px -12px rgba(47,125,168,.7); }
+  .ctrl button.on{
+    background:linear-gradient(135deg,var(--brand),var(--brand-lt));
+    color:#fff; border-color:transparent;
+    box-shadow:0 9px 20px -11px rgba(47,125,168,.7);
+  }
+  body.theme-dark .ctrl button{ background:rgba(34,211,238,.12); color:var(--brand-lt); border-color:rgba(34,211,238,.22); }
+  body.theme-dark .ctrl button.on{ background:linear-gradient(135deg,var(--brand),var(--brand-lt)); color:#06212e; }
+  .ctrl .note{ font-size:12px; color:var(--ink-3); line-height:1.75; margin:2px 0 0; }
+  .ctrl .note b{ color:var(--ink-2); }
+
+  /* 图区 */
+  .chart-box{
+    position:relative; overflow:hidden;
+    background:
+      radial-gradient(760px 400px at 20% 2%, rgba(47,125,168,.11), transparent 62%),
+      radial-gradient(660px 360px at 88% 98%, rgba(232,145,60,.10), transparent 64%),
+      var(--card);
+    border:1px solid var(--line); border-radius:18px;
+    padding:12px 8px 4px; margin-top:14px;
+    box-shadow:0 20px 50px -32px rgba(31,45,61,.45);
+  }
+  body.theme-dark .chart-box{
+    background:
+      radial-gradient(760px 400px at 20% 2%, rgba(34,211,238,.10), transparent 62%),
+      radial-gradient(660px 360px at 88% 98%, rgba(232,145,60,.09), transparent 64%),
+      var(--card);
+  }
+  .chart-box svg{ width:100%; height:auto; display:block; touch-action:none; cursor:grab; }
+  .chart-box svg.dragging{ cursor:grabbing; }
+  .chart-cap{ font-size:12px; color:var(--ink-3); text-align:center; padding:4px 0 8px; }
+
+  /* 图内元素 */
+  .face{ stroke:none; }
+  .floor-line{ stroke-linecap:round; }
+  .bub{ cursor:pointer; }
+  .bub.dimmed{ opacity:.16; }
+  .bub .ring{ opacity:0; transition:opacity .18s ease; }
+  .bub:hover .ring,
+  .bub.sel .ring{ opacity:1; }
+  .bub.sel .ring{ stroke-dasharray:3 4; }
+  .bub text.lb{ font-family:var(--sans); font-size:12.5px; font-weight:700; }
+  .bub text.vl{ font-family:var(--mono); font-size:9.5px; fill:var(--ink-3); }
+  .lb-bg{ fill:rgba(255,255,255,.82); stroke-width:1; stroke-opacity:.38; }
+  body.theme-dark .lb-bg{ fill:rgba(13,20,28,.84); stroke-opacity:.5; }
+  .ax-name{
+    font-family:var(--sans); font-size:12.5px; font-weight:800;
+    paint-order:stroke; stroke:var(--card); stroke-width:3.5px; stroke-linejoin:round;
+  }
+  .ax-tick{
+    font-family:var(--mono); font-size:9.5px; fill:var(--ink-3);
+    paint-order:stroke; stroke:var(--card); stroke-width:3px; stroke-linejoin:round;
+  }
+
+  /* 图内 HUD */
+  .q-hud-bg{ fill:var(--solid); fill-opacity:.74; stroke:var(--line); stroke-width:1; }
+  .q-hud-tick{ stroke:var(--line); stroke-width:1; }
+  .q-hud-t{ font-family:var(--mono); font-size:10px; fill:var(--ink-3); letter-spacing:.6px; }
+  .q-hud-ax{ stroke-width:2.2; stroke-linecap:round; fill:none; }
+  .q-hud-ax.hx{ stroke:var(--brand); }
+  .q-hud-ax.hy{ stroke:var(--accent); }
+  .q-hud-ax.hz{ stroke:var(--ok); }
+  .q-hud-dot{ fill:var(--ink-3); }
+
+  /* 图例 */
+  .q-legend{
+    display:flex; flex-wrap:wrap; gap:10px 20px; align-items:center; justify-content:center;
+    margin:12px 0 0; font-size:12.5px; color:var(--ink-2);
+  }
+  .q-legend .lg{ display:inline-flex; align-items:center; gap:7px; }
+  .q-legend .lg i{ width:13px; height:13px; display:inline-block; }
+  .q-legend .lg i.dot{ border-radius:50%; background:#2F7DA8; border:2px solid #2F7DA8; opacity:.55; }
+  .q-legend .lg i.sq{ border-radius:3px; background:#E8913C; border:2px solid #E8913C; opacity:.55; }
+  .q-legend .lg i.ax{ width:15px; height:3px; border-radius:2px; }
+  .q-legend .lg i.hx{ background:var(--brand); }
+  .q-legend .lg i.hy{ background:var(--accent); }
+  .q-legend .lg i.hz{ background:var(--ok); }
+  .q-legend .lg-toggle{ display:inline-flex; align-items:center; gap:6px; cursor:pointer; color:var(--ink-3); }
+  .q-legend .lg-toggle input{ accent-color:var(--brand); }
+
+  /* 类型说明 */
+  .type-note{
+    margin:16px 0 0; background:var(--accent-bg); border:1px solid rgba(232,145,60,.28);
+    border-radius:12px; padding:14px 18px;
+  }
+  .type-note h4{ margin:0 0 6px; font-size:14px; color:var(--accent); }
+  .type-note p{ margin:0; font-size:13px; color:var(--ink-2); line-height:1.8; }
+
+  /* tooltip */
+  .tip{
+    position:fixed; z-index:300; pointer-events:none; opacity:0;
+    transform:translate(-50%,-100%); transition:opacity .15s;
+    background:var(--solid); border:1px solid var(--line); border-radius:10px;
+    box-shadow:var(--shadow-2); padding:10px 13px; min-width:196px;
+  }
+  .tip.on{ opacity:1; }
+  .tip .t-n{ font-size:13.5px; font-weight:700; margin-bottom:4px; }
+  .tip .t-ty{ font-family:var(--mono); font-size:10px; color:var(--ink-3); margin-bottom:7px; }
+  .tip .t-r{ display:flex; justify-content:space-between; gap:14px; font-size:12px; color:var(--ink-2); padding:2px 0; }
+  .tip .t-r b{ font-family:var(--mono); color:var(--ink); }
+
+  /* 详情面板 */
+  .detail{
+    margin-top:20px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px 22px;
+  }
+  .detail .dt-head{ display:flex; align-items:center; gap:12px; margin-bottom:4px; flex-wrap:wrap; }
+  .detail .dt-dot{ width:14px; height:14px; flex-shrink:0; }
+  .detail h3{ margin:0; font-size:19px; }
+  .detail .dt-by{ font-size:12.5px; color:var(--ink-3); }
+  .detail .dt-scores{ display:flex; gap:22px; flex-wrap:wrap; margin:14px 0 4px; }
+  .detail .dt-scores .s{ min-width:120px; }
+  .detail .dt-scores .s .k{ font-family:var(--mono); font-size:10.5px; color:var(--ink-3); letter-spacing:.5px; }
+  .detail .dt-scores .s .v{ font-size:24px; font-weight:800; line-height:1.2; }
+  .detail .dt-scores .s .v span{ font-size:12px; color:var(--ink-3); font-weight:500; }
+  .dt-src{ font-size:12px; color:var(--ink-3); margin-top:6px; }
+
+  table.bd{ width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+  table.bd th,table.bd td{ border-bottom:1px solid var(--line-2); padding:7px 10px; text-align:left; }
+  table.bd th{ font-family:var(--mono); font-size:10.5px; color:var(--ink-3); letter-spacing:.5px; }
+  table.bd td.n{ font-family:var(--mono); width:56px; color:var(--ink); font-weight:600; }
+  table.bd td.ev{ color:var(--ink-2); font-size:12.5px; }
+
+  /* 象限解读 */
+  .quad-read{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:14px; }
+  .qr{ border-radius:14px; padding:16px 18px; border:1px solid var(--line); }
+  .qr h4{ margin:0 0 6px; font-size:15px; }
+  .qr .qr-z{ font-family:var(--mono); font-size:10px; color:var(--ink-3); letter-spacing:.5px; }
+  .qr p{ margin:8px 0 0; font-size:13px; color:var(--ink-2); line-height:1.7; }
+  .qr.q1{ background:rgba(62,158,118,.10); }
+  .qr.q2{ background:rgba(47,125,168,.10); }
+  .qr.q3{ background:rgba(232,145,60,.12); }
+  .qr.q4{ background:rgba(44,58,71,.06); }
+  body.theme-dark .qr.q1{ background:rgba(62,158,118,.16); }
+  body.theme-dark .qr.q2{ background:rgba(47,125,168,.16); }
+  body.theme-dark .qr.q3{ background:rgba(232,145,60,.16); }
+
+  .axis-read{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+  .ar{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; }
+  .ar .ar-k{ font-family:var(--mono); font-size:10px; letter-spacing:1px; color:var(--brand); }
+  .ar h4{ margin:6px 0 6px; font-size:14.5px; }
+  .ar p{ margin:0; font-size:12.5px; color:var(--ink-2); line-height:1.7; }
+
+  /* 依据总表 */
+  .section{ margin-top:44px; }
+  .sec-kicker{ font-family:var(--mono); font-size:11px; letter-spacing:2px; color:var(--brand); text-transform:uppercase; }
+  .sec-title{ font-size:24px; font-weight:800; margin:8px 0 6px; }
+  .sec-desc{ color:var(--ink-2); font-size:14px; margin:0 0 16px; }
+
+  table.mx{ width:100%; border-collapse:collapse; font-size:13.5px; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  table.mx th,table.mx td{ border-bottom:1px solid var(--line-2); padding:11px 13px; text-align:left; }
+  table.mx thead th{ background:var(--brand-bg); font-family:var(--mono); font-size:10.5px; letter-spacing:.5px; color:var(--brand-dk); }
+  table.mx tbody th{ font-weight:600; width:110px; }
+  table.mx td{ color:var(--ink-2); font-size:12.5px; }
+  table.mx td b{ color:var(--ink); font-family:var(--mono); }
+
+  .ev-list{ margin-top:12px; }
+  details.ev{ background:var(--card); border:1px solid var(--line); border-radius:12px; margin-bottom:10px; }
+  details.ev summary{ padding:13px 18px; cursor:pointer; font-weight:600; font-size:14.5px; display:flex; align-items:center; gap:10px; }
+  details.ev summary .sw{ width:12px; height:12px; flex-shrink:0; }
+  details.ev summary .sw.sq{ border-radius:3px; }
+  details.ev summary .sw.dot{ border-radius:50%; }
+  details.ev summary .sc{ margin-left:auto; font-family:var(--mono); font-size:11.5px; color:var(--ink-3); font-weight:400; }
+  details.ev .ev-b{ padding:0 18px 14px; }
+  details.ev .ev-b table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  details.ev .ev-b td{ border-bottom:1px solid var(--line-2); padding:6px 8px; }
+  details.ev .ev-b td:first-child{ width:150px; color:var(--ink); font-weight:600; }
+  details.ev .ev-b td:nth-child(2){ width:44px; font-family:var(--mono); color:var(--brand); font-weight:700; }
+  details.ev .ev-b td:last-child{ color:var(--ink-2); }
+  details.ev .ev-src{ font-size:11.5px; color:var(--ink-3); margin-top:10px; padding-top:8px; border-top:1px dashed var(--line); }
+
+  .disclaimer{ margin-top:26px; background:var(--accent-bg); border:1px solid rgba(232,145,60,.3); border-radius:12px; padding:16px 20px; }
+  .disclaimer h4{ margin:0 0 8px; font-size:14.5px; color:var(--accent); }
+  .disclaimer ul{ margin:0; padding-left:20px; font-size:13px; color:var(--ink-2); line-height:1.85; }
+
+  /* 立方体主视觉：清晰的舞台层次、轴向色彩与有质感的标签 */
+  .chart-box{
+    overflow:hidden; border-radius:22px;
+    background:
+      radial-gradient(ellipse at 50% 44%,rgba(111,179,210,.18),transparent 58%),
+      radial-gradient(ellipse at 84% 12%,rgba(167,139,250,.12),transparent 40%),
+      linear-gradient(145deg,rgba(255,255,255,.88),rgba(226,236,243,.68));
+    border-color:rgba(47,125,168,.24);
+    box-shadow:0 24px 56px -30px rgba(31,68,92,.42),inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .chart-box::before{
+    content:''; position:absolute; z-index:1; pointer-events:none;
+    left:7%; right:7%; top:0; height:3px; border-radius:0 0 99px 99px;
+    background:linear-gradient(90deg,transparent,var(--brand),#A78BFA,var(--accent),transparent);
+    box-shadow:0 2px 14px rgba(47,125,168,.28);
+  }
+  .chart-box svg{ filter:drop-shadow(0 7px 13px rgba(31,45,61,.08)); }
+  .face{ stroke:rgba(47,125,168,.3); stroke-width:.8; stroke-linejoin:round; }
+  .floor-line{ stroke-linecap:round; }
+  .bub .halo{ opacity:.15 !important; }
+  .bub .sh{ stroke-width:2.6; }
+  .bub:hover .sh,.bub.sel .sh{ filter:drop-shadow(0 0 6px currentColor); }
+  .bub .ring{ stroke-width:2; }
+  text.lb{ font-size:13px; font-weight:800; }
+  .lb-bg{ fill:rgba(255,255,255,.96); stroke-width:1.4; stroke-opacity:.58; filter:drop-shadow(0 2px 3px rgba(31,45,61,.13)); }
+  .ax-name{ font-size:13.5px; stroke-width:4.5px; }
+  .ax-tick{ font-size:10px; font-weight:700; stroke-width:3.5px; }
+  .q-hud-bg{ fill-opacity:.9; stroke-width:1.3; }
+  .q-hud-ax{ stroke-width:2.8; }
+  .chart-cap{ padding:8px 12px 10px; font-size:12.5px; }
+  body.theme-dark .chart-box{
+    background:
+      radial-gradient(ellipse at 48% 42%,rgba(34,211,238,.22),transparent 54%),
+      radial-gradient(ellipse at 83% 14%,rgba(139,92,246,.22),transparent 43%),
+      radial-gradient(ellipse at 15% 90%,rgba(20,184,166,.12),transparent 42%),
+      linear-gradient(145deg,#0b1424 0%,#10172d 52%,#091522 100%);
+    border-color:rgba(71,220,244,.48);
+    box-shadow:0 28px 70px -30px rgba(0,0,0,.86),0 0 34px rgba(34,211,238,.11),inset 0 1px 0 rgba(211,250,255,.13),inset 0 0 30px rgba(62,106,202,.10);
+  }
+  body.theme-dark .chart-box::before{
+    height:4px;
+    background:linear-gradient(90deg,transparent,#42E8FF 20%,#A78BFA 52%,#55F2C4 80%,transparent);
+    box-shadow:0 0 8px rgba(66,232,255,.78),0 0 24px rgba(167,139,250,.48);
+  }
+  body.theme-dark .chart-box svg{
+    filter:drop-shadow(0 0 12px rgba(34,211,238,.15)) drop-shadow(0 14px 24px rgba(0,0,0,.45));
+  }
+  body.theme-dark .face{ stroke:rgba(110,240,255,.5); filter:drop-shadow(0 0 5px rgba(34,211,238,.25)); }
+  body.theme-dark .face-floor{ stroke:rgba(87,232,245,.62); }
+  body.theme-dark .face-side{ stroke:rgba(181,145,255,.48); }
+  body.theme-dark .far-grid{ filter:drop-shadow(0 0 3px rgba(93,219,255,.45)); }
+  body.theme-dark .floor-grid{ filter:drop-shadow(0 0 4px rgba(61,219,240,.5)); }
+  body.theme-dark .cube-edge{ filter:drop-shadow(0 0 5px rgba(78,218,242,.52)); }
+  body.theme-dark .cube-edge.near-edge{ filter:drop-shadow(0 0 7px rgba(115,241,255,.76)); }
+  body.theme-dark .axis-line{ filter:drop-shadow(0 0 6px currentColor) drop-shadow(0 0 13px currentColor); }
+  body.theme-dark .projection{ filter:drop-shadow(0 0 4px currentColor); opacity:.7 !important; }
+  body.theme-dark .bub .halo{ opacity:.25 !important; filter:blur(5px); }
+  body.theme-dark .bub .sh{ filter:drop-shadow(0 0 5px currentColor) drop-shadow(0 0 12px currentColor); }
+  body.theme-dark .bub .ring{ opacity:.48; filter:drop-shadow(0 0 4px currentColor); }
+  body.theme-dark .bub:hover .ring,body.theme-dark .bub.sel .ring{ opacity:1; filter:drop-shadow(0 0 7px currentColor) drop-shadow(0 0 15px currentColor); }
+  body.theme-dark .lb-bg{ fill:rgba(7,16,30,.94); stroke-opacity:.86; filter:drop-shadow(0 0 6px rgba(73,206,237,.19)) drop-shadow(0 3px 5px rgba(0,0,0,.62)); }
+  body.theme-dark .bub text.lb{ filter:drop-shadow(0 0 4px currentColor); }
+  body.theme-dark .ax-name{ paint-order:stroke; stroke:rgba(8,17,32,.94); stroke-width:5px; filter:drop-shadow(0 0 5px currentColor); }
+  body.theme-dark .ax-tick{ fill:#C5EAF5; stroke:rgba(8,17,32,.94); }
+  body.theme-dark .q-hud-bg{ fill-opacity:.96; stroke:rgba(95,219,240,.56); filter:drop-shadow(0 0 8px rgba(34,211,238,.24)); }
+  body.theme-dark .q-hud-tick{ stroke:rgba(132,222,239,.56); }
+  body.theme-dark .q-hud-t{ fill:#B7E8F2; }
+  body.theme-dark .q-hud-ax{ filter:drop-shadow(0 0 4px rgba(83,224,246,.78)); }
+  .q-legend .lg i.dot{ background:#2F7DA8; border-color:#2F7DA8; opacity:.82; box-shadow:0 0 0 3px rgba(47,125,168,.12); }
+  .q-legend .lg i.sq{ background:#E8913C; border-color:#E8913C; opacity:.9; box-shadow:0 0 0 3px rgba(232,145,60,.13); }
+  .q-legend .lg i.ax{ height:4px; box-shadow:0 1px 5px currentColor; }
+  .detail{ border-color:color-mix(in srgb,var(--brand) 25%,var(--line)); box-shadow:0 14px 34px rgba(31,45,61,.09); }
+  .detail .dt-scores .s{ padding:10px 13px; border:1px solid var(--line); border-radius:12px; background:var(--card-2); }
+  @media (max-width:860px){
+    .chart-box{ border-radius:17px; padding:8px 4px 3px; }
+    .chart-box svg{ filter:none; }
+  }
+  @media (prefers-reduced-motion:reduce){ .chart-box svg{ filter:none; } }
+
+  @media (max-width:860px){
+    .dims{ grid-template-columns:1fr; }
+    .axis-read{ grid-template-columns:1fr; }
+    .quad-read{ grid-template-columns:1fr; }
+    table.mx{ font-size:12.5px; }
+    .q-wrap{ padding:24px 16px 56px; }
+  }
+</style>
+</head>
+<body data-page="quadrant">
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow a" aria-hidden="true"></div>
+<div class="glow b" aria-hidden="true"></div>
+
+<aside class="sidebar">
+  <a class="sb-brand" href="index.html">
+    <span class="logo-dot"></span>
+    <span class="sb-brand-txt"><b>AI AGENTS</b><i>选型讲义 · 2026</i></span>
+  </a>
+
+  <p class="sb-label"><span>主导航</span></p>
+  <a class="sb-item" href="index.html" title="工具图鉴"><span class="ico">&#9672;</span><span class="txt">工具图鉴</span></a>
+  <a class="sb-item" href="compare.html" title="对比矩阵"><span class="ico">&#9636;</span><span class="txt">对比矩阵</span></a>
+  <a class="sb-item active" href="quadrant.html" title="能力立方图"><span class="ico">&#9715;</span><span class="txt">能力立方图</span></a>
+  <a class="sb-item" href="practice.html" title="选型决策器"><span class="ico">&#9670;</span><span class="txt">选型决策器</span></a>
+  <a class="sb-item" href="pk.html" title="双雄 PK"><span class="ico">&#9876;</span><span class="txt">双雄 PK</span></a>
+
+  <p class="sb-label"><span>工具详解</span></p>
+  <a class="sb-item sm" href="agents/workbuddy.html" title="WorkBuddy"><span class="dot wb">W</span><span class="txt">WorkBuddy</span></a>
+  <a class="sb-item sm" href="agents/traework.html" title="TraeWork"><span class="dot tw">T</span><span class="txt">TraeWork</span></a>
+  <a class="sb-item sm" href="agents/zcode.html" title="ZCode"><span class="dot zc">Z</span><span class="txt">ZCode</span></a>
+  <a class="sb-item sm" href="agents/codex.html" title="Codex"><span class="dot cx">C</span><span class="txt">Codex</span></a>
+  <a class="sb-item sm" href="agents/codearts.html" title="码道CodeArts"><span class="dot ca">&#30721;</span><span class="txt">码道CodeArts</span></a>
+
+  <div class="sb-foot">
+    <button class="sb-collapse" id="sbCollapse" type="button" title="收起侧栏" aria-expanded="true">
+      <span class="ico">&#171;</span><span class="txt">收起</span>
+    </button>
+    <div class="sb-ctl">
+      <button class="pill" id="themeToggle" type="button">&#9790; DARK</button>
+      <button class="pill" id="gridToggle" type="button">GRID: ON</button>
+    </div>
+    <p class="sb-note">数据更新 2026-09<br>价格以官网为准</p>
+  </div>
+</aside>
+<button class="sb-toggle" id="sbToggle" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="sb-mask" id="sbMask"></div>
+
+<div class="wrap">
+<nav class="subnav">
+  <a class="sub" href="compare.html"><span class="n">01</span>对比矩阵</a>
+  <a class="sub solid" href="quadrant.html"><span class="n">02</span>能力立方图</a>
+</nav>
+
+<div class="q-wrap">
+
+  <header class="page-head">
+    <div class="ph-left">
+      <p class="ph-kicker">3D Cube · 可旋转三维定位</p>
+      <h1 class="ph-title">一个立方体，看清 5 款智能体的方位</h1>
+      <p class="ph-sub">三个轴各代表一个维度，5 款产品是立方体里悬浮的坐标点。<b>按住拖动可旋转</b>、滚轮缩放，也能让它慢慢自转——转到不同角度，谁在哪个方向上领先一目了然。</p>
+    </div>
+    <div class="ph-right">
+      <a class="ph-btn" href="compare.html">回对比矩阵</a>
+      <a class="ph-btn primary" href="practice.html">帮我选型</a>
+    </div>
+  </header>
+
+  <div class="dims">
+    <div class="dim">
+      <span class="d-k">AXIS X</span>
+      <p class="d-t">学生可用性</p>
+      <p class="d-d">能不能在国内直接用、中文顺不顺、不花钱能不能起步、上手难不难。越往外＝学生拿起就能用。</p>
+      <span class="d-s">国内直连25 + 中文25 + 免费起步25 + 上手难度25</span>
+    </div>
+    <div class="dim">
+      <span class="d-k">AXIS Y</span>
+      <p class="d-t">编程工程能力</p>
+      <p class="d-d">比较代码生成、项目修改、测试调试与工程流程能力。通用办公、设计和分析另列评分。</p>
+      <span class="d-s">独立主观相对分，不代表标准化编码基准</span>
+    </div>
+    <div class="dim">
+      <span class="d-k">AXIS Z</span>
+      <p class="d-t">持续免费用量</p>
+      <p class="d-d">不付费时模型能持续用多少。应用免费不代表模型推理免费；一次性试用与长期额度分开看。</p>
+      <span class="d-s">按公开的持续免费模型额度作主观相对评估；积分与 Token 不可直接等值换算</span>
+    </div>
+  </div>
+
+  <div class="ctrl">
+    <div class="ctrl-row">
+      <span class="ctrl-lab">轴映射</span>
+      <div class="fld">
+        <label for="selX">X 轴</label>
+        <select id="selX">
+          <option value="usability" selected>学生可用性</option>
+          <option value="coding">编程工程能力</option>
+          <option value="general">通用任务能力</option>
+          <option value="quota">持续免费用量</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label for="selY">Y 轴</label>
+        <select id="selY">
+          <option value="usability">学生可用性</option>
+          <option value="coding" selected>编程工程能力</option>
+          <option value="general">通用任务能力</option>
+          <option value="quota">持续免费用量</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label for="selZ">Z 轴</label>
+        <select id="selZ">
+          <option value="usability">学生可用性</option>
+          <option value="coding">编程工程能力</option>
+          <option value="general">通用任务能力</option>
+          <option value="quota" selected>持续免费用量</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="ctrl-row">
+      <span class="ctrl-lab">视角</span>
+      <div class="btn-group">
+        <button type="button" id="btnSpin">⏸ 暂停旋转</button>
+        <button type="button" class="vp" data-v="iso">等轴</button>
+        <button type="button" class="vp" data-v="front">正面</button>
+        <button type="button" class="vp" data-v="side">侧视</button>
+        <button type="button" class="vp" data-v="top">俯视</button>
+        <button type="button" id="btnZoomIn">＋ 放大</button>
+        <button type="button" id="btnZoomOut">－ 缩小</button>
+        <button type="button" id="btnReset">↺ 复位</button>
+      </div>
+    </div>
+
+    <p class="note"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>悬停</b>看分数 · <b>点击</b>圆点/方块看逐项评分依据 · 点空白处取消选中 · 右下罗盘显示三轴当前朝向</p>
+  </div>
+
+  <div class="chart-box">
+    <svg id="chart" viewBox="0 0 940 660" role="img" aria-label="AI 智能体三维立方定位图，可旋转">
+      <defs id="qDefs"></defs>
+      <g id="qScene"></g>
+      <g id="qLabels"></g>
+      <g id="qHudBase"></g>
+      <g id="qHud"></g>
+    </svg>
+    <p class="chart-cap">图 · 三维立方定位（X＝学生可用性，Y＝编程工程能力，Z＝持续免费用量；通用任务能力见下方评分表）</p>
+  </div>
+
+  <div class="q-legend">
+    <span class="lg"><i class="dot"></i>智能体类（WorkBuddy / TraeWork / ZCode / Codex）</span>
+    <span class="lg"><i class="sq"></i>研发与数字创造工作台（码道CodeArts）</span>
+    <span class="lg"><i class="ax hx"></i>X</span>
+    <span class="lg"><i class="ax hy"></i>Y</span>
+    <span class="lg"><i class="ax hz"></i>Z — 罗盘三针</span>
+    <label class="lg-toggle"><input type="checkbox" id="hideWB"> 隐藏研发与数字创造工作台</label>
+  </div>
+
+  <div class="type-note">
+    <h4>为什么码道CodeArts单独使用方块？</h4>
+    <p>方块表示它属于<b>研发与数字创造工作台</b>这一产品类别。码道CodeArts官方定位是智能编码产品，覆盖全栈开发、代码质量管理，也支持文档、设计、数据分析和工程管理。评分把<b>编程工程能力</b>与<b>通用任务能力</b>拆开：立方图纵轴只展示编程工程能力，通用任务分数在下方表格单独查看。这样不会把它的数字创造和办公能力折进编码总分。</p>
+  </div>
+
+  <div class="detail" id="detail"></div>
+
+  <div class="section">
+    <p class="sec-kicker">HOW TO READ // 三个方向怎么读</p>
+    <h2 class="sec-title">沿每个轴往外走，意味着什么</h2>
+    <p class="sec-desc">立方体比较学生可用性、编程工程能力和持续免费用量；通用任务能力作为独立分数列在下方，不混入编程轴。</p>
+    <div class="axis-read">
+      <div class="ar">
+        <span class="ar-k">AXIS X · 学生可用性</span>
+        <h4>越靠外＝越容易上手</h4>
+        <p><b>WorkBuddy（98）、码道CodeArts（95）、TraeWork（88）</b> 最靠外：国内直连、中文原生，上手门槛较低。<b>Codex（44）</b> 仍垫底但已脱离原点：默认路径要代理 + 美元 + 英文，而在本地配置里换成国产模型后可以直连。</p>
+      </div>
+      <div class="ar">
+        <span class="ar-k">AXIS Y · 编程工程能力</span>
+        <h4>越往上＝编码流程得分越高</h4>
+        <p><b>Codex（98）</b>、<b>TraeWork（88）</b>、<b>ZCode（86）</b>偏专业编程；<b>WorkBuddy（45）</b>覆盖轻量开发；<b>码道CodeArts（30）</b>在本站试用评分中更突出数字创造和研发工作流，深度编码相对较弱。</p>
+      </div>
+      <div class="ar">
+        <span class="ar-k">AXIS Z · 持续免费用量</span>
+        <h4>越往前＝越能白嫖</h4>
+        <p><b>WorkBuddy（78）</b>体验版每月提供 500 积分；<b>码道CodeArts（60）</b>体验版每月提供积分；<b>TraeWork（50）</b>免费积分和活动权益依账号变化，公开资料不足以确认持续免费用量；<b>ZCode（50）</b>新用户试用 5 天，客户端显示 GLM-5.3 每日 300 万、GLM-5.3-Flash 每日 500 万 Token；<b>Codex（35）</b>Free / Go 当前限时提供有限用量。</p>
+      </div>
+    </div>
+
+    <div class="quad-read" style="margin-top:18px">
+      <div class="qr q1">
+        <span class="qr-z">投影视角 · 高编程能力 × 高可用</span>
+        <h4>✅ 首选区</h4>
+        <p>能力强、门槛又低。<b>TraeWork、ZCode</b> 落在这里——国内直连、中文原生，且是编程智能体；免费模型用量与试用期限请另行核对。</p>
+      </div>
+      <div class="qr q2">
+        <span class="qr-z">投影视角 · 高编程能力 × 低可用</span>
+        <h4>🚀 进阶区</h4>
+        <p>能力天花板最高，但要先跨过门槛。<b>Codex</b> 独居此区：模型与工程能力最强；默认要走代理 + 美元，也可以在本地 config.toml 里把模型指向 DeepSeek 这类兼容端点（自行配置，非官方承诺，代价是用不了 Codex Cloud 云沙箱）。</p>
+      </div>
+      <div class="qr q3">
+        <span class="qr-z">投影视角 · 低编程能力 × 高可用</span>
+        <h4>🌱 入门 / 通用区</h4>
+        <p>编程工程分相对较低、学生可用性较高。<b>WorkBuddy、码道CodeArts</b> 在此；通用任务分需另看下表，不能从编程轴推断。</p>
+      </div>
+      <div class="qr q4">
+        <span class="qr-z">投影视角 · 低编程能力 × 低可用</span>
+        <h4>⛔ 观望区</h4>
+        <p>又难用、能力又不出众——目前 5 款里<b>没有产品落在这里</b>。若某天某款滑进此区，就不值得学生投入时间了。</p>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--ink-3);margin-top:10px">说明：以上四区是把立方体投影到 X（可用性）× Y（编程工程能力）平面上读的；持续免费用量在 Z 轴体现，通用任务能力见评分表。</p>
+  </div>
+
+  <div class="section">
+    <p class="sec-kicker">SCORECARD // 评分总表</p>
+    <h2 class="sec-title">四个维度的分数与关键依据</h2>
+    <p class="sec-desc">分数为 0–100 的相对评分，每一项都可拆开核查（见下方逐项依据）。</p>
+    <table class="mx">
+      <thead>
+        <tr><th>产品</th><th>学生可用性</th><th>编程工程能力</th><th>通用任务能力</th><th>持续免费用量</th><th>一句话依据</th></tr>
+      </thead>
+      <tbody id="mxBody"></tbody>
+    </table>
+
+    <div class="ev-list" id="evList"></div>
+  </div>
+
+  <div class="disclaimer">
+    <h4>⚠️ 方法与免责声明</h4>
+    <ul>
+      <li><b>评分性质</b>：本站评分与星级是<b>结合实际试用和公开资料作出的主观相对判断</b>，不是标准化测试或官方基准测试（benchmark）结果，也不代表机构排名；仅供选型参考。</li>
+      <li><b>口径</b>：学生可用性、编程工程能力与通用任务能力分开评分；分数是主观相对评估，逐项依据见下表。持续免费用量参考公开权益；不同产品的积分与 Token 不作直接等值换算。</li>
+      <li><b>分类说明</b>：码道CodeArts是研发与数字创造工作台，官方定位包括智能编码；因此同时给出编程工程与通用任务分数，不以单一能力分概括整个产品。</li>
+      <li><b>冲突与不确定性</b>：各家额度与定价口径变动频繁，官方文档与应用内页面也可能不一致。遇到冲突一律以<b>应用内实时页面</b>为准。</li>
+      <li><b>时效</b>：数据截至 2026-09-30。AI 产品定价与额度变动极快，引用前请核对官网。</li>
+      <li><b>其他</b>：ZCode 曾于 2026-09 发生代码数据上传争议，官方已致歉、开源并整改；对数据敏感者请留意隐私设置。</li>
+    </ul>
+  </div>
+
+</div><!-- /.q-wrap -->
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="f-brand">
+      <span class="f-logo">AI AGENTS COMPASS</span>
+      <span class="f-tag">给学生的一份 AI 智能体选型讲义 · 图鉴 + 对比 + 详解 + 实践</span>
+    </div>
+    <div class="f-cols">
+      <div class="f-col">
+        <h4>详解 · 通用与编程</h4>
+        <a href="agents/workbuddy.html">WorkBuddy</a>
+        <a href="agents/traework.html">TraeWork</a>
+        <a href="agents/zcode.html">ZCode</a>
+      </div>
+      <div class="f-col">
+        <h4>详解 · 编程与数字创造</h4>
+        <a href="agents/codex.html">Codex</a>
+        <a href="agents/codearts.html">码道CodeArts</a>
+      </div>
+      <div class="f-col">
+        <h4>COMPARE</h4>
+        <a href="compare.html">对比矩阵</a>
+        <a href="quadrant.html">能力立方图</a>
+      </div>
+      <div class="f-col">
+        <h4>PRACTICE</h4>
+        <a class="warm" href="practice.html">选型决策器</a>
+        <a class="warm" href="pk.html">双雄 PK</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2026 AI AGENTS COMPASS — MADE FOR STUDENTS</span>
+    <span>数据更新 2026-09-30 · 以官网为准</span>
+    <span class="footer-made">本网站由所介绍的五种智能体协助搭建，图片资源部分来自网络</span>
+  </div>
+</footer>
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script src="assets/js/site.js"></script>
+<script>
+(function(){
+  /* ============ 数据：分数 + 逐项依据 + 来源 ============ */
+  var DIMS = {
+    usability:{ name:'学生可用性', full:'学生可用性' },
+    coding:   { name:'编程工程能力', full:'编程工程能力' },
+    general:  { name:'通用任务能力', full:'通用任务能力' },
+    quota:    { name:'持续免费用量',   full:'持续免费用量' }
+  };
+
+  var AGENTS = [
+    {
+      key:'workbuddy', name:'WorkBuddy', brand:'腾讯', color:'#2F7DA8',
+      shape:'circle', type:'通用智能体',
+      s:{ usability:98, coding:45, general:95, quota:78 },
+      brief:'国内直连、中文原生、有免费额度；能力胜在覆盖面而非单点上限。',
+      items:{
+        usability:[['国内直连',25,'腾讯云服务，无需代理'],['中文支持',25,'界面与文档原生中文'],['免费起步',25,'有免费额度，日常用量不花钱'],['上手难度',23,'对话式，无需配环境；Skill / 连接器需少量学习']],
+        coding:[['编程工程能力',45,'适合轻量代码、脚本和局部修改；大型代码库、深度测试与 CI 流程能力较弱']],
+        general:[['通用任务能力',95,'文档、表格、PPT、PDF、资料整理和日常办公覆盖广']],
+        quota:[['免费额度',78,'有免费额度覆盖日常需求；长期重度使用需订阅付费档']]
+      },
+      src:'腾讯 WorkBuddy 官网与产品页'
+    },
+    {
+      key:'traework', name:'TraeWork', brand:'字节跳动', color:'#6366F1',
+      shape:'circle', type:'编程智能体',
+      s:{ usability:88, coding:88, general:55, quota:50 },
+      brief:'积分制并提供会员套餐；免费权益与模型权限依账号和活动而异，需理解 Work/Code/Design 与 SOLO 概念。',
+      items:{
+        usability:[['国内直连',25,'国内可用，无需代理'],['中文支持',25,'原生中文'],['免费起步',20,'积分与免费权益依账号套餐及活动变化，不保证持续免费使用'],['上手难度',18,'需理解 Work/Code/Design 模式与 SOLO / Builder / Coder 概念']],
+        coding:[['编程工程能力',88,'Work/Code 模式、终端、Git、调试和 MCP 支持较完整，适合主导式开发']],
+        general:[['通用任务能力',55,'Work 与 Design 可处理文档、数据和设计任务，但整体仍偏开发工作流']],
+        quota:[['持续免费用量',50,'积分制并提供付费会员月度积分；免费积分依账号和活动变化，分数暂定']]
+      },
+      src:'TRAE 官网 trae.cn（IDE / SOLO 双模式、MCP、Trae Rules）；2026 会员档位（国内 ¥49/¥99/¥239/¥699，国际 $3/$10/$30/$100）'
+    },
+    {
+      key:'zcode', name:'ZCode', brand:'智谱 Z.ai', color:'#14B8A6',
+      shape:'circle', type:'编程智能体',
+      s:{ usability:90, coding:86, general:30, quota:50 },
+      brief:'应用可免费下载；新用户试用 5 天，客户端显示 GLM-5.3 每日 300 万、GLM-5.3-Flash 每日 500 万 Token。',
+      items:{
+        usability:[['国内直连',25,'国内可用，无需代理'],['中文支持',25,'原生中文'],['免费起步',25,'应用免费下载，并提供 5 天模型试用额度'],['上手难度',15,'需连接并配置模型（GLM Coding Plan / BigModel / API Key）']],
+        coding:[['编程工程能力',86,'GLM 深度适配、长上下文、Goal/Subagents、终端与 Git 工作流支持较强']],
+        general:[['通用任务能力',30,'产品主要针对软件开发，通用办公和非编程任务覆盖较少']],
+        quota:[['持续免费用量',50,'试用期为 5 天，客户端显示 GLM-5.3 每日 300 万、GLM-5.3-Flash 每日 500 万 Token；试用结束后可能需套餐或自带 API Key']]
+      },
+      src:'ZCode 官方文档 zcode.z.ai；Z.ai 订阅页；GLM Coding Plan 定价（2026-08 起）；第三方评测与社区报告'
+    },
+    {
+      key:'codex', name:'Codex', brand:'OpenAI', color:'#059669',
+      shape:'circle', type:'编程智能体',
+      s:{ usability:44, coding:98, general:50, quota:35 },
+      brief:'能力与工程深度天花板；默认路径要代理 + 美元 + 英文，但客户端读的是本地 config.toml，也可自行把模型指向 DeepSeek 这类兼容端点（非官方承诺）。',
+      items:{
+        usability:[['国内直连',12,'官方路径需代理；在 config.toml 里指向国产模型后可直连'],['中文支持',8,'界面与文档以英文为主'],['免费起步',12,'Free / Go 桌面端可用 GPT‑6 Luna；换成国产模型按量计费，成本极低'],['上手难度',12,'默认路径要代理 + 美元；换国产模型要自己写配置或用第三方工具']],
+        coding:[['编程工程能力',98,'代码修改、测试验证、worktree 隔离、代码审查与 PR/CI 流程能力突出']],
+        general:[['通用任务能力',50,'以软件开发为核心，可处理部分研究、文档和跨应用任务']],
+        quota:[['持续免费用量',35,'Free / Go 当前限时提供有限 Codex 用量，额度和功能依计划而异；Plus 美区标价 $20/月起，第三方 API 另行计费']]
+      },
+      src:'OpenAI 官网与 ChatGPT 内 Codex 产品页；GPT‑6 Sol / Luna 官方公告（2026-09）；DeepSeek 官方 Codex 集成文档'
+    },
+    {
+      key:'codearts', name:'码道CodeArts', brand:'华为云', color:'#E8913C',
+      shape:'square', type:'研发与数字创造工作台',
+      s:{ usability:95, coding:30, general:78, quota:60 },
+      brief:'官方定位是智能编码产品，同时覆盖代码质量、应用开发、文档、设计和分析；两类能力分开评分。',
+      items:{
+        usability:[['国内直连',25,'华为云国内服务'],['中文支持',25,'原生中文'],['免费起步',20,'体验版免费，但额度偏小'],['上手难度',25,'自然语言入口便于创建应用，起步门槛低']],
+        coding:[['编程工程能力',30,'支持全栈开发、代码评审、重构、安全审计和测试；深度编码与复杂代码库能力仍需独立实测']],
+        general:[['通用任务能力',78,'官方文档列出文档处理、设计、研究分析、数据解析和项目管理等能力']],
+        quota:[['免费额度',60,'体验版免费，额度偏小，重度需付费档']]
+      },
+      src:'华为云码道官网 codearts.huaweicloud.com；帮助中心 usermanual-codeartssnap 文档'
+    }
+  ];
+
+  /* ============ 三维投影 ============ */
+  var VIEW = { w:940, h:660, cx:470, cy:336, scale:300 };
+  /* 默认视角经过计算：在三轴不压边的前提下，让 5 个点彼此散得最开 */
+  var DEF  = { yaw:2.356, pitch:0.26, zoom:1 };
+  var yaw=DEF.yaw, pitch=DEF.pitch, zoom=DEF.zoom;
+  var spinning=true, dragging=false, hoverPause=false;
+
+  var CORNERS=[[0,0,0],[1,0,0],[1,0,1],[0,0,1],[0,1,0],[1,1,0],[1,1,1],[0,1,1]];
+  var EDGES=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+  /* 6 个面：顶点 + 外法线。只填充「远侧」的面，既有体块感又不遮挡内部数据点 */
+  var FACES=[
+    { v:[[0,0,0],[1,0,0],[1,0,1],[0,0,1]], n:[0,-1,0] },
+    { v:[[0,1,0],[1,1,0],[1,1,1],[0,1,1]], n:[0,1,0] },
+    { v:[[0,0,0],[0,1,0],[0,1,1],[0,0,1]], n:[-1,0,0] },
+    { v:[[1,0,0],[1,1,0],[1,1,1],[1,0,1]], n:[1,0,0] },
+    { v:[[0,0,0],[1,0,0],[1,1,0],[0,1,0]], n:[0,0,-1] },
+    { v:[[0,0,1],[1,0,1],[1,1,1],[0,1,1]], n:[0,0,1] }
+  ];
+
+  var svg=document.getElementById('chart');
+  var gScene=document.getElementById('qScene'), gLabels=document.getElementById('qLabels'), gHud=document.getElementById('qHud');
+  var tip=document.getElementById('tip');
+  var selX=document.getElementById('selX'), selY=document.getElementById('selY'), selZ=document.getElementById('selZ');
+  var hideWB=document.getElementById('hideWB');
+  var current=null;
+
+  function isDark(){ return document.body.classList.contains('theme-dark'); }
+  function pal(){
+    return isDark()
+      ? { edge:'#286174', edgeNear:'#9AF7FF', grid:'#27869B', axis:'#41E7FF', xAxis:'#41E7FF', yAxis:'#FFC36F', zAxis:'#67F5B8', tick:'#D0EDF4',
+          face:'rgba(65,231,255,.18)', faceFloor:'rgba(65,231,255,.27)', shadow:'rgba(0,0,0,.48)' }
+      : { edge:'#9BB2C0', edgeNear:'#456B82', grid:'#AABDC9', axis:'#2F7DA8', xAxis:'#2F7DA8', yAxis:'#D98B3E', zAxis:'#3E9E76', tick:'#506A7A',
+          face:'rgba(47,125,168,.10)', faceFloor:'rgba(47,125,168,.17)', shadow:'rgba(31,45,61,.20)' };
+  }
+
+  /* ---------- defs：每个数据点一个球面渐变 + 轴箭头 ---------- */
+  function buildDefs(){
+    var d=document.getElementById('qDefs');
+    if(!d) return;
+    var g=AGENTS.map(function(a){
+      return '<radialGradient id="qg-'+a.key+'" cx="34%" cy="29%" r="78%">'+
+        '<stop offset="0%" stop-color="#ffffff" stop-opacity="'+(isDark()?'.46':'.62')+'"/>'+
+        '<stop offset="32%" stop-color="'+a.color+'" stop-opacity=".95"/>'+
+        '<stop offset="100%" stop-color="'+a.color+'" stop-opacity="'+(isDark()?'.48':'.52')+'"/>'+
+      '</radialGradient>';
+    }).join('');
+    var C=pal();
+    [["X",C.xAxis],["Y",C.yAxis],["Z",C.zAxis]].forEach(function(ax){
+      g+='<marker id="qArrow'+ax[0]+'" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">'+
+         '<path d="M0,0 L10,5 L0,10 z" fill="'+ax[1]+'"/></marker>';
+    });
+    var fc=isDark()?['#0F7184','#4A347C']:['#BFE5F1','#E3D8F8'];
+    var floorAlpha=isDark()?['.42','.20']:['.52','.22'];
+    var sideAlpha=isDark()?['.30','.13']:['.34','.16'];
+    g+='<linearGradient id="qFaceFloor" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="'+fc[0]+'" stop-opacity="'+floorAlpha[0]+'"/><stop offset="100%" stop-color="'+fc[1]+'" stop-opacity="'+floorAlpha[1]+'"/></linearGradient>'+
+       '<linearGradient id="qFaceSide" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="'+fc[1]+'" stop-opacity="'+sideAlpha[0]+'"/><stop offset="100%" stop-color="'+fc[0]+'" stop-opacity="'+sideAlpha[1]+'"/></linearGradient>';
+    d.innerHTML=g;
+
+    /* 罗盘底板（不随帧变化，只建一次） */
+    var hb=document.getElementById('qHudBase');
+    if(hb){
+      var cx=VIEW.w-58, cy=VIEW.h-58, R=28, s='';
+      s+='<circle class="q-hud-bg" cx="'+cx+'" cy="'+cy+'" r="'+R+'"/>';
+      for(var i=0;i<12;i++){
+        var ang=i*Math.PI/6, c1=R-3.5, c2=(i%3===0)?R-8:R-6;
+        s+='<line class="q-hud-tick" x1="'+n(cx+Math.cos(ang)*c1)+'" y1="'+n(cy+Math.sin(ang)*c1)+
+           '" x2="'+n(cx+Math.cos(ang)*c2)+'" y2="'+n(cy+Math.sin(ang)*c2)+'"/>';
+      }
+      hb.innerHTML=s;
+    }
+  }
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function n(v){ return Math.round(v*100)/100; }
+  /* 3D -> 2D：先绕竖轴 yaw，再绕横轴 pitch，最后弱透视 */
+  function proj(p){
+    var cx=p[0]-0.5, cy=p[1]-0.5, cz=p[2]-0.5;
+    var cyw=Math.cos(yaw), syw=Math.sin(yaw);
+    var x1= cx*cyw + cz*syw;
+    var z1=-cx*syw + cz*cyw;
+    var y1= cy;
+    var cp=Math.cos(pitch), sp=Math.sin(pitch);
+    var y2= y1*cp - z1*sp;
+    var z2= y1*sp + z1*cp;
+    var d=3.6, f=d/(d+z2);
+    return { x: VIEW.cx + x1*VIEW.scale*f*zoom, y: VIEW.cy - y2*VIEW.scale*f*zoom, z: z2, f: f };
+  }
+
+  /* 方向向量经同样旋转后的深度分量：>0 表示该法线背向观察者（即该面在远侧） */
+  function rotZ(v){
+    var cyw=Math.cos(yaw), syw=Math.sin(yaw);
+    var z1=-v[0]*syw + v[2]*cyw;
+    var cp=Math.cos(pitch), sp=Math.sin(pitch);
+    return v[1]*sp + z1*cp;
+  }
+
+  function visible(a){ return !(hideWB.checked && a.key==='codearts'); }
+
+  function render(){
+    var kx=selX.value, ky=selY.value, kz=selZ.value;
+    var C=pal();
+    var items=[], labels=[], labelJobs=[], axisBoxes=[], placed=[];
+
+    /* 远侧面填充：给线框立方体一点体块感 */
+    FACES.forEach(function(f){
+      if(rotZ(f.n) <= 0) return;
+      var ps=f.v.map(proj);
+      var zc=ps.reduce(function(s,p){ return s+p.z; },0)/ps.length;
+      var isFloor=(f.n[1]===-1);
+        items.push({ z:zc+0.8, html:'<polygon class="face'+(isFloor?' face-floor':' face-side')+'" points="'+
+        ps.map(function(p){ return n(p.x)+','+n(p.y); }).join(' ')+'" fill="url(#'+(isFloor?'qFaceFloor':'qFaceSide')+')" stroke="'+C.edgeNear+'" stroke-opacity=".62" stroke-width="1.15"/>' });
+    });
+
+    /* 远侧面细网格：轻轻标出体积，仍让数据点保持最显眼 */
+    FACES.forEach(function(f){
+      if(rotZ(f.n) <= 0 || f.n[1]===-1) return;
+      for(var s=1;s<5;s++){
+        var t=s/5;
+        var l0=f.v[0].map(function(v,i){ return v+(f.v[3][i]-v)*t; });
+        var l1=f.v[1].map(function(v,i){ return v+(f.v[2][i]-v)*t; });
+        var r0=f.v[0].map(function(v,i){ return v+(f.v[1][i]-v)*t; });
+        var r1=f.v[3].map(function(v,i){ return v+(f.v[2][i]-v)*t; });
+        items.push(seg(l0,l1,C.grid,.8,isDark() ? 0.58 : 0.42,'far-grid'));
+        items.push(seg(r0,r1,C.grid,.8,isDark() ? 0.58 : 0.42,'far-grid'));
+      }
+    });
+
+    /* 底面（y=0）网格 */
+    var G=5;
+    for(var i=0;i<=G;i++){
+      var t=i/G;
+      items.push(seg([0,0,t],[1,0,t], C.grid, 1.05, isDark() ? 0.82 : 0.72,'floor-grid'));
+      items.push(seg([t,0,0],[t,0,1], C.grid, 1.05, isDark() ? 0.82 : 0.72,'floor-grid'));
+    }
+
+    /* 立方体 12 条棱：越近越粗越深 */
+    EDGES.forEach(function(e){
+      var a=CORNERS[e[0]], b=CORNERS[e[1]];
+      var P=proj(a), Q=proj(b);
+      var fm=(P.f+Q.f)/2;
+      var w=Math.max(1.15, 3.4*(fm-0.66));
+      var col=(fm>1.02)?C.edgeNear:C.edge;
+      items.push({ z:(P.z+Q.z)/2, html:'<line class="cube-edge '+(fm>1.02?'near-edge':'far-edge')+'" x1="'+n(P.x)+'" y1="'+n(P.y)+'" x2="'+n(Q.x)+'" y2="'+n(Q.y)+'" stroke="'+col+'" stroke-width="'+n(w)+'" stroke-linecap="round"/>' });
+    });
+
+    /* 三条主轴：从原点出发 */
+    /* 三条轴：[方向, 维度键, 轴名偏移]。Y 轴（竖直）正好穿过点密集区，故把轴名往左上挪开 */
+    var AX=[
+      [[1,0,0], kx, [-4,0], C.xAxis, 'X'],
+      [[0,1,0], ky, [-56,-30], C.yAxis, 'Y'],
+      [[0,0,1], kz, [4,0], C.zAxis, 'Z']
+    ];
+    AX.forEach(function(ax){
+      var P=proj([0,0,0]), Q=proj(ax[0]), off=ax[2], color=ax[3], marker=ax[4];
+      items.push({ z:-50, html:'<line class="axis-line axis-'+marker+'" style="color:'+color+'" x1="'+n(P.x)+'" y1="'+n(P.y)+'" x2="'+n(Q.x)+'" y2="'+n(Q.y)+'" stroke="'+color+'" stroke-width="3.1" opacity="1" marker-end="url(#qArrow'+marker+')"/>' });
+      /* 刻度 0 / 50 / 100 */
+      [0,0.5,1].forEach(function(t){
+        var T=proj([ax[0][0]*t, ax[0][1]*t, ax[0][2]*t]);
+        var sc=(t===0)?'0':(t===0.5?'50':'100');
+        var dx=Q.x-P.x, dy=Q.y-P.y, len=Math.sqrt(dx*dx+dy*dy)||1;
+        var tx=-dy/len*5.2, ty=dx/len*5.2;
+        labels.push('<line x1="'+n(T.x-tx)+'" y1="'+n(T.y-ty)+'" x2="'+n(T.x+tx)+'" y2="'+n(T.y+ty)+'" stroke="'+color+'" stroke-width="1.7" stroke-linecap="round" opacity=".88"/>');
+        labels.push('<text class="ax-tick" x="'+n(T.x)+'" y="'+n(T.y+16)+'" text-anchor="middle" fill="'+C.tick+'">'+sc+'</text>');
+      });
+      /* 轴名（沿轴方向外推），登记占位供点标签避让 */
+      var dx=Q.x-P.x, dy=Q.y-P.y, len=Math.sqrt(dx*dx+dy*dy)||1;
+      var alx=n(Q.x+dx/len*36+off[0]), aly=n(Q.y+dy/len*36+4+off[1]);
+      axisBoxes.push({ lx:alx, ly:aly, wd:DIMS[ax[1]].full.replace(/[^\x00-\xff]/g,'xx').length*7.6, anchor:'middle', isAxis:true });
+      labels.push('<text class="ax-name" x="'+alx+'" y="'+aly+'" text-anchor="middle" fill="'+color+'">'+esc(DIMS[ax[1]].full)+'</text>');
+    });
+
+    /* 数据点 + 投影虚线 */
+    AGENTS.forEach(function(a){
+      if(!visible(a)) return;
+      var p=[a.s[kx]/100, a.s[ky]/100, a.s[kz]/100];
+      var P=proj(p), B=proj([p[0],0,p[2]]);
+      var r=7*P.f*zoom + 2.5;
+      var isSel=(current===a.key);
+      var dim=(current && !isSel) ? ' dimmed' : '';
+
+      /* 落在底面的软阴影 + 落点 + 悬垂虚线 */
+      items.push({ z:B.z+0.02, html:'<ellipse cx="'+n(B.x)+'" cy="'+n(B.y)+'" rx="'+n(r*1.15)+'" ry="'+n(r*0.46)+'" fill="'+C.shadow+'" opacity=".55"/>' });
+      items.push({ z:(P.z+B.z)/2+0.001, html:'<line class="projection" style="color:'+a.color+'" x1="'+n(B.x)+'" y1="'+n(B.y)+'" x2="'+n(P.x)+'" y2="'+n(P.y)+'" stroke="'+a.color+'" stroke-width="1.2" stroke-dasharray="3 3" opacity=".42"/>' });
+      items.push({ z:B.z+0.002, html:'<circle cx="'+n(B.x)+'" cy="'+n(B.y)+'" r="2.2" fill="'+a.color+'" opacity=".55"/>' });
+
+      /* 主体：外发光 + 球面渐变 + 高光 + 选中环 */
+      var shp = (a.shape==='square')
+        ? '<rect class="sh" x="'+n(-r)+'" y="'+n(-r)+'" width="'+n(2*r)+'" height="'+n(2*r)+'" rx="4" fill="url(#qg-'+a.key+')" stroke="'+a.color+'" stroke-width="2.2"/>'
+        : '<circle class="sh" r="'+n(r)+'" fill="url(#qg-'+a.key+')" stroke="'+a.color+'" stroke-width="2.2"/>';
+      var hl = '<circle cx="'+n(-r*0.30)+'" cy="'+n(-r*0.36)+'" r="'+n(r*0.30)+'" fill="#ffffff" opacity="'+(isDark()?'.28':'.40')+'"/>';
+      var body='<circle class="halo" r="'+n(r*2.3)+'" fill="'+a.color+'" opacity=".12"/>'+ 
+               shp+hl+
+               '<circle r="3.1" fill="#fff" opacity=".94"/>'+
+               '<circle r="1.8" fill="'+a.color+'"/>'+
+               '<circle class="ring" r="'+n(r+6)+'" fill="none" stroke="'+a.color+'" stroke-width="1.8"/>';
+      items.push({ z:P.z, html:'<g class="bub'+dim+(isSel?' sel':'')+'" data-key="'+a.key+'" style="color:'+a.color+'" transform="translate('+n(P.x)+','+n(P.y)+')">'+body+'</g>' });
+
+      /* 标签先登记，稍后统一避让 */
+      var rightSide = P.x < VIEW.w-190;
+      labelJobs.push({ key:a.key, name:a.name, color:a.color, dim:!!dim, sel:isSel,
+        px:P.x, py:P.y, r:r, right:rightSide,
+        lx: rightSide ? P.x+r+8 : P.x-r-8 });
+    });
+
+    /* 标签避让：按 pill 矩形做碰撞检测，就近找空位，本侧放不下就翻到另一侧 */
+    var LH=19, GAP=3;
+    labelJobs.sort(function(a,b){ return a.py-b.py; });
+    placed = axisBoxes.slice();   // 轴名先占位，点标签绕开它
+    labelJobs.forEach(function(j){
+      j.wd = j.name.replace(/[^\x00-\xff]/g,'xx').length*7.4 + 14;  // 含 pill 左右各 7px 内边距
+      function boxAt(ly, right){
+        var lx = right ? j.px+j.r+8 : j.px-j.r-8;
+        var x0 = right ? lx-7 : lx-j.wd+7;
+        return { x0:x0, x1:x0+j.wd, y0:ly-13.5, y1:ly+5.5 };
+      }
+      function hits(b){
+        for(var i=0;i<placed.length;i++){
+          var p=placed[i], px0, px1, py0, py1;
+          if(p.isAxis){ px0=p.lx-p.wd/2; px1=p.lx+p.wd/2; py0=p.ly-11; py1=p.ly+5; }
+          else { px0=p.x0; px1=p.x1; py0=p.ly-13.5; py1=p.ly+5.5; }
+          if(b.x0 < px1+GAP && px0 < b.x1+GAP && b.y0 < py1+GAP && py0 < b.y1+GAP) return true;
+        }
+        return false;
+      }
+      var sides = j.right ? [true,false] : [false,true];
+      var found=null;
+      for(var s=0;s<2 && !found;s++){
+        var side=sides[s];
+        if(boxAt(j.py+4, side).x0 < 8) continue;
+        if(boxAt(j.py+4, side).x1 > VIEW.w-8) continue;
+        for(var d=0; d<=104 && !found; d+=2){
+          var cands = (d===0) ? [0] : [d,-d];
+          for(var c=0;c<cands.length;c++){
+            var ly=j.py+4+cands[c];
+            if(ly-13.5 < 8 || ly+5.5 > VIEW.h-10) continue;
+            var b=boxAt(ly, side);
+            if(!hits(b)){ found={ ly:ly, side:side, b:b }; break; }
+          }
+        }
+      }
+      if(!found){
+        var ly0=Math.max(22, Math.min(VIEW.h-16, j.py+4));
+        found={ ly:ly0, side:j.right, b:boxAt(ly0, j.right) };
+      }
+      j.ly=found.ly; j.right=found.side; j.x0=found.b.x0; j.x1=found.b.x1;
+      j.lx = found.side ? j.px+j.r+8 : j.px-j.r-8;
+      j.anchor = found.side ? 'start' : 'end';
+      placed.push(j);
+
+      /* 标签被推离原点时画引线 */
+      if(Math.abs(j.ly-(j.py+4))>6){
+        var dir=j.right?1:-1;
+        var ex = j.right ? j.x0-3 : j.x1+3;
+        labels.push('<line x1="'+n(j.px+dir*(j.r+2))+'" y1="'+n(j.py)+'" x2="'+n(ex)+'" y2="'+n(j.ly-4)+
+          '" stroke="'+j.color+'" stroke-width="1" opacity=".45"/>');
+      }
+      var plx = j.x0;
+      var tx  = j.anchor==='start' ? j.x0+7 : j.x1-7;
+      var pop = j.dim ? '.32' : '1';
+      labels.push('<rect class="lb-bg" x="'+n(plx)+'" y="'+n(j.ly-13.5)+'" width="'+n(j.wd)+'" height="19" rx="9.5" '+
+        'stroke="'+j.color+'" style="opacity:'+pop+';stroke-opacity:'+(j.dim?'.22':(j.sel?'.9':'.36'))+'"/>');
+      labels.push('<text class="lb" data-key="'+j.key+'" x="'+n(tx)+'" y="'+n(j.ly)+'" text-anchor="'+j.anchor+'" fill="'+j.color+'" style="opacity:'+pop+'">'+esc(j.name)+'</text>');
+    });
+
+    items.sort(function(a,b){ return b.z-a.z; });
+    gScene.innerHTML=items.map(function(it){ return it.html; }).join('');
+    gLabels.innerHTML=labels.join('');
+    gHud.innerHTML=hud(C);
+  }
+
+  /* ---------- 右下角视角罗盘 + 左上角读数 ---------- */
+  function hud(C){
+    var cx=VIEW.w-58, cy=VIEW.h-58, R=28, out='';
+    var cyw=Math.cos(yaw), syw=Math.sin(yaw), cp=Math.cos(pitch), sp=Math.sin(pitch);
+    var L=R-9;
+    var dirs=[
+      { d:[ cyw, -syw*sp ], c:'hx' },   // X 轴
+      { d:[ 0,   -cp     ], c:'hy' },   // Y 轴
+      { d:[ syw,  cyw*sp ], c:'hz' }    // Z 轴
+    ];
+    dirs.forEach(function(o){
+      out+='<line class="q-hud-ax '+o.c+'" x1="'+n(cx)+'" y1="'+n(cy)+'" x2="'+n(cx+o.d[0]*L)+'" y2="'+n(cy+o.d[1]*L)+'"/>';
+    });
+    out+='<circle class="q-hud-dot" cx="'+cx+'" cy="'+cy+'" r="2"/>';
+    var yd=((yaw*180/Math.PI)%360+360)%360, pd=pitch*180/Math.PI;
+    out+='<text class="q-hud-t" x="16" y="24">YAW '+n(yd)+'°  PITCH '+n(pd)+'°  ZOOM '+zoom.toFixed(2)+'×</text>';
+    return out;
+  }
+
+  function seg(a,b,col,w,op,cls){
+    var P=proj(a), Q=proj(b);
+    return { z:(P.z+Q.z)/2, html:'<line'+(cls?' class="'+cls+'"':'')+' x1="'+n(P.x)+'" y1="'+n(P.y)+'" x2="'+n(Q.x)+'" y2="'+n(Q.y)+'" stroke="'+col+'" stroke-width="'+w+'" opacity="'+op+'"/>' };
+  }
+
+  /* ============ 交互：拖动旋转 / 滚轮缩放 / 自动旋转 ============ */
+  var lastX=0, lastY=0;
+  function down(x,y){ dragging=true; lastX=x; lastY=y; tw=null; markPreset(null); svg.classList.add('dragging'); hideTip(); }
+  function move(x,y){
+    if(!dragging) return;
+    yaw   += (x-lastX)*0.0085;
+    pitch += (y-lastY)*0.0060;
+    pitch = Math.max(-1.25, Math.min(1.25, pitch));
+    lastX=x; lastY=y;
+    render();
+  }
+  function up(){ dragging=false; svg.classList.remove('dragging'); }
+
+  svg.addEventListener('mousedown', function(e){ down(e.clientX,e.clientY); });
+  window.addEventListener('mousemove', function(e){ move(e.clientX,e.clientY); });
+  window.addEventListener('mouseup', up);
+  svg.addEventListener('touchstart', function(e){ var t=e.touches[0]; down(t.clientX,t.clientY); }, {passive:true});
+  svg.addEventListener('touchmove', function(e){ var t=e.touches[0]; move(t.clientX,t.clientY); e.preventDefault(); }, {passive:false});
+  svg.addEventListener('touchend', up);
+  svg.addEventListener('wheel', function(e){ e.preventDefault(); tw=null; zoom=Math.max(0.62, Math.min(1.75, zoom*(e.deltaY>0?0.92:1.08))); render(); }, {passive:false});
+
+  svg.addEventListener('mouseenter', function(){ hoverPause=true; });
+  svg.addEventListener('mouseleave', function(){ hoverPause=false; hideTip(); });
+
+  /* tooltip（事件委托，元素每帧重建也不丢） */
+  svg.addEventListener('mousemove', function(e){
+    if(dragging) return;
+    var g=e.target.closest ? e.target.closest('.bub') : null;
+    if(!g){ hideTip(); return; }
+    var a=byKey(g.getAttribute('data-key'));
+    if(!a) return;
+    tip.innerHTML='<div class="t-n" style="color:'+a.color+'">'+esc(a.name)+' · '+esc(a.brand)+'</div>'+
+      '<div class="t-ty">'+esc(a.type)+'</div>'+
+      '<div class="t-r"><span>学生可用性</span><b>'+a.s.usability+'</b></div>'+
+      '<div class="t-r"><span>编程工程能力</span><b>'+a.s.coding+'</b></div>'+
+      '<div class="t-r"><span>通用任务能力</span><b>'+a.s.general+'</b></div>'+
+      '<div class="t-r"><span>免费额度</span><b>'+a.s.quota+'</b></div>';
+    tip.style.left=e.clientX+'px'; tip.style.top=(e.clientY-16)+'px';
+    tip.classList.add('on');
+  });
+  svg.addEventListener('click', function(e){
+    var g=e.target.closest ? e.target.closest('.bub') : null;
+    if(!g){ current=null; renderDetail(null); render(); return; }
+    var a=byKey(g.getAttribute('data-key'));
+    if(!a) return;
+    current=(current===a.key)?null:a.key;
+    renderDetail(current?a:null); render();
+  });
+  function byKey(k){ return AGENTS.filter(function(x){ return x.key===k; })[0]; }
+  function hideTip(){ tip.classList.remove('on'); }
+
+  /* ---------- 视角缓动：入场动画 + 预设切换 ---------- */
+  var tw=null;
+  function tweenTo(y,p,z,dur){ tw={ fy:yaw, fp:pitch, fz:zoom, ty:y, tp:p, tz:z, t0:0, dur:dur||760 }; }
+  var PRESETS={
+    iso:   { yaw:DEF.yaw,      pitch:DEF.pitch },
+    front: { yaw:0,            pitch:0.05 },
+    side:  { yaw:Math.PI/2,    pitch:0.16 },
+    top:   { yaw:DEF.yaw,      pitch:1.12 }
+  };
+  var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  (function loop(ts){
+    var now=ts||0;
+    if(tw){
+      if(!tw.t0) tw.t0=now;
+      var k=Math.min(1,(now-tw.t0)/tw.dur), e=1-Math.pow(1-k,3);
+      yaw=tw.fy+(tw.ty-tw.fy)*e; pitch=tw.fp+(tw.tp-tw.fp)*e; zoom=tw.fz+(tw.tz-tw.fz)*e;
+      render();
+      if(k>=1) tw=null;
+    } else if(spinning && !dragging && !hoverPause){ yaw += 0.0032; render(); }
+    requestAnimationFrame(loop);
+  })();
+
+  var btnSpin=document.getElementById('btnSpin');
+  btnSpin.addEventListener('click', function(){
+    spinning=!spinning;
+    btnSpin.textContent = spinning ? '⏸ 暂停旋转' : '▶ 开始旋转';
+  });
+
+  function markPreset(v){
+    var bs=document.querySelectorAll('.ctrl button.vp');
+    for(var i=0;i<bs.length;i++){ bs[i].classList.toggle('on', bs[i].getAttribute('data-v')===v); }
+  }
+  var vpBtns=document.querySelectorAll('.ctrl button.vp');
+  for(var i=0;i<vpBtns.length;i++){
+    vpBtns[i].addEventListener('click', function(){
+      var p=PRESETS[this.getAttribute('data-v')];
+      if(!p) return;
+      spinning=false; btnSpin.textContent='▶ 开始旋转';
+      markPreset(this.getAttribute('data-v'));
+      tweenTo(p.yaw, p.pitch, zoom, 720);
+    });
+  }
+
+  function zoomBy(f){ zoom=Math.max(0.62, Math.min(1.75, zoom*f)); render(); }
+  document.getElementById('btnZoomIn').addEventListener('click', function(){ zoomBy(1.12); });
+  document.getElementById('btnZoomOut').addEventListener('click', function(){ zoomBy(0.89); });
+  document.getElementById('btnReset').addEventListener('click', function(){
+    selX.value='usability'; selY.value='coding'; selZ.value='quota';
+    current=null; renderDetail(null);
+    markPreset('iso');
+    tweenTo(DEF.yaw, DEF.pitch, DEF.zoom, 720);
+  });
+
+  /* 轴映射：三轴不允许重复，重复则自动换成未用维度 */
+  function dedupe(){
+    var all=['usability','coding','general','quota'];
+    var v=[selX.value, selY.value, selZ.value];
+    for(var i=0;i<3;i++){
+      if(v.indexOf(v[i])!==i){
+        for(var j=0;j<3;j++){ if(v.indexOf(all[j])===-1){ v[i]=all[j]; break; } }
+      }
+    }
+    selX.value=v[0]; selY.value=v[1]; selZ.value=v[2];
+  }
+  [selX,selY,selZ].forEach(function(s){ s.addEventListener('change', function(){ dedupe(); render(); }); });
+  hideWB.addEventListener('change', function(){ if(current && !visible(byKey(current))){ current=null; renderDetail(null); } render(); });
+
+  /* 主题切换后重建渐变并重绘（颜色随之变化） */
+  if(window.MutationObserver){
+    new MutationObserver(function(){ buildDefs(); render(); }).observe(document.body,{ attributes:true, attributeFilter:['class'] });
+  }
+
+  /* ============ 详情面板 ============ */
+  function renderDetail(a){
+    var box=document.getElementById('detail');
+    if(!a){
+      box.innerHTML='<div class="dt-head"><h3 style="color:var(--ink-3);font-size:15px;font-weight:600">点击图中任一圆点 / 方块，查看它的逐项评分依据</h3></div>';
+      return;
+    }
+    var rows=function(list){
+      return list.map(function(it){
+        return '<tr><td class="n">'+esc(it[0])+'</td><td class="n" style="width:44px;color:var(--brand);font-weight:700">'+it[1]+'</td><td class="ev">'+esc(it[2])+'</td></tr>';
+      }).join('');
+    };
+    var html='<div class="dt-head"><span class="dt-dot" style="background:'+a.color+';'+(a.shape==='square'?'border-radius:3px':'')+'"></span><h3>'+esc(a.name)+'</h3><span class="dt-by">'+esc(a.brand)+' · '+esc(a.type)+'</span></div>';
+    html+='<div class="dt-scores">'+
+      '<div class="s"><div class="k">学生可用性</div><div class="v" style="color:var(--brand)">'+a.s.usability+'<span> /100</span></div></div>'+
+      '<div class="s"><div class="k">编程工程能力</div><div class="v" style="color:var(--accent)">'+a.s.coding+'<span> /100</span></div></div>'+
+      '<div class="s"><div class="k">通用任务能力</div><div class="v" style="color:var(--accent)">'+a.s.general+'<span> /100</span></div></div>'+
+      '<div class="s"><div class="k">免费额度</div><div class="v" style="color:var(--ok)">'+a.s.quota+'<span> /100</span></div></div>'+
+      '</div>';
+    html+='<p style="font-size:13.5px;color:var(--ink-2);margin:12px 0 0">'+esc(a.brief)+'</p>';
+    html+='<table class="bd"><thead><tr><th>子项</th><th>分</th><th>给分依据（可核查）</th></tr></thead><tbody>'+
+      rows(a.items.usability)+rows(a.items.coding)+rows(a.items.general)+rows(a.items.quota)+'</tbody></table>';
+    html+='<p class="dt-src">数据来源：'+esc(a.src)+'</p>';
+    box.innerHTML=html;
+  }
+
+  /* ============ 总表 + 逐项依据 ============ */
+  function renderTables(){
+    var mb=document.getElementById('mxBody');
+    mb.innerHTML=AGENTS.map(function(a){
+      return '<tr><th>'+esc(a.name)+'</th>'+
+        '<td><b>'+a.s.usability+'</b></td><td><b>'+a.s.coding+'</b></td><td><b>'+a.s.general+'</b></td><td><b>'+a.s.quota+'</b></td>'+ 
+        '<td>'+esc(a.brief)+'</td></tr>';
+    }).join('');
+
+    var el=document.getElementById('evList');
+    el.innerHTML=AGENTS.map(function(a){
+      var rows=function(list){
+        return list.map(function(it){
+          return '<tr><td>'+esc(it[0])+'</td><td>'+it[1]+'</td><td>'+esc(it[2])+'</td></tr>';
+        }).join('');
+      };
+      return '<details class="ev"><summary><span class="sw '+(a.shape==='square'?'sq':'dot')+'" style="background:'+a.color+'"></span>'+esc(a.name)+' · '+esc(a.type)+' · 逐项评分依据'+
+        '<span class="sc">可用 '+a.s.usability+' / 编程 '+a.s.coding+' / 通用 '+a.s.general+' / 额度 '+a.s.quota+'</span></summary>'+
+        '<div class="ev-b"><table>'+rows(a.items.usability)+rows(a.items.coding)+rows(a.items.general)+rows(a.items.quota)+'</table>'+
+        '<p class="ev-src">来源：'+esc(a.src)+'</p></div></details>';
+    }).join('');
+  }
+
+  buildDefs();
+  renderDetail(null);
+  renderTables();
+  markPreset('iso');
+  if(reduce){
+    spinning=false; btnSpin.textContent='▶ 开始旋转';
+    yaw=DEF.yaw; pitch=DEF.pitch; zoom=DEF.zoom;
+    render();
+  } else {
+    /* 入场：从偏斜的小视角缓动到默认等轴视角 */
+    yaw=DEF.yaw-0.92; pitch=0.66; zoom=0.74;
+    render();
+    tweenTo(DEF.yaw, DEF.pitch, DEF.zoom, 1150);
+  }
+})();
+</script>
+</body>
+</html>

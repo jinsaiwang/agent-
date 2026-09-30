@@ -1,0 +1,255 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 智能体对比 · Codex 详解</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-page="agent">
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow a" aria-hidden="true"></div>
+
+<aside class="sidebar">
+  <a class="sb-brand" href="../index.html">
+    <span class="logo-dot"></span>
+    <span class="sb-brand-txt"><b>AI AGENTS</b><i>选型讲义 · 2026</i></span>
+  </a>
+
+  <p class="sb-label"><span>主导航</span></p>
+  <a class="sb-item" href="../index.html" title="工具图鉴"><span class="ico">&#9672;</span><span class="txt">工具图鉴</span></a>
+  <a class="sb-item" href="../compare.html" title="对比矩阵"><span class="ico">&#9636;</span><span class="txt">对比矩阵</span></a>
+  <a class="sb-item" href="../quadrant.html" title="能力立方图"><span class="ico">&#9715;</span><span class="txt">能力立方图</span></a>
+  <a class="sb-item" href="../practice.html" title="选型决策器"><span class="ico">&#9670;</span><span class="txt">选型决策器</span></a>
+  <a class="sb-item" href="../pk.html" title="双雄 PK"><span class="ico">&#9876;</span><span class="txt">双雄 PK</span></a>
+
+  <p class="sb-label"><span>工具详解</span></p>
+  <a class="sb-item sm" href="workbuddy.html" title="WorkBuddy"><span class="dot wb">W</span><span class="txt">WorkBuddy</span></a>
+  <a class="sb-item sm" href="traework.html" title="TraeWork"><span class="dot tw">T</span><span class="txt">TraeWork</span></a>
+  <a class="sb-item sm" href="zcode.html" title="ZCode"><span class="dot zc">Z</span><span class="txt">ZCode</span></a>
+  <a class="sb-item sm active" href="codex.html" title="Codex"><span class="dot cx">C</span><span class="txt">Codex</span></a>
+  <a class="sb-item sm" href="codearts.html" title="码道CodeArts"><span class="dot ca">&#30721;</span><span class="txt">码道CodeArts</span></a>
+
+  <div class="sb-foot">
+    <button class="sb-collapse" id="sbCollapse" type="button" title="收起侧栏" aria-expanded="true">
+      <span class="ico">&#171;</span><span class="txt">收起</span>
+    </button>
+    <div class="sb-ctl">
+      <button class="pill" id="themeToggle" type="button">&#9790; DARK</button>
+      <button class="pill" id="gridToggle" type="button">GRID: ON</button>
+    </div>
+    <p class="sb-note">数据更新 2026-09<br>价格以官网为准</p>
+  </div>
+</aside>
+<button class="sb-toggle" id="sbToggle" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="sb-mask" id="sbMask"></div>
+
+<div class="wrap">
+<main class="page">
+  <p class="breadcrumb">详解 / <b>第 4 章</b></p>
+  <p class="ch-kicker">CHAPTER 04</p>
+  <h2 class="ch-title">Codex · ChatGPT 内置编程智能体</h2>
+  <div class="chips"><span class="chip">OpenAI</span><span class="chip">编程智能体</span><span class="chip">大陆不在官方支持范围</span><span class="chip">可配置第三方模型</span><span class="chip warm">学生友好 ★★★</span></div>
+  <div class="obj"><span class="lbl">目标</span><div class="body">理解 Codex 的本地与云端工作方式，并根据任务、预算和访问条件选择合适方案；了解自定义模型配置的适用范围与限制。</div></div>
+  <p class="lead">Codex 是 OpenAI 面向软件开发的智能体，可在 ChatGPT、桌面应用、IDE 扩展和 CLI 中使用。它能在独立工作区里编写、运行和检查代码，也支持并行任务、Skills、后台自动化与代码审查。官方方案与本地自定义模型的使用边界不同，后文分别说明。</p>
+
+  <div class="hero-shot is-filled">
+    <img src="../assets/screens/codex-app.png" alt="Codex 桌面应用主界面：左侧是功能栏（New chat / Scheduled / Plugins / Explore，Projects 为空，Recents 列出历史会话，左下角显示当前模型），右侧主区域是「What should we build?」新任务页，底部为「Choose project」项目选择条与任务输入框（含「Ask for approval」审批模式开关）">
+  </div>
+  <p class="shot-cap">图源：Codex 桌面应用实机截图（仅用于教学对比）</p>
+
+  <div class="spec">
+    <div class="cell"><div class="k">出品方</div><div class="v">OpenAI</div></div>
+    <div class="cell"><div class="k">定位</div><div class="v">ChatGPT 内置编程智能体</div></div>
+    <div class="cell"><div class="k">底层模型</div><div class="v">GPT‑6 Astra / Sol / Luna；改本地配置可换国产模型</div></div>
+    <div class="cell"><div class="k">国内可用</div><div class="v">中国大陆不在官方支持范围</div></div>
+    <div class="cell"><div class="k">中文</div><div class="v">⚠️ 英文为主</div></div>
+    <div class="cell"><div class="k">数据安全</div><div class="v">受美国服务条款约束；企业版有数据驻留/审计</div></div>
+    <div class="cell"><div class="k">价格</div><div class="v">ChatGPT Plus 美国标价 $20/月；API 另按量计费</div></div>
+    <div class="cell"><div class="k">平台</div><div class="v">ChatGPT / 桌面应用（Win·macOS）/ IDE 扩展 / CLI</div></div>
+  </div>
+
+  <div class="callout warn"><span class="lbl">访问与支付</span><div><b>两件事缺一不可</b>：① 注册和使用 ChatGPT 都需要稳定的网络代理——中国大陆不在官方支持范围，没有代理连登录都走不到；② 要用 GPT‑6 这类前沿模型需按美国标价以美元支付（如 Plus $20/月），国内一般依赖外币卡或第三方代充——代充价格不透明且有封号风险，重要对话与代码记得另行备份。</div></div>
+
+  <h3 class="sec-h">核心能力（点击展开看详情）</h3>
+  <div class="feat-list">
+    <details class="feat" open>
+      <summary><span class="f-ico">①</span><span class="f-name">ChatGPT 内置编程智能体</span><span class="f-tag">定位</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">Codex 随 ChatGPT 方案提供，Free / Go 也包含有限用量；云端任务则需要符合条件的付费方案。用量和可用模型因方案而异，订阅详情以官方页面为准。</p>
+        <div class="f-meta"><span class="m">无单独订阅</span><span class="m">方案额度有差异</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codex-hero.webp" alt="Codex 执行任务的全过程：用户下达「Implement dark mode across the app」，Agent 说明实现思路并汇报已端到端接通主题，显示 Thought for 8s、Explored 3 files，底部为 Changed 8 files +23 −16 与 Review 入口"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">②</span><span class="f-name">Agentic Coding 指挥中心</span><span class="f-tag">核心</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">描述要实现的目标后，Codex 可以在本地或云端工作区读取项目、修改文件、运行命令并汇报结果。云端任务可在电脑休眠时继续运行；本地任务则沿用当前设备与项目环境。</p>
+        <div class="f-meta"><span class="m">本地与云端工作区</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codex-ide.webp" alt="委派任务后的结果视图：Agent 汇报已实现滑块并补齐无障碍属性，反问「Do you want me to add tests?」，下方列出 2 files edited +123 −42 及 slider.tsx、page.tsx 两个文件的改动量"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">③</span><span class="f-name">多 Agent 并行（Worktree + 云环境）</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">复杂任务可以拆成多条并行工作，各自在独立 worktree 中改动，降低文件冲突。侧栏按项目整理会话，方便切换任务和查看进展；合并前仍需检查各自的改动。</p>
+        <div class="f-meta"><span class="m">隔离改动</span><span class="m">并行处理</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codex-multiagent.webp" alt="ChatGPT Codex 桌面应用的线程侧栏：New chat / Search / Plugins / Scheduled / Sites 入口，Pinned 区并排挂着多个进行中的线程，下方按 Projects 分组"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">④</span><span class="f-name">Skills 沉淀规范</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">把团队的编码标准、工作流写成 <b>Skill</b>，跨任务一致复用、减少人工监督——让"最佳实践"变成 Agent 默认遵循的肌肉记忆。</p>
+        <div class="f-meta"><span class="m">少监督</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codex-skills.webp" alt="调用 Skill 的对话：用户说「Use the imagegen skill to turn my website assets into clouds」，Agent 按该技能执行并回报 Worked for 45s，下方给出处理后的成品图"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑤</span><span class="f-name">Automation 后台任务</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">定时或触发式跑长任务：自动 issue 分流、告警监控、CI/CD 巡检等，结果进入审核队列，适合"挂机"型工程维护。</p>
+        <div class="f-meta"><span class="m">挂机执行</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codex-automation.webp" alt="Automation 任务队列：Up next 区显示 CI/CD Watch（进行中）、Morning Triage（13 分钟后启动）、Issue Sweep（4 小时后），下方 Unread / Read 分区列出已产出的结果"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑥</span><span class="f-name">PR 与代码审查</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">自动生成变更摘要与 diff、给出高质量 <b>review</b> 意见，从源头把控质量；也能直接代开 PR、修 CI 失败，闭环更完整。</p>
+        <div class="f-meta"><span class="m">提质</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codex-review.webp" alt="代码审查结果：用户要求「Review my current changes and call out the highest-risk issues first」，Agent 对照 diff 输出分级意见 P1「Interval cleanup missing」并附说明与 Fix with Codex 按钮，下方还有 P2 项"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑦</span><span class="f-name">CLI 与 API 接入</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">CLI 可从终端启动编码任务；另可通过 OpenAI API 将模型接入自有工具，按 Token 用量计费。例如 GPT‑6 Sol 为 <b>$2 / $10</b>、Luna 为 <b>$0.10 / $0.50</b>（每百万输入 / 输出 Token；价格可能调整）。</p>
+        <div class="f-meta"><span class="m">CLI 执行任务</span><span class="m">API 与 ChatGPT 订阅分开计费</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codex-cli.webp" alt="Codex CLI 终端界面：标题栏显示 OpenAI Codex 版本与当前模型、工作目录，提示可用 /fork 分叉会话，命令行中输入「Hey Codex, implement dark mode」，底部显示剩余上下文 100% context left"></div>
+      </div>
+    </details>
+  </div>
+
+  <h3 class="sec-h">自定义第三方模型：本地配置与使用边界</h3>
+  <p class="lead">Codex 的 CLI、桌面应用和 IDE 扩展共用本地配置。修改 provider 可将本地任务接到兼容 OpenAI Responses 协议的第三方端点（例如 DeepSeek）。</p>
+  <ul class="points">
+    <li><span class="n">01</span><span>在模型服务商处创建 API Key，并确认接口兼容 Responses 协议</span></li>
+    <li><span class="n">02</span><span>在 <b>config.toml</b> 中设置 provider、模型名和 API 地址；需要时用 <b>models.json</b> 描述模型参数</span></li>
+    <li><span class="n">03</span><span>用 CLI 或受信任的配置工具完成设置，重启客户端后确认模型与供应商显示正确</span></li>
+  </ul>
+
+  <div class="code">
+    <div class="code-bar"><span class="t">~/.codex/config.toml　·　以 DeepSeek 为例</span><button class="copy-btn" type="button">复制</button></div>
+    <pre><code>model = "deepseek-flash"
+model_provider = "deepseek"
+model_catalog_json = "~/.codex/models.json"
+preferred_auth_method = "apikey"     # 走密钥登录，不弹 ChatGPT 账号流程
+forced_login_method = "api"
+
+[model_providers.deepseek]
+name = "DeepSeek"
+base_url = "https://api.deepseek.com/"
+wire_api = "responses"               # 关键：按 OpenAI Responses 协议通信
+experimental_bearer_token = "填入自己的 DeepSeek API Key"
+                                     # ↑ experimental_ 前缀 = 非官方承诺接口</code></pre>
+  </div>
+
+  <div class="callout warn"><span class="lbl">边界</span><div>第三方 provider 不受官方兼容承诺，客户端升级后配置可能失效；它只影响本地任务，不能替代 Codex Cloud。不同登录方式下的会话分开显示，切换后原会话不会删除，切回原登录方式即可查看。</div></div>
+
+  <div class="callout warn"><span class="lbl">密钥</span><div>密钥是以<b>明文</b>写在这份 config.toml 里的：别把文件截图外发、别提交到 Git 仓库；一旦怀疑泄露，立刻到 DeepSeek 控制台吊销旧 key 并重新生成。</div></div>
+
+  <div class="student"><span class="lbl">适合谁</span><div>适合能审查代码改动、需要处理多模块项目的开发者。初学者可先用小任务熟悉它的执行与检查流程，再逐步交给它更复杂的工作。</div></div>
+
+  <h3 class="sec-h">上手三步走</h3>
+  <ol class="steps">
+    <li><span class="n">1</span> 选择工作方式：本地处理代码，或使用符合方案条件的云端任务</li>
+    <li><span class="n">2</span> 选择入口：桌面应用、VS Code 扩展或 CLI；复杂任务先拆成可独立检查的部分</li>
+    <li><span class="n">3</span> 描述目标与验收条件，完成后检查 diff、运行结果和测试报告</li>
+  </ol>
+
+  <div class="example"><span class="et">典型场景示例</span>维护一个多人协作的项目：让 Codex 分别排查两个独立模块，在 worktree 中并行修改并运行检查，最后汇总差异供人审阅，再决定是否合并。</div>
+
+  <h3 class="sec-h">优缺点对照</h3>
+  <div class="proscons">
+    <div class="pc-col pro"><h4>优势</h4><ul>
+      <li>复杂开发任务可从修改推进到运行检查与审查</li>
+      <li>Skills 和 Automation 适合复用团队流程</li>
+    </ul></div>
+    <div class="pc-col con"><h4>注意</h4><ul>
+      <li>体验受官方地区支持、ChatGPT 方案额度与第三方配置稳定性影响</li>
+    </ul></div>
+  </div>
+
+  <div class="faq-mini">
+    <details><summary>多条并行任务会自动合并吗？</summary><div class="ans">不会自动决定合并。先检查各 worktree 的 diff 和运行结果，再手动选择要保留的改动。</div></details>
+    <details><summary>切换第三方模型后，原会话不见了？</summary><div class="ans">会话按登录方式分开显示。切回原来的 ChatGPT 登录方式即可找回对应会话。</div></details>
+  </div>
+
+  <h3 class="sec-h">理解自检</h3>
+  <div class="quiz" data-answer="C" data-explain="本地配置可接入兼容端点，但属于非官方承诺的用法，不能替代 Codex Cloud。">
+    <div class="q">1. 关于 Codex 现在的用法，正确的是？</div>
+    <div class="opts">
+      <label><input type="radio" name="cxq" value="A"> 只能绑 ChatGPT 账号，别无他法</label>
+      <label><input type="radio" name="cxq" value="B"> 微信扫码登录即可拥有全功能</label>
+      <label><input type="radio" name="cxq" value="C"> 可在本地配置里指向第三方模型；但这条路非官方承诺</label>
+    </div>
+    <button class="submit">提交</button><div class="fb"></div>
+  </div>
+  <div class="quiz" data-answer="A" data-explain="Codex 的核心是把代码编写、执行、并行处理与审查连成工作流。">
+    <div class="q">2. Codex 最核心的能力定位是？</div>
+    <div class="opts">
+      <label><input type="radio" name="cxq2" value="A"> 多 Agent 并行 + 云端环境的 agentic coding</label>
+      <label><input type="radio" name="cxq2" value="B"> 完全免费且国内直连</label>
+      <label><input type="radio" name="cxq2" value="C"> 仅能做纯文本聊天</label>
+    </div>
+    <button class="submit">提交</button><div class="fb"></div>
+  </div>
+
+  <div class="chap-nav">
+    <a class="nav-card" href="zcode.html"><span class="lbl">← 上一章</span><span class="t">ZCode</span></a>
+    <a class="nav-card next" href="codearts.html"><span class="lbl">下一章 →</span><span class="t">码道CodeArts</span></a>
+  </div>
+</main>
+</div>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="f-brand">
+      <span class="f-logo">AI AGENTS COMPASS</span>
+      <span class="f-tag">给学生的一份 AI 智能体选型讲义 · 图鉴 + 对比 + 详解 + 实践</span>
+    </div>
+    <div class="f-cols">
+      <div class="f-col">
+        <h4>详解 · 通用与编程</h4>
+        <a href="workbuddy.html">WorkBuddy</a>
+        <a href="traework.html">TraeWork</a>
+        <a href="zcode.html">ZCode</a>
+      </div>
+      <div class="f-col">
+        <h4>详解 · 编程与数字创造</h4>
+        <a href="codex.html">Codex</a>
+        <a href="codearts.html">码道CodeArts</a>
+      </div>
+      <div class="f-col">
+        <h4>COMPARE</h4>
+        <a href="../compare.html">对比矩阵</a>
+        <a href="../quadrant.html">能力立方图</a>
+      </div>
+      <div class="f-col">
+        <h4>PRACTICE</h4>
+        <a class="warm" href="../practice.html">选型决策器</a>
+        <a class="warm" href="../pk.html">双雄 PK</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2026 AI AGENTS COMPASS — MADE FOR STUDENTS</span>
+    <span>数据更新 2026-09-30 · 价格以官网为准</span>
+    <span class="footer-made">本网站由所介绍的五种智能体协助搭建，图片资源部分来自网络</span>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

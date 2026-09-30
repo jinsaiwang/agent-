@@ -1,0 +1,555 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 智能体对比矩阵 · 一页看完差异</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  /* ---------- 对比矩阵：交互层 ---------- */
+  .mx-panel{
+    position:relative; overflow:hidden;
+    background:linear-gradient(150deg, rgba(255,255,255,.86), rgba(233,242,250,.62));
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line); border-radius:16px;
+    padding:16px 18px; margin:0 0 16px;
+    box-shadow:var(--shadow);
+  }
+  .mx-panel::before{
+    content:''; position:absolute; width:260px; height:260px; right:-90px; top:-120px;
+    border-radius:50%; background:radial-gradient(circle, rgba(47,125,168,.16), transparent 70%);
+    filter:blur(26px); pointer-events:none;
+  }
+  .mx-row{ position:relative; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .mx-row + .mx-row{ margin-top:12px; padding-top:12px; border-top:1px dashed var(--line); }
+  .mx-lab{
+    flex:none; font-family:var(--mono); font-size:10.5px; font-weight:600;
+    letter-spacing:1.2px; text-transform:uppercase; color:var(--brand-dk);
+    min-width:74px;
+  }
+  .mx-chips{ display:flex; gap:8px; flex-wrap:wrap; }
+  .mx-chip{
+    display:inline-flex; align-items:center; gap:7px;
+    padding:7px 13px; border-radius:999px; cursor:pointer;
+    border:1px solid var(--line); background:#fff;
+    font-size:12.5px; color:var(--ink-2); white-space:nowrap;
+    transition:transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease, opacity .16s ease;
+  }
+  .mx-chip:hover{ transform:translateY(-1px); border-color:var(--brand-lt); }
+  .mx-chip .pt{ width:9px; height:9px; border-radius:3px; flex:none; }
+  .mx-chip.on{ background:var(--brand-bg); border-color:rgba(47,125,168,.4); color:var(--brand-dk); font-weight:600; }
+  .mx-chip.off{ opacity:.45; }
+  .mx-chip.off .pt{ filter:grayscale(1); }
+  .mx-chip.off span.nm{ text-decoration:line-through; }
+  .mx-reset{
+    margin-left:auto; font-size:12px; font-family:var(--mono);
+    padding:7px 14px; border-radius:999px; cursor:pointer;
+    background:var(--card); border:1px solid var(--line); color:var(--ink-3);
+    transition:color .16s ease, border-color .16s ease;
+  }
+  .mx-reset:hover{ color:var(--brand-dk); border-color:var(--brand-lt); }
+
+  /* 表格：十字定位 / 列聚焦 / 淡化 */
+  .matrix th,.matrix td{ transition:opacity .22s ease, background .15s ease; }
+  .matrix tbody tr td.xh,.matrix tbody tr th.xh{ background:rgba(47,125,168,.08); }
+  .matrix td.foc,.matrix th.foc{ background:rgba(47,125,168,.07); }
+  .matrix th.foc{ box-shadow:inset 0 -2px 0 var(--brand); }
+  .matrix td.dimc,.matrix th.dimc{ opacity:.26; }
+  .matrix .mov{ animation:mxIn .34s cubic-bezier(.22,1,.36,1); }
+  @keyframes mxIn{ from{ opacity:.15; transform:translateY(-4px); } to{ opacity:1; transform:none; } }
+
+  .mx-status{
+    font-family:var(--mono); font-size:11.5px; color:var(--ink-3);
+    margin:12px 0 0; letter-spacing:.3px;
+  }
+  .mx-cta{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    margin-top:12px; padding:14px 18px; border-radius:14px;
+    background:var(--brand-bg); border:1px solid rgba(47,125,168,.28);
+    animation:mxPop .26s ease;
+  }
+  .mx-cta .txt{ font-size:13.5px; color:var(--ink-2); }
+  .mx-cta .txt b{ color:var(--brand-dk); }
+  .mx-cta .go{
+    margin-left:auto; font-size:12.5px; font-weight:600; padding:9px 18px; border-radius:11px;
+    background:linear-gradient(135deg,var(--brand),var(--brand-dk)); color:#fff; white-space:nowrap;
+    box-shadow:0 8px 20px rgba(47,125,168,.28);
+  }
+  .mx-cta[hidden]{ display:none; }
+  @keyframes mxPop{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+
+  body.theme-dark .mx-panel{ background:linear-gradient(150deg, rgba(30,41,59,.86), rgba(23,32,48,.6)); }
+  body.theme-dark .mx-chip,
+  body.theme-dark .mx-reset{ background:var(--solid); border-color:var(--line); }
+  body.theme-dark .mx-chip.on{ background:rgba(34,211,238,.14); color:var(--brand-lt); border-color:rgba(34,211,238,.35); }
+  body.theme-dark .matrix tbody tr td.xh,
+  body.theme-dark .matrix tbody tr th.xh{ background:rgba(34,211,238,.09); }
+  body.theme-dark .matrix td.foc,
+  body.theme-dark .matrix th.foc{ background:rgba(34,211,238,.08); }
+  body.theme-dark .mx-cta{ background:rgba(34,211,238,.1); border-color:rgba(34,211,238,.28); }
+
+  @media (max-width:760px){
+    .mx-lab{ min-width:0; }
+    .mx-reset{ margin-left:0; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .matrix .mov{ animation:none; }
+    .mx-cta{ animation:none; }
+    .mx-chip:hover{ transform:none; }
+  }
+</style>
+</head>
+<body data-page="compare">
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow a" aria-hidden="true"></div>
+<div class="glow b" aria-hidden="true"></div>
+
+<aside class="sidebar">
+  <a class="sb-brand" href="index.html">
+    <span class="logo-dot"></span>
+    <span class="sb-brand-txt"><b>AI AGENTS</b><i>选型讲义 · 2026</i></span>
+  </a>
+
+  <p class="sb-label"><span>主导航</span></p>
+  <a class="sb-item" href="index.html" title="工具图鉴"><span class="ico">&#9672;</span><span class="txt">工具图鉴</span></a>
+  <a class="sb-item active" href="compare.html" title="对比矩阵"><span class="ico">&#9636;</span><span class="txt">对比矩阵</span></a>
+  <a class="sb-item" href="quadrant.html" title="能力立方图"><span class="ico">&#9715;</span><span class="txt">能力立方图</span></a>
+  <a class="sb-item" href="practice.html" title="选型决策器"><span class="ico">&#9670;</span><span class="txt">选型决策器</span></a>
+  <a class="sb-item" href="pk.html" title="双雄 PK"><span class="ico">&#9876;</span><span class="txt">双雄 PK</span></a>
+
+  <p class="sb-label"><span>工具详解</span></p>
+  <a class="sb-item sm" href="agents/workbuddy.html" title="WorkBuddy"><span class="dot wb">W</span><span class="txt">WorkBuddy</span></a>
+  <a class="sb-item sm" href="agents/traework.html" title="TraeWork"><span class="dot tw">T</span><span class="txt">TraeWork</span></a>
+  <a class="sb-item sm" href="agents/zcode.html" title="ZCode"><span class="dot zc">Z</span><span class="txt">ZCode</span></a>
+  <a class="sb-item sm" href="agents/codex.html" title="Codex"><span class="dot cx">C</span><span class="txt">Codex</span></a>
+  <a class="sb-item sm" href="agents/codearts.html" title="码道CodeArts"><span class="dot ca">&#30721;</span><span class="txt">码道CodeArts</span></a>
+
+  <div class="sb-foot">
+    <button class="sb-collapse" id="sbCollapse" type="button" title="收起侧栏" aria-expanded="true">
+      <span class="ico">&#171;</span><span class="txt">收起</span>
+    </button>
+    <div class="sb-ctl">
+      <button class="pill" id="themeToggle" type="button">&#9790; DARK</button>
+      <button class="pill" id="gridToggle" type="button">GRID: ON</button>
+    </div>
+    <p class="sb-note">数据更新 2026-09<br>价格以官网为准</p>
+  </div>
+</aside>
+<button class="sb-toggle" id="sbToggle" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="sb-mask" id="sbMask"></div>
+
+<div class="wrap">
+<nav class="subnav">
+  <a class="sub solid" href="compare.html"><span class="n">01</span>对比矩阵</a>
+  <a class="sub" href="quadrant.html"><span class="n">02</span>能力立方图</a>
+</nav>
+
+<main>
+  <!-- ========== 页面头（左对齐） ========== -->
+  <section class="section" style="padding:30px 28px 34px">
+    <div class="page-head" style="margin-bottom:0">
+      <div class="ph-left">
+        <p class="ph-kicker">Compare · 5 大智能体横向对比</p>
+        <h1 class="ph-title">同叫 AI 智能体，差别到底在哪？</h1>
+        <p class="ph-sub">
+          WorkBuddy、TraeWork、ZCode、Codex、码道CodeArts——都能「对话即干活」，但定位差很多：
+          有的是全能办公搭子，有的是编程工作台，还有的根本不算同一类东西。
+          这一页只做一件事：把它们的真实差异摊进同一张表，从<b>国内能不能用、要不要花钱、适不适合学生</b>三个角度一次看清。
+        </p>
+      </div>
+      <div class="ph-right">
+        <a class="ph-btn" href="index.html">回工具图鉴</a>
+        <a class="ph-btn primary" href="quadrant.html">看三维立方图</a>
+      </div>
+    </div>
+    <p class="ph-note">数据更新 2026-09-30 · 价格为公开信息，以官网为准 · 教师可当课件直接放映</p>
+  </section>
+
+  <!-- ========== 快速对比矩阵 ========== -->
+  <section class="section" id="matrix">
+    <p class="sec-kicker">AT A GLANCE // 一表速览</p>
+    <h2 class="sec-title">先扫一眼关键异同</h2>
+    <p class="sec-desc">横滑看全 5 列。绿色=友好，红色=不友好，橙色=注意。下面这张表可以玩：<b>点工具名收起/展开它那一列</b>、<b>按关心的事筛行</b>、<b>换个顺序排</b>，鼠标划过表格还会十字定位。</p>
+
+    <!-- 交互控制条 -->
+    <div class="mx-panel">
+      <div class="mx-row">
+        <span class="mx-lab">看哪几款</span>
+        <div class="mx-chips" id="mxCols"></div>
+        <button class="mx-reset" id="mxReset" type="button">重置</button>
+      </div>
+      <div class="mx-row">
+        <span class="mx-lab">关心什么</span>
+        <div class="mx-chips" id="mxGroups"></div>
+      </div>
+      <div class="mx-row">
+        <span class="mx-lab">列怎么排</span>
+        <div class="mx-chips" id="mxSort"></div>
+      </div>
+    </div>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th>WorkBuddy</th>
+            <th>TraeWork</th>
+            <th>ZCode</th>
+            <th>Codex</th>
+            <th>码道CodeArts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th>出品方</th><td>腾讯</td><td>字节跳动</td><td>智谱 Z.ai</td><td>OpenAI</td><td>华为云</td></tr>
+          <tr><th>定位</th><td>通用工作台</td><td>AI 原生工作台</td><td>编程 ADE</td><td>ChatGPT 内置编程智能体</td><td>研发与数字创造工作台（智能编码产品）</td></tr>
+          <tr><th>国内可用</th><td class="y">✅ 无需代理</td><td class="y">✅ 无需代理</td><td class="y">✅ 无需代理</td><td class="w">⚠️ 官方路径需代理；改本地配置可换国产模型</td><td class="y">✅ 无需代理</td></tr>
+          <tr><th>中文支持</th><td class="y">✅ 原生</td><td class="y">✅ 原生</td><td class="y">✅ 原生</td><td class="w">⚠️ 英文为主</td><td class="y">✅ 原生</td></tr>
+          <tr><th>底层模型</th><td>混元/DeepSeek/GLM 等可切</td><td>Seed 系列 + 国产</td><td>GLM-5.2/5.3</td><td>GPT‑6 Astra / Sol / Luna，可换第三方</td><td>GLM / DeepSeek-V4 / 华为 OpenPangu 等可切</td></tr>
+          <tr><th>编程工程能力（本站主观分）</th><td>45 / 100</td><td>88 / 100</td><td>86 / 100</td><td>98 / 100</td><td>30 / 100</td></tr>
+          <tr><th>通用任务能力（本站主观分）</th><td>95 / 100</td><td>55 / 100</td><td>30 / 100</td><td>50 / 100</td><td>78 / 100</td></tr>
+          <tr><th>免费 / 价格</th><td class="y">体验版 500 积分/月；付费套餐另有额度</td><td class="y">积分制；免费积分和活动权益依账号而异</td><td class="y">应用可免费下载；新用户 5 天试用：GLM-5.3 300 万、GLM-5.3-Flash 500 万 Token/日</td><td class="w">Free / Go 限时含有限用量；Plus 美区标价 $20/月起</td><td class="y">体验版 500 积分/月；标准版 ¥98/月起</td></tr>
+          <tr><th>性价比</th><td class="y">轻量使用可从体验版起步</td><td class="y">按实际积分消耗和套餐比较</td><td class="y">应用免费，模型推理需另配额度</td><td class="w">用量与可用模型依计划而异</td><td class="y">体验额度适合入门试用</td></tr>
+          <tr><th>上手难度</th><td>⭐ 低</td><td>⭐⭐ 中</td><td>⭐⭐ 中</td><td>⭐⭐⭐ 中高</td><td>⭐⭐ 中</td></tr>
+          <tr><th>学生友好度</th><td class="y">★★★★★</td><td class="y">★★★★</td><td class="y">★★★★</td><td class="w">★★★</td><td class="y">★★★★</td></tr>
+          <tr><th>最适合</th><td>全能助手型学生</td><td>做开发+多端协作</td><td>国产模型长程编程</td><td>追前沿·愿折腾配置</td><td>团队/企业项目</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legend">图例：✅ 友好 / ⚠️ 注意 / ❌ 不友好（国内访问）。学生友好度按「免费额度 + 国内可用 + 中文 + 上手难度」综合判断；星级为本站结合试用与公开资料作出的主观评价，不是标准化测评。</p>
+    <p class="mx-status" id="mxStatus"></p>
+    <div class="mx-cta" id="mxCta" hidden></div>
+
+    <h3 class="sec-h" style="margin-top:26px">怎么读这张表</h3>
+    <div class="callout tip">
+      <span class="lbl">先分类</span>
+      <div>先看使用方式，再分开比较能力。<b>码道CodeArts</b>官方定位是智能编码产品，同时覆盖全栈开发、代码质量管理、文档、设计和分析；本站因此分别列出“编程工程能力”和“通用任务能力”，避免用单一总分掩盖它的强项。<b>WorkBuddy</b>偏通用工作，<b>TraeWork / ZCode / Codex</b>偏编程工作流。</div>
+    </div>
+    <div class="callout tip">
+      <span class="lbl">排除法</span>
+      <div>不想折腾代理、也不想付美元，<b>Codex 可以先放一放</b>——不是它不强，是默认路径获取成本太高。真想用也有办法：它读的是本地 config.toml，把 provider 指向 DeepSeek 这类兼容端点后可国内直连、人民币按量——配置要自己写（或用 CLI 脚本、第三方配置工具），这条路不受官方承诺，而且用不了 Codex Cloud 云沙箱。剩下四款里：想认真写代码选 ZCode 或 TraeWork，完全不想碰代码选码道CodeArts，要一个全能搭子选 WorkBuddy。</div>
+    </div>
+    <div class="callout warn">
+      <span class="lbl">安全</span>
+      <div>贴进对话的内容都会被读取处理。<b>ZCode 曾发生代码数据上传争议</b>（官方已致歉、开源并整改）；处理未公开的作业、实验数据或论文素材时，优先选明确承诺不用于训练的工具，GLM 权重开源可自托管兜底。密钥、未公开答案不要直接贴进对话。</div>
+    </div>
+  </section>
+
+  <!-- ========== 逐个看详解 ========== -->
+  <section class="section">
+    <p class="sec-kicker">DETAIL // 想深入单个工具</p>
+    <h2 class="sec-title">逐个看详解</h2>
+    <p class="sec-desc">每款工具一页，含：目标 · 规格 · 核心能力（可点开看详情+界面图）· 价格明细 · 优缺点 · 上手步骤 · 理解自检。按分类浏览请回首页图鉴。</p>
+    <div class="subnav" style="padding-top:0">
+      <a class="sub" href="agents/workbuddy.html">🌐 WorkBuddy</a>
+      <a class="sub" href="agents/traework.html">🌐 TraeWork</a>
+      <a class="sub" href="agents/zcode.html">💻 ZCode</a>
+      <a class="sub" href="agents/codex.html">💻 Codex</a>
+      <a class="sub" href="agents/codearts.html">🧩 码道CodeArts</a>
+    </div>
+  </section>
+
+  <!-- ========== FAQ ========== -->
+  <section class="section">
+    <p class="sec-kicker">FAQ // 新生最常问</p>
+    <h2 class="sec-title">选之前先弄清 6 件事</h2>
+    <div class="faq-list">
+      <details class="faq" open>
+        <summary><span class="q-no">Q1</span>完全没基础，能直接用吗？<span class="tg">−</span></summary>
+        <div class="a">能。WorkBuddy、TraeWork、ZCode 都对中文原生、国内直连，对话式上手；Codex 默认要代理 + 英文 + 美元，门槛最高——不过它读的是本地 config.toml，把 provider 指向 DeepSeek 这类兼容端点后可以不办 OpenAI 账号，代价是配置得自己写（或借助第三方工具）；CodeArts 偏企业流程，稍重。零基础先从轻量全能型（WorkBuddy）或免费编程型（ZCode/TraeWork）入手。</div>
+      </details>
+      <details class="faq">
+        <summary><span class="q-no">Q2</span>哪个不用花钱就能用？<span class="tg">+</span></summary>
+        <div class="a">免费权益不能直接等同：WorkBuddy 体验版每月 500 积分；ZCode 新用户试用 5 天，客户端显示 GLM-5.3 每日 300 万 Token、GLM-5.3-Flash 每日 500 万 Token；TraeWork 的积分、模型和活动权益以账号套餐为准；码道CodeArts体验版每月 500 积分。Codex 当前对 Free / Go 计划限时提供有限用量，具体限制以账号页面为准。积分和 Token 不能直接横向换算，长期使用前请核对官方计费规则。</div>
+      </details>
+      <details class="faq">
+        <summary><span class="q-no">Q3</span>在国内都能直接打开吗？<span class="tg">+</span></summary>
+        <div class="a">WorkBuddy、TraeWork、ZCode、CodeArts 都国内可用、无需代理；只有 Codex 的默认路径要科学上网。想在国内直连用 Codex，只能在本地配置里把 provider 指向 DeepSeek 这类兼容端点（非官方承诺的用法），代价是用不了 Codex Cloud 云沙箱；跑 GPT 模型则始终需要代理。</div>
+      </details>
+      <details class="faq">
+        <summary><span class="q-no">Q4</span>主要想写代码，选哪个？<span class="tg">+</span></summary>
+        <div class="a">想用国产开源大模型、跑长任务：ZCode（应用免费、模型按量，GLM 适配深）。想要 AI 工作台 + 手机随时派任务、三端同步：TraeWork。不太会写代码、想快速出成果：码道CodeArts。追最强模型且能接受折腾：Codex。</div>
+      </details>
+      <details class="faq">
+        <summary><span class="q-no">Q5</span>我的代码/数据会被上传吗？<span class="tg">+</span></summary>
+        <div class="a">贴进对话的内容会被读取处理。注意：ZCode 曾于 2026-09 发生代码数据上传争议，官方已致歉、开源并整改；对数据敏感的同学留意各工具的隐私设置，密钥/未公开答案不要直接贴。</div>
+      </details>
+      <details class="faq">
+        <summary><span class="q-no">Q6</span>老师能直接拿去上课吗？<span class="tg">+</span></summary>
+        <div class="a">可以。本站是讲义式排版，每章带「目标」提示块、要点、上手步骤与自检小测验，既适合学生自学，也方便老师当课件放映。价格为公开信息，课堂引用请标注更新日期并以官网为准。</div>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="f-brand">
+      <span class="f-logo">AI AGENTS COMPASS</span>
+      <span class="f-tag">给学生的一份 AI 智能体选型讲义 · 图鉴 + 对比 + 详解 + 实践</span>
+    </div>
+    <div class="f-cols">
+      <div class="f-col">
+        <h4>详解 · 通用与编程</h4>
+        <a href="agents/workbuddy.html">WorkBuddy</a>
+        <a href="agents/traework.html">TraeWork</a>
+        <a href="agents/zcode.html">ZCode</a>
+      </div>
+      <div class="f-col">
+        <h4>详解 · 编程与数字创造</h4>
+        <a href="agents/codex.html">Codex</a>
+        <a href="agents/codearts.html">码道CodeArts</a>
+      </div>
+      <div class="f-col">
+        <h4>COMPARE</h4>
+        <a href="compare.html">对比矩阵</a>
+        <a href="quadrant.html">能力立方图</a>
+      </div>
+      <div class="f-col">
+        <h4>PRACTICE</h4>
+        <a class="warm" href="practice.html">选型决策器</a>
+        <a class="warm" href="pk.html">双雄 PK</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2026 AI AGENTS COMPASS — MADE FOR STUDENTS</span>
+    <span>数据更新 2026-09-30 · 以官网为准</span>
+    <span class="footer-made">本网站由所介绍的五种智能体协助搭建，图片资源部分来自网络</span>
+  </div>
+</footer>
+</div>
+
+<script src="assets/js/site.js"></script>
+<script>
+/* ============================================================
+   对比矩阵交互层：筛选列 / 筛选行 / 排序 / 十字定位 / 列聚焦
+   表格本身是静态 HTML，这里只做「重排 + 显隐」，不改动单元格内容。
+   ============================================================ */
+(function(){
+  var tbl = document.querySelector('.matrix');
+  if (!tbl) return;
+
+  var COLS = [
+    { k:'workbuddy', n:'WorkBuddy', c:'#2F7DA8' },
+    { k:'traework',  n:'TraeWork',  c:'#6366F1' },
+    { k:'zcode',     n:'ZCode',     c:'#14B8A6' },
+    { k:'codex',     n:'Codex',     c:'#059669' },
+    { k:'codearts',  n:'码道CodeArts', c:'#E8913C' }
+  ];
+  var KEYS = COLS.map(function(c){ return c.k; });
+  var NAME = {}; COLS.forEach(function(c){ NAME[c.k] = c.n; });
+
+  /* 行 → 关注点分组（按行首维度名匹配） */
+  var GROUPS = [
+    { k:'cost',   n:'💰 花多少钱',   rows:['免费 / 价格','学生福利','学生友好度'] },
+    { k:'access', n:'🌏 能不能用',   rows:['国内可用','中文支持','上手难度'] },
+    { k:'cap',    n:'🧠 能力与定位', rows:['出品方','定位','底层模型','编程工程能力（本站主观分）','通用任务能力（本站主观分）'] },
+    { k:'verdict',n:'🎯 结论',       rows:['最适合'] }
+  ];
+  /* 排序口径：直接沿用能力立方图的评分模型 */
+  var RANK = {
+    def:       null,
+    usability: { n:'按学生可用性', v:{ workbuddy:98, traework:88, zcode:90, codex:44, codearts:95 } },
+    coding:    { n:'按编程工程能力', v:{ workbuddy:45, traework:88, zcode:86, codex:98, codearts:30 } },
+    general:   { n:'按通用任务能力', v:{ workbuddy:95, traework:55, zcode:30, codex:50, codearts:78 } },
+    quota:     { n:'按持续免费用量',   v:{ workbuddy:78, traework:50, zcode:50, codex:35, codearts:60 } }
+  };
+
+  var headRow  = tbl.querySelector('thead tr');
+  var bodyRows = Array.prototype.slice.call(tbl.querySelectorAll('tbody tr'));
+  var headByKey = {}, cellByKey = [];
+
+  // 给表头与单元格打上所属工具的标记（只在初始化时做一次）
+  COLS.forEach(function(c, i){
+    var th = headRow.cells[i + 1];
+    if (th){ th.setAttribute('data-k', c.k); headByKey[c.k] = th; }
+  });
+  bodyRows.forEach(function(tr){
+    var map = {};
+    for (var i = 1; i < tr.cells.length; i++){
+      var td = tr.cells[i], k = KEYS[i - 1];
+      if (td && k){ td.setAttribute('data-k', k); map[k] = td; }
+    }
+    cellByKey.push(map);
+    // 行分组：用行首文字匹配，匹配不到就归到「结论」
+    var label = (tr.cells[0].textContent || '').trim();
+    var g = 'verdict';
+    GROUPS.forEach(function(gr){ if (gr.rows.indexOf(label) >= 0) g = gr.k; });
+    tr.setAttribute('data-g', g);
+    tr.setAttribute('data-label', label);
+  });
+
+  var state = {
+    off: {},                                  // 被收起的列
+    groups: { cost:1, access:1, cap:1, verdict:1 },
+    sort: 'def',
+    focus: null                               // 聚焦的列 key
+  };
+
+  /* ---------- 控制条渲染 ---------- */
+  var elCols   = document.getElementById('mxCols');
+  var elGroups = document.getElementById('mxGroups');
+  var elSort   = document.getElementById('mxSort');
+  var elStatus = document.getElementById('mxStatus');
+  var elCta    = document.getElementById('mxCta');
+
+  function renderCols(){
+    elCols.innerHTML = COLS.map(function(c){
+      var on = !state.off[c.k];
+      return '<button type="button" class="mx-chip ' + (on ? 'on' : 'off') + '" data-col="' + c.k + '" title="' + (on ? '点击收起这一列' : '点击展开这一列') + '">' +
+             '<span class="pt" style="background:' + c.c + '"></span><span class="nm">' + c.n + '</span></button>';
+    }).join('');
+  }
+  function renderGroups(){
+    elGroups.innerHTML = GROUPS.map(function(g){
+      return '<button type="button" class="mx-chip ' + (state.groups[g.k] ? 'on' : 'off') + '" data-group="' + g.k + '">' +
+             '<span class="nm">' + g.n + '</span></button>';
+    }).join('');
+  }
+  function renderSort(){
+    elSort.innerHTML = Object.keys(RANK).map(function(k){
+      var n = k === 'def' ? '默认顺序' : RANK[k].n;
+      return '<button type="button" class="mx-chip ' + (state.sort === k ? 'on' : '') + '" data-sort="' + k + '">' +
+             '<span class="nm">' + n + '</span></button>';
+    }).join('');
+  }
+
+  /* ---------- 应用到表格 ---------- */
+  var lastVis = [];
+  function apply(animate){
+    var vis = KEYS.filter(function(k){ return !state.off[k]; });
+
+    // 排序
+    if (state.sort !== 'def' && RANK[state.sort]){
+      var v = RANK[state.sort].v;
+      vis = vis.slice().sort(function(a, b){ return v[b] - v[a]; });
+    }
+
+    // 表头：按 vis 顺序重排，隐藏的列 display:none
+    var allHead = COLS.map(function(c){ return headByKey[c.k]; });
+    allHead.forEach(function(th){ if (th) th.style.display = state.off[th.getAttribute('data-k')] ? 'none' : ''; });
+    vis.forEach(function(k){ if (headByKey[k]) headRow.appendChild(headByKey[k]); });
+
+    // 行：按分组显隐；单元格按 vis 顺序重排
+    var shownRows = 0;
+    bodyRows.forEach(function(tr, idx){
+      var show = !!state.groups[tr.getAttribute('data-g')];
+      tr.style.display = show ? '' : 'none';
+      if (show) shownRows++;
+      var map = cellByKey[idx];
+      KEYS.forEach(function(k){ if (map[k]) map[k].style.display = state.off[k] ? 'none' : ''; });
+      vis.forEach(function(k){ if (map[k]) tr.appendChild(map[k]); });
+    });
+
+    // 聚焦态
+    KEYS.forEach(function(k){
+      var isFoc = state.focus === k && !state.off[k];
+      if (headByKey[k]) headByKey[k].classList.toggle('foc', isFoc);
+      bodyRows.forEach(function(tr, idx){
+        var td = cellByKey[idx][k];
+        if (!td) return;
+        td.classList.toggle('foc', isFoc);
+        td.classList.toggle('dimc', !!state.focus && !isFoc && !state.off[k]);
+      });
+    });
+
+    // 排序列变化时给个入场动画
+    var moved = vis.join() !== lastVis.join();
+    if (animate && moved){
+      [].concat(allHead, bodyRows.reduce(function(a, tr){ return a.concat(Array.prototype.slice.call(tr.cells)); }, []))
+        .forEach(function(el){ if (!el) return; el.classList.remove('mov'); void el.offsetWidth; el.classList.add('mov'); });
+      setTimeout(function(){
+        tbl.querySelectorAll('.mov').forEach(function(el){ el.classList.remove('mov'); });
+      }, 420);
+    }
+    lastVis = vis;
+
+    // 状态行
+    elStatus.textContent = '当前：' + vis.length + ' 列 × ' + shownRows + ' 行'
+      + (state.sort !== 'def' ? ' · ' + RANK[state.sort].n : '')
+      + (state.focus ? ' · 已聚焦 ' + NAME[state.focus] : '');
+
+    // 只剩两列 → 引导去 PK
+    if (vis.length === 2){
+      elCta.hidden = false;
+      elCta.innerHTML = '<span class="txt">只剩 <b>' + NAME[vis[0]] + '</b> 和 <b>' + NAME[vis[1]] +
+        '</b> 了 —— 要不要让它们正面对决？PK 页会带好这两个选手。</span>' +
+        '<a class="go" href="pk.html?a=' + vis[0] + '&b=' + vis[1] + '">去 PK：' + NAME[vis[0]] + ' vs ' + NAME[vis[1]] + '</a>';
+    } else {
+      elCta.hidden = true; elCta.innerHTML = '';
+    }
+  }
+
+  function redraw(animate){ renderCols(); renderGroups(); renderSort(); apply(animate); }
+
+  /* ---------- 事件 ---------- */
+  document.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target : null;
+
+    var col = t && t.closest('[data-col]');
+    if (col){
+      var k = col.getAttribute('data-col');
+      var visible = KEYS.filter(function(x){ return !state.off[x]; });
+      if (!state.off[k] && visible.length <= 1) return;      // 至少留一列
+      state.off[k] = !state.off[k];
+      if (state.off[k] && state.focus === k) state.focus = null;
+      redraw(true); return;
+    }
+
+    var grp = t && t.closest('[data-group]');
+    if (grp){
+      var g = grp.getAttribute('data-group');
+      var onKeys = Object.keys(state.groups).filter(function(x){ return state.groups[x]; });
+      if (state.groups[g] && onKeys.length <= 1) return;     // 至少留一组
+      state.groups[g] = !state.groups[g];
+      redraw(true); return;
+    }
+
+    var so = t && t.closest('[data-sort]');
+    if (so){ state.sort = so.getAttribute('data-sort'); redraw(true); return; }
+  });
+
+  document.getElementById('mxReset').addEventListener('click', function(){
+    state.off = {}; state.sort = 'def'; state.focus = null;
+    state.groups = { cost:1, access:1, cap:1, verdict:1 };
+    redraw(true);
+  });
+
+  /* 十字定位：鼠标划过单元格，同列同列头一起亮 */
+  function cross(i, on){
+    if (i == null) return;
+    var th = headRow.cells[i];
+    if (th) th.classList.toggle('xh', on);
+    bodyRows.forEach(function(tr){
+      var c = tr.cells[i];
+      if (c) c.classList.toggle('xh', on);
+      var h = tr.cells[0];
+      if (h) h.classList.toggle('xh', on);
+    });
+  }
+  var curX = null;
+  tbl.addEventListener('mouseover', function(e){
+    var td = e.target.closest ? e.target.closest('td,th') : null;
+    if (!td) return;
+    var i = td.cellIndex;
+    if (i === curX) return;
+    cross(curX, false); curX = i; cross(i, true);
+  });
+  tbl.addEventListener('mouseleave', function(){ cross(curX, false); curX = null; });
+
+  /* 点表头聚焦某一列，再点取消 */
+  headRow.addEventListener('click', function(e){
+    var th = e.target.closest ? e.target.closest('th') : null;
+    if (!th) return;
+    var k = th.getAttribute('data-k');
+    if (!k || state.off[k]) return;
+    state.focus = (state.focus === k) ? null : k;
+    redraw(false);
+  });
+
+  redraw(false);
+})();
+</script>
+</body>
+</html>

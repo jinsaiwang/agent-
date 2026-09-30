@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 智能体对比 · WorkBuddy 详解</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-page="agent">
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow a" aria-hidden="true"></div>
+
+<aside class="sidebar">
+  <a class="sb-brand" href="../index.html">
+    <span class="logo-dot"></span>
+    <span class="sb-brand-txt"><b>AI AGENTS</b><i>选型讲义 · 2026</i></span>
+  </a>
+
+  <p class="sb-label"><span>主导航</span></p>
+  <a class="sb-item" href="../index.html" title="工具图鉴"><span class="ico">&#9672;</span><span class="txt">工具图鉴</span></a>
+  <a class="sb-item" href="../compare.html" title="对比矩阵"><span class="ico">&#9636;</span><span class="txt">对比矩阵</span></a>
+  <a class="sb-item" href="../quadrant.html" title="能力立方图"><span class="ico">&#9715;</span><span class="txt">能力立方图</span></a>
+  <a class="sb-item" href="../practice.html" title="选型决策器"><span class="ico">&#9670;</span><span class="txt">选型决策器</span></a>
+  <a class="sb-item" href="../pk.html" title="双雄 PK"><span class="ico">&#9876;</span><span class="txt">双雄 PK</span></a>
+
+  <p class="sb-label"><span>工具详解</span></p>
+  <a class="sb-item sm active" href="workbuddy.html" title="WorkBuddy"><span class="dot wb">W</span><span class="txt">WorkBuddy</span></a>
+  <a class="sb-item sm" href="traework.html" title="TraeWork"><span class="dot tw">T</span><span class="txt">TraeWork</span></a>
+  <a class="sb-item sm" href="zcode.html" title="ZCode"><span class="dot zc">Z</span><span class="txt">ZCode</span></a>
+  <a class="sb-item sm" href="codex.html" title="Codex"><span class="dot cx">C</span><span class="txt">Codex</span></a>
+  <a class="sb-item sm" href="codearts.html" title="码道CodeArts"><span class="dot ca">&#30721;</span><span class="txt">码道CodeArts</span></a>
+
+  <div class="sb-foot">
+    <button class="sb-collapse" id="sbCollapse" type="button" title="收起侧栏" aria-expanded="true">
+      <span class="ico">&#171;</span><span class="txt">收起</span>
+    </button>
+    <div class="sb-ctl">
+      <button class="pill" id="themeToggle" type="button">&#9790; DARK</button>
+      <button class="pill" id="gridToggle" type="button">GRID: ON</button>
+    </div>
+    <p class="sb-note">数据更新 2026-09<br>价格以官网为准</p>
+  </div>
+</aside>
+<button class="sb-toggle" id="sbToggle" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="sb-mask" id="sbMask"></div>
+
+<div class="wrap">
+<main class="page">
+  <p class="breadcrumb">详解 / <b>第 1 章</b></p>
+  <p class="ch-kicker">CHAPTER 01</p>
+  <h2 class="ch-title">WorkBuddy · 全能办公搭子</h2>
+  <div class="chips"><span class="chip">腾讯</span><span class="chip">通用工作台</span><span class="chip">对话式入口</span><span class="chip warm">学生友好 ★★★★★</span></div>
+  <div class="obj"><span class="lbl">目标</span><div class="body">看懂 WorkBuddy 的「多 Agent 并行规划 + 本地文件 + 连接器」架构与能力边界，能判断它是否适合作为日常 AI 助手，并知道学生如何免费领取额度。</div></div>
+  <p class="lead">WorkBuddy 是腾讯出品的「全场景 AI 办公工作台」——不是单纯的编程工具，而是把一个<b>任务自动拆成多步、并行调用多个专能 Agent、直接产出成品</b>的「数字同事」。对学生来说，它更像随叫随到的万能搭子：写作业、查资料、做 PPT、问论文、办校园琐事，一个对话框搞定。它于 <b>2026 年 3 月</b>正式上线，与 CodeBuddy 同账号积分共享。</p>
+
+  <div class="hero-shot is-filled">
+    <img src="../assets/screens/workbuddy-mainui-real.png" alt="WorkBuddy 桌面端（Windows）主界面：左侧功能栏为搜索任务、新建任务、Claw、专家、技能、插件、自动化；主区为「Claw Your Ideas Into Reality」欢迎语，下方分「代码开发」与「日常办公」两类场景卡，中部是带 Craft / Auto / Skills 开关与选择文件夹按钮的消息输入框，底部一排快捷能力标签（文档处理、视频生成、深度研究、幻灯片、数据分析、数据可视化、金融服务、产品设计、设计、邮件编辑），左下角提示可领取 100 积分">
+  </div>
+  <p class="shot-cap">图源：WorkBuddy 桌面端实机截图（Windows，仅用于教学对比）</p>
+
+  <div class="spec">
+    <div class="cell"><div class="k">出品方</div><div class="v">腾讯</div></div>
+    <div class="cell"><div class="k">定位</div><div class="v">全场景 AI 办公工作台</div></div>
+    <div class="cell"><div class="k">底层模型</div><div class="v">可切换：混元/DeepSeek/GLM/Kimi/MiniMax + OpenAI 兼容端点</div></div>
+    <div class="cell"><div class="k">国内可用</div><div class="v">✅ 无需代理</div></div>
+    <div class="cell"><div class="k">中文</div><div class="v">✅ 原生</div></div>
+    <div class="cell"><div class="k">数据安全</div><div class="v">本地授权文件夹才读取；企业版可 SSO/审计</div></div>
+    <div class="cell"><div class="k">价格</div><div class="v">积分制 · 有免费额度，重度再订阅</div></div>
+    <div class="cell"><div class="k">平台</div><div class="v">桌面 / 网页 / 移动端（微信等远程调度 Claw）</div></div>
+  </div>
+
+  <h3 class="sec-h">核心能力（点击展开看详情）</h3>
+  <div class="feat-list">
+    <details class="feat" open>
+      <summary><span class="f-ico">①</span><span class="f-name">多 Agent 并行规划</span><span class="f-tag">核心</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">把一句复杂需求（如"做一份行业调研报告"）自动拆成多步，并行调度<b>多个专能 Agent</b>协作：查资料的查资料、写初稿的写初稿、做图表的做图表，最后汇总成一份可直接用的成品，而不是一次只答一句话。</p>
+        <div class="f-meta"><span class="m">适合：复杂任务</span><span class="m">零门槛</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/workbuddy-analysis-real.png" alt="多 Agent 并行规划"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">②</span><span class="f-name">本地文件访问</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">只读取经<b>主动授权</b>的本地文件夹，把课程资料、数据表、草稿真正接入对话——可直接读写、整理、批量重命名、跨文件检索，让 AI 基于真实资料工作，而非凭空编造。</p>
+        <div class="f-meta"><span class="m">隐私：授权才读</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/workbuddy-files-mcp-real.png" alt="本地文件访问"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">③</span><span class="f-name">连接器生态</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">一键接入 <b>GitHub、GitLab、Jira、Confluence、Google Drive、Gmail、Notion、Slack</b> 等，把 AI 接到已有的工作流：读仓库、查邮件、同步文档都不用手动搬运。</p>
+        <div class="f-meta"><span class="m">效率</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/workbuddy-mcp-real.png" alt="连接器生态"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">④</span><span class="f-name">Skill 技能系统</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">用自然语言就能"手搓"可复用的小工具——校园里已有人做出<b>选课指南、复习助手、校园养宠</b>等 Skill。一次做好，以后一句话调用，越用越顺手。</p>
+        <div class="f-meta"><span class="m">可自定义</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/workbuddy-skills-real.png" alt="Skill 技能系统"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑤</span><span class="f-name">专家中心</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">备考规划、论文写作、求职冲刺等场景都有<b>现成 AI 专家</b>直接调用，相当于把各领域"老师傅"打包好随时问，省去自己写一长串提示词。</p>
+        <div class="f-meta"><span class="m">场景化</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/workbuddy-expert-center-real.png" alt="专家中心"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑥</span><span class="f-name">自动化 & 发布</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">把重复流程<b>定时跑</b>起来（如每日新闻摘要、每周数据汇总），或把做好的成果一键发布成可分享的<b>网页 / 应用</b>，从"对话"走向"交付"。</p>
+        <div class="f-meta"><span class="m">省时</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/workbuddy-automation-real.png" alt="自动化 & 发布"></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="student"><span class="lbl">性价比</span><div>免费额度覆盖查资料、写提纲、做 PPT 这类日常需求；按积分计费，重度多项目才需要付费档。五款里上手最省事，适合把 AI 当日常搭子而不是生产力引擎的场景。</div></div>
+
+  <h3 class="sec-h">上手三步走</h3>
+  <ol class="steps">
+    <li><span class="n">1</span> 打开 WorkBuddy（桌面 / 网页 / 微信小程序），用微信或账号登录</li>
+    <li><span class="n">2</span> 先用免费额度跑一轮，熟悉「说清需求 → 看结果 → 再追问」的节奏</li>
+    <li><span class="n">3</span> 直接对话提需求；想固化流程试「手搓 Skill」；想整理课程就接腾讯会议连接器，把录音转成要点、复习大纲</li>
+  </ol>
+
+  <div class="example"><span class="et">典型场景示例</span>期末想做一份《市场营销》复习大纲：把课程录音（腾讯会议云录制）丢给 WorkBuddy → 它自动生成<b>课程要点 + 复习大纲 + 一页速记卡</b>，还可以顺势「手搓」一个「期末刷题 Skill」留着复用。</div>
+
+  <h3 class="sec-h">优缺点对照</h3>
+  <div class="proscons">
+    <div class="pc-col pro"><h4>优势</h4><ul>
+      <li>一个入口覆盖学习 / 生活 / 办公，零基础对话式上手</li>
+      <li>国内直连、中文原生，有免费额度，起步零成本</li>
+      <li>模型可切换，不绑死单一厂商</li>
+      <li>Skill 与专家中心，能「自己造工具」</li>
+    </ul></div>
+    <div class="pc-col con"><h4>注意</h4><ul>
+      <li>不是为重度纯编程设计，认真写大型项目代码不如 ZCode / Codex</li>
+      <li>积分消耗较难预估，重度使用会触顶</li>
+      <li>英文版能力弱于中文版；定时任务需桌面保持在线</li>
+    </ul></div>
+  </div>
+
+  <div class="faq-mini">
+    <details><summary>WorkBuddy 和 CodeBuddy 是什么关系？</summary><div class="ans">同一账号积分共享、无需分别订阅。WorkBuddy 偏「办公 / 通用工作台」，CodeBuddy 偏「编程」，底层是同一套 Buddy AI 能力。</div></details>
+    <details><summary>免费额度够用吗？</summary><div class="ans">覆盖查资料、写提纲、做 PPT 等日常需求基本够；重度多项目再考虑付费档。具体档位与额度以产品内实时页面为准。</div></details>
+  </div>
+
+  <h3 class="sec-h">理解自检</h3>
+  <div class="quiz" data-answer="B" data-explain="WorkBuddy 定位是全场景办公工作台，优势在学习、生活、办公一把抓；大型工程代码不是它的强项。">
+    <div class="q">1. WorkBuddy 最适合的用法是？</div>
+    <div class="opts">
+      <label><input type="radio" name="wbq" value="A"> 重构大型工程代码</label>
+      <label><input type="radio" name="wbq" value="B"> 学习、生活、办公一把抓</label>
+      <label><input type="radio" name="wbq" value="C"> 只做本地文件检索</label>
+    </div>
+    <button class="submit">提交</button><div class="fb"></div>
+  </div>
+  <div class="quiz" data-answer="C" data-explain="WorkBuddy 的模型层开放，可跑混元、DeepSeek、GLM、Kimi、MiniMax 或任意 OpenAI 兼容端点，不绑死单一厂商。">
+    <div class="q">2. 关于 WorkBuddy 的模型，正确的是？</div>
+    <div class="opts">
+      <label><input type="radio" name="wbq2" value="A"> 只能用腾讯混元</label>
+      <label><input type="radio" name="wbq2" value="B"> 只能用 GPT 系列</label>
+      <label><input type="radio" name="wbq2" value="C"> 可切换多家模型（混元/DeepSeek/GLM 等 + 兼容端点）</label>
+    </div>
+    <button class="submit">提交</button><div class="fb"></div>
+  </div>
+
+  <div class="chap-nav">
+    <a class="nav-card" href="../index.html"><span class="lbl">← 返回</span><span class="t">工具图鉴</span></a>
+    <a class="nav-card next" href="traework.html"><span class="lbl">下一章 →</span><span class="t">TraeWork</span></a>
+  </div>
+</main>
+</div>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="f-brand">
+      <span class="f-logo">AI AGENTS COMPASS</span>
+      <span class="f-tag">给学生的一份 AI 智能体选型讲义 · 图鉴 + 对比 + 详解 + 实践</span>
+    </div>
+    <div class="f-cols">
+      <div class="f-col">
+        <h4>详解 · 通用与编程</h4>
+        <a href="workbuddy.html">WorkBuddy</a>
+        <a href="traework.html">TraeWork</a>
+        <a href="zcode.html">ZCode</a>
+      </div>
+      <div class="f-col">
+        <h4>详解 · 编程与数字创造</h4>
+        <a href="codex.html">Codex</a>
+        <a href="codearts.html">码道CodeArts</a>
+      </div>
+      <div class="f-col">
+        <h4>COMPARE</h4>
+        <a href="../compare.html">对比矩阵</a>
+        <a href="../quadrant.html">能力立方图</a>
+      </div>
+      <div class="f-col">
+        <h4>PRACTICE</h4>
+        <a class="warm" href="../practice.html">选型决策器</a>
+        <a class="warm" href="../pk.html">双雄 PK</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2026 AI AGENTS COMPASS — MADE FOR STUDENTS</span>
+    <span>数据更新 2026-09-30 · 价格以官网为准</span>
+    <span class="footer-made">本网站由所介绍的五种智能体协助搭建，图片资源部分来自网络</span>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

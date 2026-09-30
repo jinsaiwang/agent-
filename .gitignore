@@ -1,0 +1,23 @@
+# ===== 编辑器与内建工具 =====
+_editor/
+
+# ===== WorkBuddy 工作区元数据（memory / 日志 / 标记） =====
+.workbuddy/
+
+# ===== 发布工具标记 =====
+.wbapp_*.genie
+
+# ===== Trae 临时分享包 =====
+.trae-html-share-packages/
+
+# ===== 文档与汇报（非网页运行所需） =====
+*.md
+
+# ===== OS / 编辑器杂项 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo

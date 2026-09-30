@@ -1,0 +1,235 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 智能体对比 · 码道CodeArts 详解</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-page="agent">
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow a" aria-hidden="true"></div>
+
+<aside class="sidebar">
+  <a class="sb-brand" href="../index.html">
+    <span class="logo-dot"></span>
+    <span class="sb-brand-txt"><b>AI AGENTS</b><i>选型讲义 · 2026</i></span>
+  </a>
+
+  <p class="sb-label"><span>主导航</span></p>
+  <a class="sb-item" href="../index.html" title="工具图鉴"><span class="ico">&#9672;</span><span class="txt">工具图鉴</span></a>
+  <a class="sb-item" href="../compare.html" title="对比矩阵"><span class="ico">&#9636;</span><span class="txt">对比矩阵</span></a>
+  <a class="sb-item" href="../quadrant.html" title="能力立方图"><span class="ico">&#9715;</span><span class="txt">能力立方图</span></a>
+  <a class="sb-item" href="../practice.html" title="选型决策器"><span class="ico">&#9670;</span><span class="txt">选型决策器</span></a>
+  <a class="sb-item" href="../pk.html" title="双雄 PK"><span class="ico">&#9876;</span><span class="txt">双雄 PK</span></a>
+
+  <p class="sb-label"><span>工具详解</span></p>
+  <a class="sb-item sm" href="workbuddy.html" title="WorkBuddy"><span class="dot wb">W</span><span class="txt">WorkBuddy</span></a>
+  <a class="sb-item sm" href="traework.html" title="TraeWork"><span class="dot tw">T</span><span class="txt">TraeWork</span></a>
+  <a class="sb-item sm" href="zcode.html" title="ZCode"><span class="dot zc">Z</span><span class="txt">ZCode</span></a>
+  <a class="sb-item sm" href="codex.html" title="Codex"><span class="dot cx">C</span><span class="txt">Codex</span></a>
+  <a class="sb-item sm active" href="codearts.html" title="码道CodeArts"><span class="dot ca">&#30721;</span><span class="txt">码道CodeArts</span></a>
+
+  <div class="sb-foot">
+    <button class="sb-collapse" id="sbCollapse" type="button" title="收起侧栏" aria-expanded="true">
+      <span class="ico">&#171;</span><span class="txt">收起</span>
+    </button>
+    <div class="sb-ctl">
+      <button class="pill" id="themeToggle" type="button">&#9790; DARK</button>
+      <button class="pill" id="gridToggle" type="button">GRID: ON</button>
+    </div>
+    <p class="sb-note">数据更新 2026-09<br>价格以官网为准</p>
+  </div>
+</aside>
+<button class="sb-toggle" id="sbToggle" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="sb-mask" id="sbMask"></div>
+
+<div class="wrap">
+<main class="page">
+  <p class="breadcrumb">详解 / <b>第 5 章</b></p>
+  <p class="ch-kicker">CHAPTER 05</p>
+  <h2 class="ch-title">码道CodeArts · 华为云代码智能体</h2>
+  <div class="chips"><span class="chip">华为云</span><span class="chip">代码智能体</span><span class="chip">桌面端(Beta) / IDE / CLI / 插件</span><span class="chip warm">学生友好 ★★★★</span></div>
+  <div class="obj"><span class="lbl">目标</span><div class="body">理解码道CodeArts作为华为云「智能编码产品」的官方定位与多形态（桌面端(Beta) / AI IDE / CLI / 插件）、免费体验版，能判断它是否适合自己，并知道氛围编程 / 规范驱动开发双模式、Agent Space 是产品级能力。</div></div>
+  <p class="lead">码道CodeArts（全名「华为云码道（CodeArts）代码智能体」）是华为云推出的<b>智能编码产品</b>——围绕代码生成与续写、研发知识问答、单测生成等编码场景，官方下载页提供 <b>AI IDE（Windows / macOS / Linux）、桌面端(Beta)、CLI/TUI 终端、JetBrains 与 VS Code 插件</b>五个并列入口；帮助文档与实测中还可见用自然语言生成应用 / 文档 / 设计等扩展场景。<b>氛围编程 / 规范驱动开发双模式、Agent Space（多会话并行、多 Agent 并发）是整个产品的能力</b>，各入口通用。国内直连、中文原生，体验版免费。</p>
+
+  <div class="hero-shot is-filled">
+    <img src="../assets/screens/codearts-hero.png" alt="码道CodeArts主界面：让每个想法触手可及，含需求输入框与提示词卡片">
+  </div>
+  <p class="shot-cap">图源：华为云官方产品页 / 帮助文档（仅用于教学对比）</p>
+
+  <div class="spec">
+    <div class="cell"><div class="k">出品方</div><div class="v">华为云</div></div>
+    <div class="cell"><div class="k">定位</div><div class="v">智能编码产品（代码智能体）</div></div>
+    <div class="cell"><div class="k">底层模型</div><div class="v">DeepSeek-V4（v4-pro-0813 / v4-flash-0731 / v4.1-flash）、GLM-5.3-Flash、鸿蒙增训版 GLM-5.2-ArkTS-SPARK、华为自研 OpenPangu-2.0（Pro / Flash）等（可切换 / 外接）</div></div>
+    <div class="cell"><div class="k">国内可用</div><div class="v">✅ 无需代理</div></div>
+    <div class="cell"><div class="k">中文</div><div class="v">✅ 原生</div></div>
+    <div class="cell"><div class="k">数据安全</div><div class="v">华为云账号体系 + 隐私模式；企业版可 SSO / 审计</div></div>
+    <div class="cell"><div class="k">价格</div><div class="v">体验版免费（500 积分/月）· 标准版 ¥98/月起</div></div>
+    <div class="cell"><div class="k">形态</div><div class="v">桌面端(Beta) / AI IDE（Windows / macOS / Linux）/ CLI(TUI) / JetBrains 插件 / VS Code 插件</div></div>
+  </div>
+
+  <div class="f-shot is-filled">
+    <img src="../assets/screens/codearts-download.png" alt="华为云码道CodeArts官方下载页：IDE、VS Code 插件、JetBrains 插件、桌面端(Beta)、CLI 五个入口并列">
+  </div>
+  <p class="shot-cap">官方下载页（codearts.huaweicloud.com）：桌面端(Beta) 与 IDE、CLI、插件并列，是官方确认的第五种入口</p>
+
+  <h3 class="sec-h">核心能力（点击展开看详情）</h3>
+  <div class="feat-list">
+    <details class="feat" open>
+      <summary><span class="f-ico">①</span><span class="f-name">自然语言造应用 / 工具 / 内容</span><span class="f-tag">核心</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">用一句话需求，直接产出<b>可运行的应用、小工具、文稿、自动化流程</b>。对学生来说，做课程小工具、个人网站、签到小程序、自动填表脚本，不用写代码也能落地——这是它和纯编程智能体使用体感上最大的区别。</p>
+        <div class="f-meta"><span class="m">低门槛</span><span class="m">实测能力</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codearts-app.png" alt="码道CodeArts新建项目对话框（项目名称 / 描述 / 指令）"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">②</span><span class="f-name">办公文档处理</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">直接处理 <b>Word / Excel / PPT / PDF</b>：写报告、做演示、整理会议纪要、排版长文档。学生写论文初稿、做课程汇报 PPT、处理实验数据表格都能用。</p>
+        <div class="f-meta"><span class="m">Word</span><span class="m">Excel</span><span class="m">PPT</span><span class="m">PDF</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codearts-office.png" alt="码道CodeArts生成活动方案文档的结果（含方案概要与预算分配表）"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">③</span><span class="f-name">可视化创意设计</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">产出<b>海报、PPT、技术图表</b>，把创意想法转化为可视化成果；还能搭建个人工作台。适合社团宣传、课程展示、论文插图等场景。</p>
+        <div class="f-meta"><span class="m">海报</span><span class="m">图表</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codearts-design.png" alt="码道CodeArts生成的应用界面示例（职场打卡 / 生活手账 / 识字启蒙）"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">④</span><span class="f-name">全栈应用开发 + 代码质量管控</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">覆盖<b>前端、后端、鸿蒙</b>全栈开发，可直接输出可运行的应用交付物；同时提供代码评审、重构优化、安全审计、单元测试、编码规范修复等治理能力。比纯「说句话出应用」更进一步时，也能动手改代码。</p>
+        <div class="f-meta"><span class="m">全栈</span><span class="m">代码治理</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codearts-dev.png" alt="码道CodeArts代码仓与「问问码道」代码分析面板"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑤</span><span class="f-name">研究分析与决策支撑</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">开展<b>课题深度调研、市场趋势研判、数据解析</b>，输出 AI 行业简报，以客观依据辅助业务 / 学习决策。适合文献综述、竞品分析、调研报告。</p>
+        <div class="f-meta"><span class="m">调研</span><span class="m">数据解析</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codearts-analysis.png" alt="码道CodeArts「数据分析」能力：评价分析 / 活动分析 / 经营看板三类数据看板"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑥</span><span class="f-name">专属能力配置（专家 / 技能 / 连接器）</span><span class="f-tag">差异点</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">按需选用 <b>AI 专家角色或专家团</b>、系统预置<b>技能</b>、<b>MCP 外部连接器</b>（如网页开发、单元测试、代码评审、编译构建等），把工作台按自己的场景拼装起来，越用越顺手。</p>
+        <div class="f-meta"><span class="m">专家团</span><span class="m">技能</span><span class="m">MCP 连接器</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codearts-expert.png" alt="码道CodeArts「添加文件 > 专家」配置菜单"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑦</span><span class="f-name">工作空间 & 项目管理</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">关联本地目录，支持代码预览编辑、网页调试、Office 文档查阅编辑；<b>智能任务看板</b>覆盖项目 / 任务 / 执行 / 审核全流程，可一键下发计划给 AI Agent 自动执行；还支持<b>定时任务</b>，把周期活交给 AI。桌面端(Beta) / AI IDE / CLI / 插件多形态共用同一华为云账号与套餐。</p>
+        <div class="f-meta"><span class="m">任务看板</span><span class="m">定时任务</span><span class="m">多形态共用</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/codearts-workspace.png" alt="码道CodeArts智能任务看板（待开始 / 进行中 / 待确认 / 已完成）"></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="student"><span class="lbl">性价比</span><div>体验版免费（500 积分/月）可长期试水，标准版 ¥98/月起，价格在国内几款里居中。大型代码库则建议专业编码智能体。</div></div>
+
+  <h3 class="sec-h">上手三步走</h3>
+  <ol class="steps">
+    <li><span class="n">1</span> 从官方下载页选入口：桌面端(Beta)、码道 IDE（或安装 VS Code / JetBrains 插件、CLI），用华为云账号登录，体验版免费开通</li>
+    <li><span class="n">2</span> 在对话框用自然语言描述需求（如「做个课程签到小程序」），或选用内置专家 / 技能加速</li>
+    <li><span class="n">3</span> 用工作空间管理产物、任务看板跟踪进度；额度不够再考虑付费档</li>
+  </ol>
+
+  <div class="example"><span class="et">典型场景示例</span>课程大作业用码道CodeArts做一个「图书管理 Web 应用」：自然语言描述需求 → 直接产出可运行前端 + 后端；顺手用办公能力写项目文档、用项目管理看板跟踪进度。官方定位是智能编码产品，这类自然语言出成果的用法对新手同样友好。</div>
+
+  <h3 class="sec-h">优缺点对照</h3>
+  <div class="proscons">
+    <div class="pc-col pro"><h4>优势</h4><ul>
+      <li>体验版免费，国内直连、中文原生</li>
+      <li>实测可自然语言造应用，低门槛，学生 / 普通用户友好</li>
+      <li>能力全：文档 / 设计 / 开发 / 分析 / 项目管理一站搞定</li>
+      <li>多形态：桌面端(Beta) / IDE / CLI / 插件，一套套餐全覆盖</li>
+    </ul></div>
+    <div class="pc-col con"><h4>注意</h4><ul>
+      <li>复杂专业研发（大型代码库深度协作）弱于 ZCode / Codex 等专业编码智能体</li>
+      <li>深度编程仍受生成质量限制，需自己审代码、补逻辑</li>
+      <li>体验版额度有限，重度需升付费档</li>
+    </ul></div>
+  </div>
+
+  <div class="faq-mini">
+    <details><summary>个人能用吗？要不要企业资质？</summary><div class="ans">可以。体验版对个人免费开放，无需企业资质；做课程小工具、文档、PPT 直接用它即可，用量变大再考虑付费档。</div></details>
+    <details><summary>和 ZCode / TraeWork 怎么选？</summary><div class="ans">码道CodeArts官方定位是智能编码产品，支持全栈开发、代码审查、测试与 CI/CD，也提供自然语言驱动的低门槛应用创建，并覆盖文档、设计和分析；ZCode / TraeWork 更偏专业编码工作流。若重视完整研发流程，可优先比较工程协作能力；若想快速做出应用雏形，可关注自然语言创建体验。</div></details>
+    <details><summary>它和「码道 IDE」是一回事吗？</summary><div class="ans">「码道 IDE」是它的官方入口之一（另有桌面端(Beta)、CLI/TUI 终端、JetBrains 与 VS Code 插件）。氛围编程 / 规范驱动开发双模式、Agent Space（多会话并行、多 Agent 并发）是整个产品的能力，各入口通用，并非 IDE 独有。</div></details>
+  </div>
+
+  <h3 class="sec-h">理解自检</h3>
+  <div class="quiz" data-answer="A" data-explain="码道CodeArts体验版对个人免费开放，无需企业资质，个人可直接开通试用。">
+    <div class="q">1. 想零成本试码道CodeArts，应选？</div>
+    <div class="opts">
+      <label><input type="radio" name="caq" value="A"> 体验版（免费，个人可开通）</label>
+      <label><input type="radio" name="caq" value="B"> 必须买专业版</label>
+      <label><input type="radio" name="caq" value="C"> 仅企业可注册，个人不可用</label>
+    </div>
+    <button class="submit">提交</button><div class="fb"></div>
+  </div>
+  <div class="quiz" data-answer="A" data-explain="官方定位是智能编码产品（代码智能体），形态覆盖桌面端(Beta) / AI IDE / CLI / 插件；实测中它也能用自然语言生成应用 / 文档，对新手友好。">
+    <div class="q">2. 关于码道CodeArts的定位，正确的是？</div>
+    <div class="opts">
+      <label><input type="radio" name="caq2" value="A"> 华为云的智能编码产品，官方形态含桌面端(Beta) / AI IDE / CLI / 插件</label>
+      <label><input type="radio" name="caq2" value="B"> 腾讯出品的通用办公工作台</label>
+      <label><input type="radio" name="caq2" value="C"> 只能写代码，完全做不了文档和设计</label>
+    </div>
+    <button class="submit">提交</button><div class="fb"></div>
+  </div>
+
+  <div class="chap-nav">
+    <a class="nav-card" href="codex.html"><span class="lbl">← 上一章</span><span class="t">Codex</span></a>
+    <a class="nav-card next" href="../practice.html"><span class="lbl">去实践 →</span><span class="t">选型实践页</span></a>
+  </div>
+</main>
+</div>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="f-brand">
+      <span class="f-logo">AI AGENTS COMPASS</span>
+      <span class="f-tag">给学生的一份 AI 智能体选型讲义 · 图鉴 + 对比 + 详解 + 实践</span>
+    </div>
+    <div class="f-cols">
+      <div class="f-col">
+        <h4>详解 · 通用与编程</h4>
+        <a href="workbuddy.html">WorkBuddy</a>
+        <a href="traework.html">TraeWork</a>
+        <a href="zcode.html">ZCode</a>
+      </div>
+      <div class="f-col">
+        <h4>详解 · 编程与数字创造</h4>
+        <a href="codex.html">Codex</a>
+        <a href="codearts.html">码道CodeArts</a>
+      </div>
+      <div class="f-col">
+        <h4>COMPARE</h4>
+        <a href="../compare.html">对比矩阵</a>
+        <a href="../quadrant.html">能力立方图</a>
+      </div>
+      <div class="f-col">
+        <h4>PRACTICE</h4>
+        <a class="warm" href="../practice.html">选型决策器</a>
+        <a class="warm" href="../pk.html">双雄 PK</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2026 AI AGENTS COMPASS — MADE FOR STUDENTS</span>
+    <span>数据更新 2026-09-30 · 价格以官网为准</span>
+    <span class="footer-made">本网站由所介绍的五种智能体协助搭建，图片资源部分来自网络</span>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 智能体对比 · ZCode 详解</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-page="agent">
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow a" aria-hidden="true"></div>
+
+<aside class="sidebar">
+  <a class="sb-brand" href="../index.html">
+    <span class="logo-dot"></span>
+    <span class="sb-brand-txt"><b>AI AGENTS</b><i>选型讲义 · 2026</i></span>
+  </a>
+
+  <p class="sb-label"><span>主导航</span></p>
+  <a class="sb-item" href="../index.html" title="工具图鉴"><span class="ico">&#9672;</span><span class="txt">工具图鉴</span></a>
+  <a class="sb-item" href="../compare.html" title="对比矩阵"><span class="ico">&#9636;</span><span class="txt">对比矩阵</span></a>
+  <a class="sb-item" href="../quadrant.html" title="能力立方图"><span class="ico">&#9715;</span><span class="txt">能力立方图</span></a>
+  <a class="sb-item" href="../practice.html" title="选型决策器"><span class="ico">&#9670;</span><span class="txt">选型决策器</span></a>
+  <a class="sb-item" href="../pk.html" title="双雄 PK"><span class="ico">&#9876;</span><span class="txt">双雄 PK</span></a>
+
+  <p class="sb-label"><span>工具详解</span></p>
+  <a class="sb-item sm" href="workbuddy.html" title="WorkBuddy"><span class="dot wb">W</span><span class="txt">WorkBuddy</span></a>
+  <a class="sb-item sm" href="traework.html" title="TraeWork"><span class="dot tw">T</span><span class="txt">TraeWork</span></a>
+  <a class="sb-item sm active" href="zcode.html" title="ZCode"><span class="dot zc">Z</span><span class="txt">ZCode</span></a>
+  <a class="sb-item sm" href="codex.html" title="Codex"><span class="dot cx">C</span><span class="txt">Codex</span></a>
+  <a class="sb-item sm" href="codearts.html" title="码道CodeArts"><span class="dot ca">&#30721;</span><span class="txt">码道CodeArts</span></a>
+
+  <div class="sb-foot">
+    <button class="sb-collapse" id="sbCollapse" type="button" title="收起侧栏" aria-expanded="true">
+      <span class="ico">&#171;</span><span class="txt">收起</span>
+    </button>
+    <div class="sb-ctl">
+      <button class="pill" id="themeToggle" type="button">&#9790; DARK</button>
+      <button class="pill" id="gridToggle" type="button">GRID: ON</button>
+    </div>
+    <p class="sb-note">数据更新 2026-09<br>价格以官网为准</p>
+  </div>
+</aside>
+<button class="sb-toggle" id="sbToggle" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="sb-mask" id="sbMask"></div>
+
+<div class="wrap">
+<main class="page">
+  <p class="breadcrumb">详解 / <b>第 3 章</b></p>
+  <p class="ch-kicker">CHAPTER 03</p>
+  <h2 class="ch-title">ZCode · 国产大模型编程 ADE</h2>
+  <div class="chips"><span class="chip">智谱 Z.ai</span><span class="chip">编程 ADE</span><span class="chip">GLM 深度适配</span><span class="chip warm">学生友好 ★★★★</span></div>
+  <div class="obj"><span class="lbl">目标</span><div class="body">知道 ZCode 是「Agentic 开发环境」、深度适配哪些模型，理解它为什么适合跑长程编程任务，并留意其数据安全争议。</div></div>
+  <p class="lead">ZCode 是智谱 Z.ai（原智谱 AI）推出的 <b>Agentic 开发环境（ADE）</b>——把 AI Agent 放在工作流中心：用自然语言描述目标，由它驱动「编码 → 调试 → 预览 → 迭代」全流程。最大亮点是<b>深度适配国产 GLM 大模型（1M 长上下文）</b>，且<b>应用本体可免费下载</b>。新用户试用期为 <b>5 天</b>，客户端显示额度为 <b>GLM-5.3 每日 300 万 Token、GLM-5.3-Flash 每日 500 万 Token</b>；试用结束后，模型推理可能需连接套餐或自带 API Key。</p>
+
+  <div class="hero-shot is-filled">
+    <img src="../assets/screens/zcode-workspace.webp" alt="ZCode 桌面端工作区主界面：左侧栏为 New Task / Search / Skills / Workspace 与项目历史任务列表，中部是新任务输入区，含项目、分支选择器与提问输入框">
+  </div>
+  <p class="shot-cap">图源：ZCode 官方文档（仅用于教学对比）</p>
+
+  <div class="spec">
+    <div class="cell"><div class="k">出品方</div><div class="v">智谱 Z.ai</div></div>
+    <div class="cell"><div class="k">定位</div><div class="v">Agentic 开发环境</div></div>
+    <div class="cell"><div class="k">底层模型</div><div class="v">GLM-5.2 / 5.3（智谱自研；5.2 权重 MIT，5.3 为自定义许可）</div></div>
+    <div class="cell"><div class="k">上下文</div><div class="v">1M tokens（长程推理强）</div></div>
+    <div class="cell"><div class="k">国内可用</div><div class="v">✅ 无需代理</div></div>
+    <div class="cell"><div class="k">中文</div><div class="v">✅ 原生</div></div>
+    <div class="cell"><div class="k">数据安全</div><div class="v">执行模式可分级；代码经中国公司处理，敏感代码留意</div></div>
+    <div class="cell"><div class="k">价格</div><div class="v">应用免费 + GLM Coding Plan</div></div>
+    <div class="cell"><div class="k">平台</div><div class="v">macOS / Windows / Linux（Linux 测试版）</div></div>
+  </div>
+
+  <h3 class="sec-h">核心能力（点击展开看详情）</h3>
+  <div class="feat-list">
+    <details class="feat" open>
+      <summary><span class="f-ico">①</span><span class="f-name">Agentic 开发环境</span><span class="f-tag">定位</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">不是给编辑器装个插件，而是独立的 <b>ADE（Agentic Dev Environment）</b>：AI Agent 位于工作流中心，用自然语言描述目标，由它驱动「编码 → 调试 → 预览 → 迭代」全流程，重在"把事办成"。</p>
+        <div class="f-meta"><span class="m">独立 IDE</span><span class="m">对标 Cursor</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/zcode-agent-workflow.webp" alt="ZCode 工作区：左侧文件树带 Git 状态标记，中间为任务与提问输入区，右侧预览 Agent 生成的《v3.6.0 Release Readiness Report》文档"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">②</span><span class="f-name">Goal Mode 可验收目标</span><span class="f-tag">核心</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">把指令变成「可验收目标」状态机，每轮自动验证是否达成，没达成就继续。<b>failed-closed 设计</b>保证不会谎报"已完成"——这是它和只会聊天的工具有本质区别的地方。</p>
+        <div class="f-meta"><span class="m">防谎报</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/zcode-goal.webp" alt="Goal Mode 界面：右侧 Goal 面板显示目标与已用时 2h 3m 42s，按迭代分组的完成清单，以及本轮 Progress 进度与待办项"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">③</span><span class="f-name">Subagents 多智能体</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">一个大目标可拆成多个 <b>Agent 并行</b>（如一个写 auth、一个写测试、一个查文档），适合复杂、互相独立又需协同的任务，速度显著快于单线程。</p>
+        <div class="f-meta"><span class="m">并行</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/zcode-subagents.webp" alt="Subagents 并行委派示意：ZCode Agent 调度 Code Review、Explore Search、Documentation Research 三个子智能体并行执行，各自隔离上下文并汇总结果"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">④</span><span class="f-name">Remote Control 远程派单</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">通过 <b>微信 / 飞书</b>（官方 Bot Channel）随时唤起派单，不在电脑前也能推进长任务——睡前丢一句需求，醒来看结果。手机是入口，不是鸡肋。</p>
+        <div class="f-meta"><span class="m">手机可派活</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/zcode-remote.webp" alt="远程派单：左为微信中与 ZCode Bot 对话，右为飞书中绑定 ZCode Agent 后查看 /help 指令列表并下发任务"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑤</span><span class="f-name">GLM-5.2/5.3 + 1M 上下文</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">深度适配国产 <b>GLM-5.2 / 5.3</b>，提供 <b>1M tokens 长上下文</b>：大型重构、多文件协调、依赖更新等长程任务优势明显，且国内直连、中文原生。</p>
+        <div class="f-meta"><span class="m">国产模型</span><span class="m">长上下文</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/zcode-models.png" alt="模型选择器展开：可选 GLM-5.2、GLM-5-Turbo、GLM-5.3、GLM-5V-Turbo、GLM-5.2-fusion，底部含 ZAPI / highspeed 通道与 Manage models 入口"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑥</span><span class="f-name">20+ 工具 & Checkpoint 审查</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">内置 <b>20+ 工具</b>（文件、终端、Git、包管理、构建、测试、Lint、数据库、API 测试）；每步用 <b>Checkpoint</b> 暂停展示 diff，经审批后继续，支持 MCP 接入更多能力。改动量会实时累计（截图右上角的 <b>Changes +15369 −0</b> 即是），并且每次对话都能<b>回溯后改写需求继续执行</b>，不必从头重来。</p>
+        <div class="f-meta"><span class="m">可管控</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/zcode-edit-history.webp" alt="编辑历史会话：可回溯并修改此前的请求后继续执行，右上角显示 Changes +15369 -0 变更量，底部终端面板直连工作目录"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑦</span><span class="f-name">数据自主权</span><span class="f-tag">须知</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">2026-09 曾发生代码数据上传争议，官方已致歉、<b>开源</b>并整改，提供本地 / 私有化选项与分级权限。敏感 / 专有代码建议自托管 GLM 或留意隐私设置，密钥勿直贴。</p>
+        <div class="f-meta"><span class="m">敏感代码留意</span></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="student"><span class="lbl">性价比</span><div>应用本体免费下载，入门档月费在几款里偏低，还能自带 API Key 走按量。做项目、学编程的性价比最高；代价是模型生态较封闭，且敏感代码要考虑自托管。</div></div>
+
+  <h3 class="sec-h">上手三步走</h3>
+  <ol class="steps">
+    <li><span class="n">1</span> 下载 ZCode 桌面端（macOS / Windows / Linux 测试版），注册 Z.ai 账号</li>
+    <li><span class="n">2</span> 接模型：订阅 GLM Coding Plan，或自带 API Key 走按量（兼容 OpenAI / Anthropic 协议的服务均可接入）</li>
+    <li><span class="n">3</span> 用 <code style="font-family:var(--mono)">/goal</code> 设定可验收目标，让它规划→执行→验证；出门用微信/飞书远程派单</li>
+  </ol>
+
+  <div class="example"><span class="et">典型场景示例</span>「给这个 Flask 项目加用户登录并补测试」：ZCode 用 Goal Mode 拆成「建 auth 模块 / 写测试 / 接数据库」并行推进，每步 Checkpoint 都能先审 diff 再放行，<b>长上下文让它跨多文件不丢上下文</b>。</div>
+
+  <h3 class="sec-h">优缺点对照</h3>
+  <div class="proscons">
+    <div class="pc-col pro"><h4>优势</h4><ul>
+      <li>应用免费、国产模型、国内直连，学生门槛最低</li>
+      <li>1M 长上下文 + Goal 可验收，长程任务强</li>
+      <li>GUI 单窗口 + 微信/飞书远程控制，比纯终端友好</li>
+      <li>GLM-5.2 权重 MIT 开源，可自托管保隐私（5.3 许可不同）</li>
+    </ul></div>
+    <div class="pc-col con"><h4>注意</h4><ul>
+      <li>2026-09 曾发生代码数据上传争议，官方已致歉、开源并整改；敏感代码留意</li>
+      <li>原生深度适配 GLM，其他模型通过兼容协议接入，体验不如 GLM 丝滑</li>
+      <li>无移动/网页版（远程控制是手机入口）；Linux 仍测试版；生态较新</li>
+    </ul></div>
+  </div>
+
+  <div class="faq-mini">
+    <details><summary>ZCode 真的完全免费吗？</summary><div class="ans">应用本体可免费下载。新用户可试用 5 天；客户端显示 GLM-5.3 每日 300 万 Token、GLM-5.3-Flash 每日 500 万 Token。试用结束后，模型推理可能需要连接 GLM Coding Plan 或自带 API Key。</div></details>
+    <details><summary>代码会被上传吗？数据安全怎么看？</summary><div class="ans">执行模式可分级控制权限；但托管方案下代码经中国公司处理，受国内法管辖。敏感/专有代码建议自托管 GLM 或留意隐私设置，密钥勿直贴。</div></details>
+  </div>
+
+  <h3 class="sec-h">理解自检</h3>
+  <div class="quiz" data-answer="A" data-explain="ZCode 由智谱推出，自研 Agent 深度适配 GLM-5.2 / 5.3 系列模型，1M 长上下文。">
+    <div class="q">1. ZCode 深度适配的底层模型系列是？</div>
+    <div class="opts">
+      <label><input type="radio" name="zcq" value="A"> 智谱 GLM-5.2 / 5.3</label>
+      <label><input type="radio" name="zcq" value="B"> OpenAI GPT 系列</label>
+      <label><input type="radio" name="zcq" value="C"> 华为 Pangu 系列</label>
+    </div>
+    <button class="submit">提交</button><div class="fb"></div>
+  </div>
+  <div class="quiz" data-answer="B" data-explain="Goal Mode 把指令变成可验收目标，每轮自动验证是否达成，failed-closed 设计避免模型谎报任务完成。">
+    <div class="q">2. ZCode 的 Goal Mode 主要解决什么？</div>
+    <div class="opts">
+      <label><input type="radio" name="zcq2" value="A"> 让界面更好看</label>
+      <label><input type="radio" name="zcq2" value="B"> 把目标变可验收状态机，自动验证防谎报完成</label>
+      <label><input type="radio" name="zcq2" value="C"> 仅用于聊天问答</label>
+    </div>
+    <button class="submit">提交</button><div class="fb"></div>
+  </div>
+
+  <div class="chap-nav">
+    <a class="nav-card" href="traework.html"><span class="lbl">← 上一章</span><span class="t">TraeWork</span></a>
+    <a class="nav-card next" href="codex.html"><span class="lbl">下一章 →</span><span class="t">Codex</span></a>
+  </div>
+</main>
+</div>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="f-brand">
+      <span class="f-logo">AI AGENTS COMPASS</span>
+      <span class="f-tag">给学生的一份 AI 智能体选型讲义 · 图鉴 + 对比 + 详解 + 实践</span>
+    </div>
+    <div class="f-cols">
+      <div class="f-col">
+        <h4>详解 · 通用与编程</h4>
+        <a href="workbuddy.html">WorkBuddy</a>
+        <a href="traework.html">TraeWork</a>
+        <a href="zcode.html">ZCode</a>
+      </div>
+      <div class="f-col">
+        <h4>详解 · 编程与数字创造</h4>
+        <a href="codex.html">Codex</a>
+        <a href="codearts.html">码道CodeArts</a>
+      </div>
+      <div class="f-col">
+        <h4>COMPARE</h4>
+        <a href="../compare.html">对比矩阵</a>
+        <a href="../quadrant.html">能力立方图</a>
+      </div>
+      <div class="f-col">
+        <h4>PRACTICE</h4>
+        <a class="warm" href="../practice.html">选型决策器</a>
+        <a class="warm" href="../pk.html">双雄 PK</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2026 AI AGENTS COMPASS — MADE FOR STUDENTS</span>
+    <span>数据更新 2026-09-30 · 价格以官网为准</span>
+    <span class="footer-made">本网站由所介绍的五种智能体协助搭建，图片资源部分来自网络</span>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

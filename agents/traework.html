@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 智能体对比 · TraeWork 详解</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-page="agent">
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow a" aria-hidden="true"></div>
+
+<aside class="sidebar">
+  <a class="sb-brand" href="../index.html">
+    <span class="logo-dot"></span>
+    <span class="sb-brand-txt"><b>AI AGENTS</b><i>选型讲义 · 2026</i></span>
+  </a>
+
+  <p class="sb-label"><span>主导航</span></p>
+  <a class="sb-item" href="../index.html" title="工具图鉴"><span class="ico">&#9672;</span><span class="txt">工具图鉴</span></a>
+  <a class="sb-item" href="../compare.html" title="对比矩阵"><span class="ico">&#9636;</span><span class="txt">对比矩阵</span></a>
+  <a class="sb-item" href="../quadrant.html" title="能力立方图"><span class="ico">&#9715;</span><span class="txt">能力立方图</span></a>
+  <a class="sb-item" href="../practice.html" title="选型决策器"><span class="ico">&#9670;</span><span class="txt">选型决策器</span></a>
+  <a class="sb-item" href="../pk.html" title="双雄 PK"><span class="ico">&#9876;</span><span class="txt">双雄 PK</span></a>
+
+  <p class="sb-label"><span>工具详解</span></p>
+  <a class="sb-item sm" href="workbuddy.html" title="WorkBuddy"><span class="dot wb">W</span><span class="txt">WorkBuddy</span></a>
+  <a class="sb-item sm active" href="traework.html" title="TraeWork"><span class="dot tw">T</span><span class="txt">TraeWork</span></a>
+  <a class="sb-item sm" href="zcode.html" title="ZCode"><span class="dot zc">Z</span><span class="txt">ZCode</span></a>
+  <a class="sb-item sm" href="codex.html" title="Codex"><span class="dot cx">C</span><span class="txt">Codex</span></a>
+  <a class="sb-item sm" href="codearts.html" title="码道CodeArts"><span class="dot ca">&#30721;</span><span class="txt">码道CodeArts</span></a>
+
+  <div class="sb-foot">
+    <button class="sb-collapse" id="sbCollapse" type="button" title="收起侧栏" aria-expanded="true">
+      <span class="ico">&#171;</span><span class="txt">收起</span>
+    </button>
+    <div class="sb-ctl">
+      <button class="pill" id="themeToggle" type="button">&#9790; DARK</button>
+      <button class="pill" id="gridToggle" type="button">GRID: ON</button>
+    </div>
+    <p class="sb-note">数据更新 2026-09<br>价格以官网为准</p>
+  </div>
+</aside>
+<button class="sb-toggle" id="sbToggle" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="sb-mask" id="sbMask"></div>
+
+<div class="wrap">
+<main class="page">
+  <p class="breadcrumb">详解 / <b>第 2 章</b></p>
+  <p class="ch-kicker">CHAPTER 02</p>
+  <h2 class="ch-title">TraeWork · AI 原生工作台</h2>
+  <div class="chips"><span class="chip">字节跳动</span><span class="chip">AI 工作台</span><span class="chip">三端同步</span><span class="chip warm">学生友好 ★★★★</span></div>
+  <div class="obj"><span class="lbl">目标</span><div class="body">理解 TraeWork「Work / Code / Design 三模式 + 桌面/网页/手机三端同步」的结构，能说清它和纯聊天助手的区别，并判断免费额度是否够自己用。</div></div>
+  <p class="lead">TraeWork（字节 TRAE 旗下）是一款<b>云端 AI 原生工作台</b>，与 TraeCode（AI IDE）同属 TRAE 产品矩阵但定位不同：TraeWork 面向更广泛人群，设有 <b>Work / Code / Design 三种模式</b>，桌面、网页、手机三端实时同步。它最大的杀手锏是<b>跨端协同</b>——在外面用手机「按住说话」派个任务，回到电脑前接着看结果。Code 模式下由 AI Agent 主导开发，能从 0 到 1 建项目，也能对着已有代码库迭代、修 Bug。当前采用积分计费并提供会员套餐；免费权益、赠送积分和模型权限可能随账号或活动变化，请以账号内套餐与用量页面为准。</p>
+
+  <div class="hero-shot is-filled">
+    <img src="../assets/screens/traework-home.png" alt="TraeWork 桌面端首页「Work with TRAE」：左上角 Work / Code / Design 三模式切换，左侧边栏为新建任务、插件市场、模板库、自动化、办公助理、我的文件，中间是任务输入框（可切换本地 / 云端运行环境）与 PPT / 文档 / 数据分析 / 视频 / 图像 / 产品开发 / 内容创作等场景模板">
+  </div>
+  <p class="shot-cap">图源：TRAE 官方文档与客户端界面（仅用于教学对比）</p>
+
+  <div class="spec">
+    <div class="cell"><div class="k">出品方</div><div class="v">字节跳动（TRAE）</div></div>
+    <div class="cell"><div class="k">定位</div><div class="v">AI 原生工作台</div></div>
+    <div class="cell"><div class="k">底层模型</div><div class="v">国内版：Seed 系列 + GLM / DeepSeek / Kimi / Qwen 等国产模型；国际版可接 GPT / DeepSeek / Gemini 等</div></div>
+    <div class="cell"><div class="k">国内可用</div><div class="v">✅ 无需代理</div></div>
+    <div class="cell"><div class="k">中文</div><div class="v">✅ 原生</div></div>
+    <div class="cell"><div class="k">数据安全</div><div class="v">本地 / 云端运行环境可切换；敏感变量 KMS 加密存储、仅运行时读取</div></div>
+    <div class="cell"><div class="k">价格</div><div class="v">积分制 · 会员套餐权益依档位而异</div></div>
+    <div class="cell"><div class="k">平台</div><div class="v">桌面 / 网页 / 移动</div></div>
+  </div>
+
+  <h3 class="sec-h">核心能力（点击展开看详情）</h3>
+  <div class="feat-list">
+    <details class="feat" open>
+      <summary><span class="f-ico">①</span><span class="f-name">三模式工作流</span><span class="f-tag">核心</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">一个 Workspace 内切换三种角色：<b>Work</b>（写文档 / 整理数据 / 做演示等非开发）、<b>Code</b>（编码 / 调试 / Git）、<b>Design</b>（AI 一站式完成设计，支持导出 Figma / 从 Figma 还原代码）。文档和代码不必在两三个软件间来回搬，切换只改左上角那一处。</p>
+        <div class="f-meta"><span class="m">Work / Code / Design</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/traework-modes.webp" alt="TraeWork 桌面端的 Design 模式界面：左上角 Work / Code / Design 三模式切换器，其中 Design 被红框标出；左侧边栏为新建任务、技能、设计系统，主区标题「Design with TRAE」，下方是任务输入框（运行环境显示为云端）与三个模板卡——设计还原 / 概念成稿 / 规范出图"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">②</span><span class="f-name">Code 模式 · AI Agent 开发</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">Code 模式由 <b>AI Agent 主导开发</b>：既能从 0 到 1 自动建项目、装依赖、跑起来，也能对着已有代码库迭代、修 Bug、做重构、走 Git 工作流。支持 <b>100+ 编程语言</b>，底层共享 TraeCode 同源的 SOLO Agent 引擎（TRAE Agent 曾在 SWE-Bench 编码榜单登顶）。用自然语言下达指令，AI 自动规划并执行；运行环境可在<b>本地与云端之间切换</b>。</p>
+        <div class="f-meta"><span class="m">0→1 建项目</span><span class="m">100+ 语言</span><span class="m">Git 工作流</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/traework-code.webp" alt="TraeWork 桌面端 Code 模式的任务输入区：标题「Code with TRAE」，输入框内已挂载一个 zip 设计稿作为上下文并附上了开发要求；输入区底部可切换云端运行环境、选择 Git 仓库与默认环境，下方并列四个任务预设入口——应用开发 / 项目理解 / 游戏创意 / 工具脚本"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">③</span><span class="f-name">三端实时同步</span><span class="f-tag">差异点</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc"><b>桌面 / 网页 / 手机</b>数据实时同步，手机上就能派任务、看进度。TRAE 移动端是「任务下发中心」：可以直接把任务丢给<b>云端</b>跑，也可以下发给在线的电脑（可添加多台），桌面端负责任务执行与产物验收。出门在外也能推进工作，这是它相对其他工具最突出的差异化能力。</p>
+        <div class="f-meta"><span class="m">手机可派活</span><span class="m">多台电脑可选</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/traework-mobile.webp" alt="TRAE 移动端的「选择任务运行位置」弹窗：第一项「云端」已勾选，第二项是可选的电脑（右侧标「在线」），底部另有「+ 连接我的电脑」——手机据此把任务下发到云端或多台自己的电脑"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">④</span><span class="f-name">云端运行环境 · 沙箱</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">Code 模式下可自建<b>云端运行环境</b>：语言版本按需预装（Python / Node.js / Go / Rust / Java / Ruby / PHP / Swift），依赖装一次就复用，换电脑不用重搭环境。密钥写进<b>敏感变量</b>由 KMS 加密存储、只在运行时读取；沙箱出站流量默认走白名单（npm / PyPI / GitHub 等常用依赖源），本地环境不一致的问题随之消失。</p>
+        <div class="f-meta"><span class="m">零环境配置</span><span class="m">敏感变量加密</span><span class="m">出站白名单</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/traework-cloud-env.webp" alt="TraeWork 的「创建环境」弹窗：环境名称输入框，预装依赖区可分别指定 Python 3.14、Node.js 24、Go 1.25.1、Rust 1.92.0、Java 25、Ruby 3.4.4、PHP 8.5、Swift 6.2 的版本，下面依次是环境变量、敏感变量（提示用于存放密码与 API Key 等私密信息）与运行方式配置"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑤</span><span class="f-name">语音讨论与自动纪要</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">输入框右下角的<b>语音讨论</b>入口支持多轮语音往返：随口讲思路，AI 会追问、补充甚至质疑，适合需求梳理和方案推敲。讨论结束后自动整理——去掉「嗯 / 就是 / 那个」这类口癖、识别「不是 A 是 B」的自我修正只保留最终结论，再按主题结构化成一份纪要，原始语音记录也随时可查。</p>
+        <div class="f-meta"><span class="m">中文语音</span><span class="m">自动结构化纪要</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/traework-voice.webp" alt="TraeWork 对话输入框的局部截图：左侧有附件与「手动审批」开关、可挂载视频 / 图片等上下文，右侧为模型选择（Auto Mode）与喇叭图标，最右侧的「语音讨论」按钮被红框标出——点击即进入语音讨论"></div>
+      </div>
+    </details>
+    <details class="feat">
+      <summary><span class="f-ico">⑥</span><span class="f-name">技能（Skills）与 MCP 扩展</span><span class="f-tg">+</span></summary>
+      <div class="f-body">
+        <p class="f-desc">技能用一份 <b>SKILL.md</b> 描述「这类任务怎么做」，<b>按需加载</b>——只在任务相关时才读进上下文，不常驻占用。可在<b>插件市场</b>一键安装，也能上传本地技能，把团队规范或自己的 SOP 沉淀成可复用能力；配合 <b>MCP</b> 接入外部工具与企业系统，进一步拓展边界。</p>
+        <div class="f-meta"><span class="m">Skills</span><span class="m">MCP</span><span class="m">按需加载</span></div>
+        <div class="f-shot is-filled"><img src="../assets/screens/traework-skills.webp" alt="TraeWork 的「插件市场 · 技能」页：左侧边栏选中插件市场，顶部有插件 / 技能切换（技能被红框标出）、搜索框与「+ 上传技能」按钮，分类筛选为全部 / 开发工具 / 界面设计 / 内容创作 / 效率提升 / 数据分析，卡片列出 git-commit、frontend-design、mcp-builder、react-best-practices 等可安装技能"></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="student"><span class="lbl">性价比</span><div>按积分计费，会员套餐包含的积分、模型权限和并发额度依档位而异；开始长期使用前，先核对账号当前权益。三端同步和云端环境适合常换设备、想用手机派活的场景。</div></div>
+
+  <h3 class="sec-h">上手三步走</h3>
+  <ol class="steps">
+    <li><span class="n">1</span> 下载 TraeWork 桌面端，或打开网页版 / 手机端登录</li>
+    <li><span class="n">2</span> 选模式：写代码进 Code、写材料进 Work、做设计进 Design</li>
+    <li><span class="n">3</span> 用自然语言描述任务让它自动拆解执行；出门用手机接着派活、看进度——这就是它比别的工具强的点</li>
+  </ol>
+
+  <div class="example"><span class="et">典型场景示例</span>在宿舍用电脑让 TraeWork 写了个「课程表网页」，出门路上用手机说「把配色改成校色、加个倒计时」，回宿舍电脑端已同步改好——<b>三端实时同步</b>是它最实用的差异点。</div>
+
+  <h3 class="sec-h">优缺点对照</h3>
+  <div class="proscons">
+    <div class="pc-col pro"><h4>优势</h4><ul>
+      <li>Work / Code / Design 三模式，文档和代码不用来回搬</li>
+      <li>三端同步体验最佳，手机可随时派活</li>
+      <li>云端运行环境免配置、换机不用重搭；代码能力强（底层 Agent 曾登顶 SWE-Bench）</li>
+      <li>国产模型 + 语音讨论，中文场景顺手</li>
+    </ul></div>
+    <div class="pc-col con"><h4>注意</h4><ul>
+      <li>积分消耗与免费权益依账号套餐、模型和活动而异，长期使用需先核对用量</li>
+      <li>国内版以国产模型为主，无 Claude 等海外旗舰模型</li>
+      <li>以 Agent 对话驱动为主，纯文字办公场景不如 WorkBuddy 顺手</li>
+    </ul></div>
+  </div>
+
+  <div class="faq-mini">
+    <details><summary>免费档真的不用花钱吗？</summary><div class="ans">TraeWork 采用积分计费并提供会员套餐；免费额度、活动赠分及可用模型可能随账号和活动变化，不应默认免费档包含全部功能。请以应用内套餐与用量页面为准。</div></details>
+    <details><summary>和国际版 Trae 有什么区别？</summary><div class="ans">国内版用 Seed、GLM、DeepSeek、Kimi、Qwen 等国产模型、人民币计费；国际版可接 GPT / DeepSeek / Gemini 等模型，但国内访问不稳。日常用优先国内版。</div></details>
+  </div>
+
+  <h3 class="sec-h">理解自检</h3>
+  <div class="quiz" data-answer="C" data-explain="TraeWork 的三种模式是 Work（办公）、Code（编程）、Design（设计），覆盖不同背景的用户。">
+    <div class="q">1. TraeWork 的「三模式」指的是？</div>
+    <div class="opts">
+      <label><input type="radio" name="twq" value="A"> 免费 / 付费 / 企业三档</label>
+      <label><input type="radio" name="twq" value="B"> Windows / macOS / Linux 三系统</label>
+      <label><input type="radio" name="twq" value="C"> Work / Code / Design 三种工作模式</label>
+    </div>
+    <button class="submit">提交</button><div class="fb"></div>
+  </div>
+  <div class="quiz" data-answer="B" data-explain="TraeWork 桌面/网页/手机三端实时同步，手机语音即可派任务，是它相对其他工具最突出的差异化能力。">
+    <div class="q">2. TraeWork 最突出的差异化能力是？</div>
+    <div class="opts">
+      <label><input type="radio" name="twq2" value="A"> 只能用命令行操作</label>
+      <label><input type="radio" name="twq2" value="B"> 桌面/网页/手机三端实时同步，手机可派活</label>
+      <label><input type="radio" name="twq2" value="C"> 仅支持英文界面</label>
+    </div>
+    <button class="submit">提交</button><div class="fb"></div>
+  </div>
+
+  <div class="chap-nav">
+    <a class="nav-card" href="workbuddy.html"><span class="lbl">← 上一章</span><span class="t">WorkBuddy</span></a>
+    <a class="nav-card next" href="zcode.html"><span class="lbl">下一章 →</span><span class="t">ZCode</span></a>
+  </div>
+</main>
+</div>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="f-brand">
+      <span class="f-logo">AI AGENTS COMPASS</span>
+      <span class="f-tag">给学生的一份 AI 智能体选型讲义 · 图鉴 + 对比 + 详解 + 实践</span>
+    </div>
+    <div class="f-cols">
+      <div class="f-col">
+        <h4>详解 · 通用与编程</h4>
+        <a href="workbuddy.html">WorkBuddy</a>
+        <a href="traework.html">TraeWork</a>
+        <a href="zcode.html">ZCode</a>
+      </div>
+      <div class="f-col">
+        <h4>详解 · 编程与数字创造</h4>
+        <a href="codex.html">Codex</a>
+        <a href="codearts.html">码道CodeArts</a>
+      </div>
+      <div class="f-col">
+        <h4>COMPARE</h4>
+        <a href="../compare.html">对比矩阵</a>
+        <a href="../quadrant.html">能力立方图</a>
+      </div>
+      <div class="f-col">
+        <h4>PRACTICE</h4>
+        <a class="warm" href="../practice.html">选型决策器</a>
+        <a class="warm" href="../pk.html">双雄 PK</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2026 AI AGENTS COMPASS — MADE FOR STUDENTS</span>
+    <span>数据更新 2026-09-30 · 价格以官网为准</span>
+    <span class="footer-made">本网站由所介绍的五种智能体协助搭建，图片资源部分来自网络</span>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

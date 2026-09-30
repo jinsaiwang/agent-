@@ -1,0 +1,566 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 智能体对比 · 双雄 PK</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  /* ---------- PK 页 ----------
+     橙色与「选型决策器」页完全一致：不自定义底色，直接吃 body.theme-warm 的
+     品牌色覆盖（--brand/#E8913C 系）与全局 glow，由 style.css 统一控制。 */
+  .pk-body{ max-width:1060px; margin:0 auto; padding:36px 28px 80px; }
+
+  /* ---------- ① 选人 + 选维度 ---------- */
+  .pk-setup{
+    position:relative; overflow:hidden;
+    background:linear-gradient(150deg, rgba(255,255,255,.88), rgba(255,247,238,.70));
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(232,145,60,.24);
+    border-radius:18px; padding:20px 22px 18px;
+    box-shadow:0 12px 34px rgba(180,110,40,.10);
+  }
+  .pk-setup::before{
+    content:''; position:absolute; width:300px; height:300px; right:-100px; top:-140px;
+    border-radius:50%; background:radial-gradient(circle, rgba(232,145,60,.22), transparent 70%);
+    filter:blur(28px); pointer-events:none;
+  }
+  .pk-label{
+    font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:1.6px;
+    text-transform:uppercase; color:var(--brand-dk); margin:0 0 10px;
+  }
+  .pk-arena{ display:grid; grid-template-columns:1fr 96px 1fr; gap:14px; align-items:stretch; }
+  .pk-side{
+    background:var(--card-2); border:1px solid var(--line);
+    border-radius:14px; padding:12px 13px;
+  }
+  .pk-side .s-hd{
+    display:flex; align-items:center; gap:8px; margin-bottom:10px;
+    font-size:12px; color:var(--ink-3); font-family:var(--mono); letter-spacing:.6px;
+  }
+  .pk-side .s-hd .tag{
+    font-size:10.5px; padding:2px 8px; border-radius:999px;
+    background:rgba(232,145,60,.14); color:var(--brand-dk); letter-spacing:.4px;
+  }
+  .pk-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    display:inline-flex; align-items:center; gap:7px;
+    padding:8px 13px; border-radius:999px;
+    border:1px solid var(--line); background:#fff;
+    font-size:13px; color:var(--ink-2); cursor:pointer;
+    transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease, color .18s ease;
+  }
+  .chip:hover{ transform:translateY(-1px); border-color:var(--brand-lt); }
+  .chip .cd{
+    width:19px; height:19px; border-radius:6px; flex:none;
+    display:grid; place-items:center;
+    font-size:10.5px; font-weight:800; color:#fff; letter-spacing:0;
+  }
+  .chip.on{
+    background:linear-gradient(135deg,var(--brand),var(--brand-dk));
+    border-color:transparent; color:#fff;
+    box-shadow:0 6px 18px rgba(232,145,60,.30);
+  }
+  .chip.on .cd{ box-shadow:0 0 0 2px rgba(255,255,255,.7); }
+  .pk-vs-mini{
+    display:grid; place-items:center;
+    font-family:var(--mono); font-size:15px; font-weight:800; letter-spacing:1px;
+    color:var(--brand-dk);
+  }
+  .pk-vs-mini span{
+    width:52px; height:52px; border-radius:50%; display:grid; place-items:center;
+    background:linear-gradient(135deg,var(--brand),var(--brand-dk)); color:#fff;
+    box-shadow:0 8px 22px rgba(232,145,60,.34);
+  }
+  .pk-dims{ margin-top:16px; padding-top:15px; border-top:1px dashed rgba(232,145,60,.3); }
+  .pk-dim-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .dchip{
+    padding:7px 14px; border-radius:8px; cursor:pointer;
+    border:1px solid var(--line); background:#fff;
+    font-size:13px; color:var(--ink-2);
+    transition:transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
+  }
+  .dchip:hover{ transform:translateY(-1px); border-color:var(--brand-lt); }
+  .dchip.on{
+    background:var(--brand-bg); border-color:rgba(232,145,60,.45);
+    color:var(--brand-dk); font-weight:600;
+  }
+  .pk-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; align-items:center; }
+  .pk-btn{
+    font-size:13px; font-weight:600; padding:10px 20px; border-radius:12px; cursor:pointer;
+    background:var(--card); border:1px solid var(--line); color:var(--ink-2);
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .pk-btn:hover{ transform:translateY(-2px); border-color:rgba(232,145,60,.45); color:var(--brand-dk); box-shadow:0 8px 20px rgba(180,110,40,.14); }
+  .pk-btn.primary{
+    background:linear-gradient(135deg,var(--brand),var(--brand-dk));
+    border-color:transparent; color:#fff; box-shadow:0 10px 26px rgba(232,145,60,.32);
+  }
+  .pk-btn.primary:hover{ color:#fff; }
+  .pk-hint{ font-size:12px; color:var(--ink-3); margin-left:auto; font-family:var(--mono); }
+
+  /* ---------- ② 擂台 ---------- */
+  .pk-stage{ margin-top:24px; }
+  .pk-fight{ display:grid; grid-template-columns:1fr 104px 1fr; gap:16px; align-items:stretch; }
+  .pk-fighter{
+    position:relative; overflow:hidden; text-align:center;
+    border-radius:20px; padding:22px 18px 20px;
+    background:linear-gradient(165deg, rgba(255,255,255,.92), rgba(255,255,255,.58));
+    border:1px solid var(--line); box-shadow:var(--shadow);
+    transition:box-shadow .35s ease, border-color .35s ease, transform .35s ease;
+  }
+  .pk-fighter .halo{
+    position:absolute; width:240px; height:240px; left:50%; top:-130px;
+    transform:translateX(-50%); border-radius:50%; filter:blur(42px);
+    background:var(--ac); opacity:.28; pointer-events:none;
+  }
+  .pk-fighter .fl{
+    position:relative; width:58px; height:58px; border-radius:17px;
+    margin:0 auto 10px; display:grid; place-items:center;
+    color:#fff; font-size:20px; font-weight:800; letter-spacing:0;
+    background:var(--ac); box-shadow:0 10px 24px rgba(31,45,61,.18);
+  }
+  .pk-fighter .fn{ position:relative; font-size:20px; font-weight:800; letter-spacing:-.2px; }
+  .pk-fighter .fb{ position:relative; font-family:var(--mono); font-size:11px; color:var(--ink-3); letter-spacing:.4px; }
+  .pk-fighter .fs{
+    position:relative; margin-top:14px; font-family:var(--mono);
+    font-size:32px; font-weight:800; line-height:1; color:var(--ac);
+  }
+  .pk-fighter .fs small{ display:block; font-size:11px; font-weight:600; color:var(--ink-3); margin-top:6px; letter-spacing:.5px; }
+  .pk-fighter.win{ border-color:var(--ac); box-shadow:0 16px 42px rgba(31,45,61,.14); transform:translateY(-3px); }
+  .pk-fighter.win .halo{ opacity:.40; }
+  .pk-fighter .crown{
+    position:absolute; top:12px; right:12px;
+    font-size:10.5px; font-weight:800; font-family:var(--mono); letter-spacing:1px;
+    padding:4px 10px; border-radius:999px; color:#fff; background:var(--ac);
+    box-shadow:0 4px 14px rgba(31,45,61,.2);
+  }
+  .pk-vs-col{ display:grid; place-items:center; }
+  .pk-vs-col .ball{
+    width:76px; height:76px; border-radius:50%; display:grid; place-items:center;
+    font-family:var(--mono); font-size:20px; font-weight:800; letter-spacing:1px; color:#fff;
+    background:linear-gradient(135deg,#E8913C,#C9742A);
+    box-shadow:0 12px 30px rgba(232,145,60,.36);
+  }
+  .pk-vs-col .sub{ margin-top:8px; font-family:var(--mono); font-size:10.5px; color:var(--ink-3); letter-spacing:.6px; }
+
+  /* ---------- ③ 逐维度对比 ---------- */
+  .pk-rows{ margin-top:18px; display:flex; flex-direction:column; gap:10px; }
+  .pk-row{
+    display:grid; grid-template-columns:1fr 148px 1fr; gap:16px; align-items:center;
+    background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:13px 16px;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  }
+  .pk-cell{ display:flex; flex-direction:column; gap:5px; min-width:0; }
+  .pk-cell.l{ align-items:flex-end; text-align:right; }
+  .pk-cell.r{ align-items:flex-start; text-align:left; }
+  .pk-val{ font-family:var(--mono); font-size:19px; font-weight:800; line-height:1; color:var(--ink-3); transition:color .3s ease; }
+  .pk-bar{ width:100%; height:8px; border-radius:6px; background:var(--line-2); overflow:hidden; display:flex; }
+  .pk-cell.l .pk-bar{ justify-content:flex-end; }
+  .pk-bar i{
+    display:block; height:100%; width:0; border-radius:6px;
+    background:var(--ink-3); opacity:.35;
+    transition:width .65s cubic-bezier(.22,1,.36,1), background .3s ease, opacity .3s ease;
+  }
+  .pk-note{ font-size:11.5px; line-height:1.55; color:var(--ink-3); max-width:300px; transition:color .3s ease; }
+  .pk-cell.win .pk-val{ color:var(--ac); }
+  .pk-cell.win .pk-bar i{ background:var(--ac); opacity:1; }
+  .pk-cell.win .pk-note{ color:var(--ink-2); }
+  .pk-dim{ text-align:center; }
+  .pk-dim .dn{ font-size:13.5px; font-weight:700; color:var(--ink); }
+  .pk-dim .dt{ font-family:var(--mono); font-size:10px; color:var(--ink-3); letter-spacing:.3px; margin-top:2px; }
+  .pk-dim .tie{ font-size:10.5px; color:var(--brand-dk); font-family:var(--mono); margin-top:3px; }
+
+  /* ---------- ④ 结果 ---------- */
+  .pk-verdict{
+    margin-top:20px; padding:24px 24px 22px; border-radius:20px; text-align:center;
+    background:linear-gradient(135deg, rgba(232,145,60,.15), rgba(255,255,255,.72));
+    border:1px solid rgba(232,145,60,.34);
+    box-shadow:0 14px 38px rgba(180,110,40,.12);
+  }
+  .pk-verdict .sc{ font-family:var(--mono); font-size:38px; font-weight:800; line-height:1; letter-spacing:-1px; }
+  .pk-verdict .sc .wa{ color:var(--ca); } .pk-verdict .sc .wb{ color:var(--cb); }
+  .pk-verdict .sc .sep{ color:var(--ink-3); margin:0 10px; font-size:26px; }
+  .pk-verdict .lg{ margin-top:10px; font-family:var(--mono); font-size:11.5px; color:var(--ink-3); letter-spacing:.3px; }
+  .pk-verdict .lg .dot2{ margin:0 8px; }
+  .pk-verdict .vt{ margin-top:12px; font-size:20px; font-weight:800; letter-spacing:-.2px; }
+  .pk-verdict .vr{ margin-top:8px; font-size:13.5px; color:var(--ink-2); line-height:1.8; }
+  .pk-verdict .vr b{ color:var(--brand-dk); }
+  .pk-verdict .cav{
+    margin-top:14px; padding-top:13px; border-top:1px dashed rgba(232,145,60,.35);
+    font-size:12.5px; color:var(--ink-2); line-height:1.8; text-align:left;
+  }
+  .pk-verdict .cav span{ color:var(--brand-dk); font-weight:600; }
+
+  .pk-empty{
+    margin-top:24px; padding:44px 20px; border-radius:20px; text-align:center;
+    border:1px dashed rgba(232,145,60,.4); background:var(--card-2);
+    color:var(--ink-3); font-size:14px;
+  }
+
+  /* ---------- 暗色覆盖 ---------- */
+  body.theme-dark .pk-setup{ background:linear-gradient(150deg, rgba(38,28,20,.86), rgba(30,22,16,.68)); border-color:rgba(232,145,60,.24); }
+  body.theme-dark .pk-side,
+  body.theme-dark .chip,
+  body.theme-dark .dchip,
+  body.theme-dark .pk-btn{ background:var(--solid); border-color:var(--line); }
+  body.theme-dark .dchip.on{ background:rgba(232,145,60,.18); color:var(--brand-lt); border-color:rgba(232,145,60,.4); }
+  body.theme-dark .pk-fighter{ background:linear-gradient(165deg, rgba(40,30,22,.9), rgba(28,21,15,.6)); }
+  body.theme-dark .pk-row{ background:var(--solid); }
+  body.theme-dark .pk-bar{ background:rgba(255,255,255,.08); }
+  body.theme-dark .pk-note{ color:var(--ink-3); }
+  body.theme-dark .pk-cell.win .pk-note{ color:var(--ink-2); }
+  body.theme-dark .pk-verdict{ background:linear-gradient(135deg, rgba(232,145,60,.16), rgba(30,22,16,.6)); }
+  body.theme-dark .pk-empty{ background:var(--solid); }
+
+  @media (max-width:900px){
+    .pk-arena{ grid-template-columns:1fr; }
+    .pk-vs-mini{ padding:4px 0; }
+    .pk-fight{ grid-template-columns:1fr; }
+    .pk-vs-col{ padding:6px 0; }
+    .pk-row{ grid-template-columns:1fr; gap:8px; text-align:center; }
+    .pk-cell.l, .pk-cell.r{ align-items:center; text-align:center; }
+    .pk-cell.l .pk-bar{ justify-content:center; }
+    .pk-note{ max-width:none; }
+    .pk-hint{ margin-left:0; width:100%; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .pk-bar i{ transition:none; }
+    .pk-fighter, .chip, .dchip, .pk-btn{ transition:none; }
+  }
+</style>
+</head>
+<body data-page="pk" class="theme-warm pk-page">
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow a" aria-hidden="true"></div>
+<div class="glow b" aria-hidden="true"></div>
+
+<aside class="sidebar">
+  <a class="sb-brand" href="index.html">
+    <span class="logo-dot"></span>
+    <span class="sb-brand-txt"><b>AI AGENTS</b><i>选型讲义 · 2026</i></span>
+  </a>
+
+  <p class="sb-label"><span>主导航</span></p>
+  <a class="sb-item" href="index.html" title="工具图鉴"><span class="ico">&#9672;</span><span class="txt">工具图鉴</span></a>
+  <a class="sb-item" href="compare.html" title="对比矩阵"><span class="ico">&#9636;</span><span class="txt">对比矩阵</span></a>
+  <a class="sb-item" href="quadrant.html" title="能力立方图"><span class="ico">&#9715;</span><span class="txt">能力立方图</span></a>
+  <a class="sb-item" href="practice.html" title="选型决策器"><span class="ico">&#9670;</span><span class="txt">选型决策器</span></a>
+  <a class="sb-item active" href="pk.html" title="双雄 PK"><span class="ico">&#9876;</span><span class="txt">双雄 PK</span></a>
+
+  <p class="sb-label"><span>工具详解</span></p>
+  <a class="sb-item sm" href="agents/workbuddy.html" title="WorkBuddy"><span class="dot wb">W</span><span class="txt">WorkBuddy</span></a>
+  <a class="sb-item sm" href="agents/traework.html" title="TraeWork"><span class="dot tw">T</span><span class="txt">TraeWork</span></a>
+  <a class="sb-item sm" href="agents/zcode.html" title="ZCode"><span class="dot zc">Z</span><span class="txt">ZCode</span></a>
+  <a class="sb-item sm" href="agents/codex.html" title="Codex"><span class="dot cx">C</span><span class="txt">Codex</span></a>
+  <a class="sb-item sm" href="agents/codearts.html" title="码道CodeArts"><span class="dot ca">&#30721;</span><span class="txt">码道CodeArts</span></a>
+
+  <div class="sb-foot">
+    <button class="sb-collapse" id="sbCollapse" type="button" title="收起侧栏" aria-expanded="true">
+      <span class="ico">&#171;</span><span class="txt">收起</span>
+    </button>
+    <div class="sb-ctl">
+      <button class="pill" id="themeToggle" type="button">&#9790; DARK</button>
+      <button class="pill" id="gridToggle" type="button">GRID: ON</button>
+    </div>
+    <p class="sb-note">数据更新 2026-09<br>价格以官网为准</p>
+  </div>
+</aside>
+<button class="sb-toggle" id="sbToggle" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="sb-mask" id="sbMask"></div>
+
+<div class="wrap">
+<main class="pk-body">
+  <section class="page-head">
+    <div class="ph-left">
+      <p class="ph-kicker">HEAD TO HEAD · 双雄对决</p>
+      <h1 class="ph-title">两款智能体，正面对决</h1>
+      <p class="ph-sub">挑两个选手、选好比拼的方面，逐项打分比高低，最后算出胜负。分数是本站<b>相对评分</b>（0–100，非跑分），打分依据写在每一条下面。</p>
+    </div>
+    <div class="ph-right">
+      <a class="ph-btn primary" href="practice.html">去选型决策器</a>
+      <a class="ph-btn" href="compare.html">看对比矩阵</a>
+    </div>
+  </section>
+
+  <!-- ① 选人与选维度 -->
+  <section class="pk-setup">
+    <div class="pk-arena">
+      <div class="pk-side">
+        <div class="s-hd"><span class="tag">RED CORNER</span> 左侧选手</div>
+        <div class="pk-chips" id="pickA"></div>
+      </div>
+      <div class="pk-vs-mini"><span>VS</span></div>
+      <div class="pk-side">
+        <div class="s-hd"><span class="tag">BLUE CORNER</span> 右侧选手</div>
+        <div class="pk-chips" id="pickB"></div>
+      </div>
+    </div>
+
+    <div class="pk-dims">
+      <p class="pk-label">比拼维度（可多选，至少 1 项）</p>
+      <div class="pk-dim-chips" id="dimPick"></div>
+    </div>
+
+    <div class="pk-actions">
+      <button class="pk-btn" id="pkSwap" type="button">&#8646; 左右互换</button>
+      <button class="pk-btn" id="pkRandom" type="button">&#127922; 随机对手</button>
+      <button class="pk-btn" id="pkAll" type="button">全选 / 清空维度</button>
+      <span class="pk-hint" id="pkHint"></span>
+    </div>
+  </section>
+
+  <!-- ② 擂台 -->
+  <section class="pk-stage" id="pkStage"></section>
+
+  <div class="callout tip"><span class="lbl">提醒</span> 评分和星级是本站结合实际试用与公开资料作出的<b>主观相对判断</b>，不是标准化测试或官方跑分；价格、额度与套餐权益以官网及账号内页面为准。</div>
+</main>
+</div>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="f-brand">
+      <span class="f-logo">AI AGENTS COMPASS</span>
+      <span class="f-tag">给学生的一份 AI 智能体选型讲义 · 图鉴 + 对比 + 详解 + 实践</span>
+    </div>
+    <div class="f-cols">
+      <div class="f-col">
+        <h4>详解 · 通用与编程</h4>
+        <a href="agents/workbuddy.html">WorkBuddy</a>
+        <a href="agents/traework.html">TraeWork</a>
+        <a href="agents/zcode.html">ZCode</a>
+      </div>
+      <div class="f-col">
+        <h4>详解 · 编程与数字创造</h4>
+        <a href="agents/codex.html">Codex</a>
+        <a href="agents/codearts.html">码道CodeArts</a>
+      </div>
+      <div class="f-col">
+        <h4>COMPARE</h4>
+        <a href="compare.html">对比矩阵</a>
+        <a href="quadrant.html">能力立方图</a>
+      </div>
+      <div class="f-col">
+        <h4>PRACTICE</h4>
+        <a class="warm" href="practice.html">选型决策器</a>
+        <a class="warm" href="pk.html">双雄 PK</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2026 AI AGENTS COMPASS — MADE FOR STUDENTS</span>
+    <span>数据更新 2026-09-30 · 价格以官网为准</span>
+    <span class="footer-made">本网站由所介绍的五种智能体协助搭建，图片资源部分来自网络</span>
+  </div>
+</footer>
+
+<script src="assets/js/site.js"></script>
+<script>
+(function(){
+  /* ============ 数据：8 个维度 × 5 款工具（0–100 相对评分 + 打分依据） ============ */
+  var DIMS = [
+    { k:'domestic', name:'国内可用性', tip:'能否直连 / 要不要代理' },
+    { k:'cn',       name:'中文支持',   tip:'界面 · 文档 · 中文指令' },
+    { k:'quota',    name:'持续免费用量',   tip:'不付费时模型能持续用多少；一次性试用另行说明' },
+    { k:'student',  name:'性价比',     tip:'同等价格下的可用额度' },
+    { k:'coding',   name:'编程工程能力',   tip:'写代码与工程化上限' },
+    { k:'office',   name:'通用任务能力',   tip:'文档 · 数据 · 设计 · 研究 · 工作流' },
+    { k:'safety',   name:'数据安全',   tip:'数据使用与训练承诺' },
+    { k:'easy',     name:'上手容易',   tip:'从零到跑起来的门槛' }
+  ];
+
+  var A = {
+    workbuddy:{ name:'WorkBuddy', brand:'腾讯', logo:'W', color:'#2F7DA8', type:'通用工作台',
+      d:{ domestic:100, cn:100, quota:78, student:95, coding:45, office:95, safety:88, easy:92 },
+      n:{ domestic:'腾讯云服务，无需代理', cn:'界面与文档原生中文', quota:'有免费额度，日常需求够用', student:'零成本起步，重度才需付费', coding:'轻量编程可胜任，大工程偏弱', office:'文档 / 表格 / PPT / PDF 全覆盖', safety:'国内合规，数据境内处理', easy:'对话式开箱，无需配环境' } },
+    traework:{ name:'TraeWork', brand:'字节跳动', logo:'T', color:'#6366F1', type:'编程智能体',
+      d:{ domestic:100, cn:100, quota:50, student:70, coding:88, office:55, safety:78, easy:72 },
+      n:{ domestic:'国内可用，无需代理', cn:'原生中文', quota:'积分与免费权益依账号套餐和活动变化', student:'性价比需结合当前套餐用量', coding:'VS Code 内核，终端 / Git / MCP 全', office:'以开发为主，Design 兼顾设计', safety:'国内服务，条款需自行留意', easy:'需理解 Work / Code / Design 三模式' } },
+    zcode:{ name:'ZCode', brand:'智谱 Z.ai', logo:'Z', color:'#14B8A6', type:'编程智能体',
+      d:{ domestic:100, cn:100, quota:50, student:88, coding:86, office:30, safety:62, easy:58 },
+      n:{ domestic:'国内可用，无需代理', cn:'原生中文', quota:'新用户 5 天试用：GLM-5.3 每日 300 万、GLM-5.3-Flash 每日 500 万 Token', student:'编程场景单价需结合当前套餐比较', coding:'GLM-5.2 / 5.3，1M 长上下文', office:'专注编程，非编程场景弱', safety:'曾有数据争议，敏感项目慎用', easy:'需先配置模型与 API Key' } },
+    codex:{ name:'Codex', brand:'OpenAI', logo:'C', color:'#059669', type:'编程智能体',
+      d:{ domestic:45, cn:32, quota:35, student:45, coding:98, office:50, safety:85, easy:40 },
+      n:{ domestic:'官方路径需代理；改本地配置可换国产模型', cn:'界面与文档以英文为主', quota:'Free / Go 当前限时含有限用量；具体额度依计划', student:'官方路径的用量与计划成本需按需求核算', coding:'GPT‑6 Astra / Sol / Luna，PR / CI 最完整', office:'以编程为核心，兼顾通用任务', safety:'境外存储，按 OpenAI 数据策略', easy:'默认要代理；换国产模型得自己写配置' } },
+    codearts:{ name:'码道CodeArts', brand:'华为云', logo:'码', color:'#E8913C', type:'研发与数字创造工作台',
+      d:{ domestic:100, cn:100, quota:60, student:82, coding:30, office:78, safety:90, easy:96 },
+      n:{ domestic:'华为云国内服务', cn:'原生中文', quota:'体验版免费，额度偏小', student:'入门易用，权益按套餐核对', coding:'官方覆盖全栈开发、代码审查、测试与 CI/CD；本站评分侧重深度工程协作表现', office:'文档 / 设计 / 数据 / 研究 / 项目管理覆盖较广', safety:'华为云企业级合规', easy:'自然语言入口降低起步门槛' } }
+  };
+  var KEYS = ['workbuddy','traework','zcode','codex','codearts'];
+
+  /* 参与 PK 时的固定提示（与分数无关的现实约束） */
+  var CAVEAT = {
+    codex:'Codex 默认要代理 + 美元；也可在 config.toml 里把它指向 DeepSeek 这类端点绕开 OpenAI 账号，但这条路非官方承诺且用不了 Codex Cloud——纸面赢了，落地仍有取舍。',
+    zcode:'ZCode 曾有数据争议，涉敏感代码 / 数据建议自托管 GLM 或换工具。',
+    codearts:'码道CodeArts官方定位是智能编码产品，但实测强项在低门槛造应用而非深度编码，编程维度比较时请留意口径。'
+  };
+
+  var sel = { a:'workbuddy', b:'codex' };
+
+  /* 支持从对比矩阵带参数进来：pk.html?a=workbuddy&b=codex */
+  (function(){
+    var qs = (location.search || '').replace(/^\?/, '');
+    if (!qs) return;
+    var p = {};
+    qs.split('&').forEach(function(kv){
+      var i = kv.indexOf('=');
+      if (i > 0) p[decodeURIComponent(kv.slice(0, i))] = decodeURIComponent(kv.slice(i + 1));
+    });
+    if (p.a && A[p.a]) sel.a = p.a;
+    if (p.b && A[p.b] && p.b !== sel.a) sel.b = p.b;
+  })();
+
+  var on = {}; DIMS.forEach(function(d){ on[d.k] = true; });
+
+  var elA = document.getElementById('pickA');
+  var elB = document.getElementById('pickB');
+  var elD = document.getElementById('dimPick');
+  var stage = document.getElementById('pkStage');
+  var hint = document.getElementById('pkHint');
+
+  function chips(host, side){
+    host.innerHTML = KEYS.map(function(k){
+      var a = A[k];
+      return '<button type="button" class="chip'+(sel[side]===k?' on':'')+'" data-k="'+k+'" data-side="'+side+'">'+
+             '<span class="cd" style="background:'+a.color+'">'+a.logo+'</span>'+a.name+'</button>';
+    }).join('');
+  }
+  function dims(){
+    elD.innerHTML = DIMS.map(function(d){
+      return '<button type="button" class="dchip'+(on[d.k]?' on':'')+'" data-d="'+d.k+'">'+d.name+'</button>';
+    }).join('');
+  }
+
+  function pick(side, k){
+    if (sel[side] === k) return;
+    if (sel[side === 'a' ? 'b' : 'a'] === k) { sel[side === 'a' ? 'b' : 'a'] = sel[side]; }  // 撞车则交换
+    sel[side] = k;
+    chips(elA,'a'); chips(elB,'b'); render();
+  }
+
+  document.addEventListener('click', function(e){
+    var c = e.target.closest ? e.target.closest('.chip') : null;
+    if (c){ pick(c.getAttribute('data-side'), c.getAttribute('data-k')); return; }
+    var d = e.target.closest ? e.target.closest('.dchip') : null;
+    if (d){
+      var k = d.getAttribute('data-d');
+      on[k] = !on[k];
+      if (!DIMS.some(function(x){ return on[x.k]; })) on[k] = true;   // 至少留一项
+      dims(); render();
+    }
+  });
+
+  document.getElementById('pkSwap').addEventListener('click', function(){
+    var t = sel.a; sel.a = sel.b; sel.b = t;
+    chips(elA,'a'); chips(elB,'b'); render();
+  });
+  document.getElementById('pkRandom').addEventListener('click', function(){
+    var pool = KEYS.filter(function(k){ return k !== sel.a; });
+    sel.b = pool[Math.floor(Math.random()*pool.length)];
+    chips(elA,'a'); chips(elB,'b'); render();
+  });
+  document.getElementById('pkAll').addEventListener('click', function(){
+    var allOn = DIMS.every(function(d){ return on[d.k]; });   // 已全选则清空（至少留 1 项）
+    DIMS.forEach(function(d){ on[d.k] = !allOn; });
+    if (!DIMS.some(function(d){ return on[d.k]; })) on[DIMS[0].k] = true;
+    dims(); render();
+  });
+
+  /* ============ 渲染擂台 ============ */
+  function render(){
+    var la = A[sel.a], lb = A[sel.b];
+    var use = DIMS.filter(function(d){ return on[d.k]; });
+
+    hint.textContent = '当前比拼 ' + use.length + ' / ' + DIMS.length + ' 项';
+    if (!use.length){ stage.innerHTML = '<div class="pk-empty">至少选一个维度才能开打。</div>'; return; }
+
+    var wa = 0, wb = 0, tie = 0, sa = 0, sb = 0, winsA = [], winsB = [];
+    var rows = use.map(function(d){
+      var va = la.d[d.k], vb = lb.d[d.k];
+      sa += va; sb += vb;
+      var r = 'draw';
+      if (va > vb){ wa++; r = 'l'; winsA.push({ n:d.name, g:va-vb }); }
+      else if (vb > va){ wb++; r = 'r'; winsB.push({ n:d.name, g:vb-va }); }
+      else tie++;
+      return '<div class="pk-row">'+
+        '<div class="pk-cell l'+(r==='l'?' win':'')+'" style="--ac:'+la.color+'">'+
+          '<span class="pk-val">'+va+'</span>'+
+          '<div class="pk-bar"><i data-w="'+va+'"></i></div>'+
+          '<span class="pk-note">'+la.n[d.k]+'</span>'+
+        '</div>'+
+        '<div class="pk-dim">'+
+          '<div class="dn">'+d.name+'</div>'+
+          '<div class="dt">'+d.tip+'</div>'+
+          (r==='draw'?'<div class="tie">平局</div>':'')+
+        '</div>'+
+        '<div class="pk-cell r'+(r==='r'?' win':'')+'" style="--ac:'+lb.color+'">'+
+          '<span class="pk-val">'+vb+'</span>'+
+          '<div class="pk-bar"><i data-w="'+vb+'"></i></div>'+
+          '<span class="pk-note">'+lb.n[d.k]+'</span>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+
+    var avgA = Math.round(sa/use.length), avgB = Math.round(sb/use.length);
+    var winA = wa > wb, winB = wb > wa;
+    var champ = null;
+    if (winA) champ = 'a'; else if (winB) champ = 'b';
+    else champ = avgA === avgB ? null : (avgA > avgB ? 'a' : 'b');
+
+    function fighter(a, side){
+      var isWin = champ === side;
+      return '<div class="pk-fighter'+(isWin?' win':'')+'" style="--ac:'+a.color+'">'+
+        '<span class="halo"></span>'+
+        (isWin?'<span class="crown">WINNER</span>':'')+
+        '<div class="fl">'+a.logo+'</div>'+
+        '<div class="fn">'+a.name+'</div>'+
+        '<div class="fb">'+a.brand+' · '+a.type+'</div>'+
+        '<div class="fs">'+(side==='a'?avgA:avgB)+'<small>综合分 · '+use.length+' 项均值</small></div>'+
+      '</div>';
+    }
+
+    var vt, vr;
+    if (!champ){
+      vt = '战成平局 ' + wa + ' : ' + wb;
+      vr = '两项综合分同为 <b>' + avgA + '</b>，谁也没占到便宜——可按实际场景再挑一个维度加进来比。';
+    } else {
+      var W = champ === 'a' ? la : lb, L = champ === 'a' ? lb : la;
+      var cw = champ === 'a' ? wa : wb, lw = champ === 'a' ? wb : wa;
+      var mine = (champ === 'a' ? winsA : winsB).slice().sort(function(x,y){ return y.g - x.g; }).slice(0,3).map(function(x){ return x.n; });
+      var theirs = (champ === 'a' ? winsB : winsA).slice().sort(function(x,y){ return y.g - x.g; }).slice(0,2).map(function(x){ return x.n; });
+      vt = '<b>' + W.name + '</b> 赢下 ' + cw + ' 项，' + L.name + ' 赢下 ' + lw + ' 项' + (tie ? '（另有 ' + tie + ' 项打平）' : '');
+      vr = '胜在 <b>' + mine.join('、') + '</b>' +
+           (theirs.length ? '；但 <b>' + L.name + '</b> 在 <b>' + theirs.join('、') + '</b> 上更强，看重这些就该反着选。' : '，本轮没有失分项。');
+    }
+
+    var cavs = [];
+    [sel.a, sel.b].forEach(function(k){ if (CAVEAT[k]) cavs.push('<div>· <span>' + A[k].name + '</span>：' + CAVEAT[k] + '</div>'); });
+    if (avgA === avgB && champ) cavs.push('<div>· 总分打平，胜负由<b>单项领先数</b>决定；换一组维度可能翻盘。</div>');
+
+    stage.innerHTML =
+      '<div class="pk-fight">' +
+        fighter(la,'a') +
+        '<div class="pk-vs-col"><div class="ball">VS</div><div class="sub">' + use.length + ' ROUNDS</div></div>' +
+        fighter(lb,'b') +
+      '</div>' +
+      '<div class="pk-rows">' + rows + '</div>' +
+      '<div class="pk-verdict" style="--ca:' + la.color + ';--cb:' + lb.color + '">' +
+        '<div class="sc"><span class="wa">' + wa + '</span><span class="sep">:</span><span class="wb">' + wb + '</span></div>' +
+        '<div class="lg"><span style="color:' + la.color + '">' + la.name + ' 胜项</span><span class="dot2">·</span><span style="color:' + lb.color + '">' + lb.name + ' 胜项</span></div>' +
+        '<div class="vt">' + vt + '</div>' +
+        '<div class="vr">' + vr + '</div>' +
+        (cavs.length ? '<div class="cav">' + cavs.join('') + '</div>' : '') +
+      '</div>';
+
+    // 进度条生长动画（下一帧再赋值，保证 transition 生效）
+    requestAnimationFrame(function(){
+      stage.querySelectorAll('.pk-bar i').forEach(function(i){ i.style.width = i.getAttribute('data-w') + '%'; });
+    });
+  }
+
+  chips(elA,'a'); chips(elB,'b'); dims(); render();
+})();
+</script>
+</body>
+</html>

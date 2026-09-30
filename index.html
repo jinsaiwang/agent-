@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 智能体分类图鉴</title>
+<meta name="description" content="5 款主流 AI 智能体图鉴：通用工作台 · 编程智能体 · 研发与数字创造工作台，一张图看懂各自适合谁。">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  /* ============================================================
+     图鉴首页专用样式（升级版 · 雾面玻璃蓝）
+     ============================================================ */
+  /* 页面头样式已提到 style.css（全站共用 .page-head / .ph-*） */
+
+  /* ---------- 数据块（彩色玻璃卡） ---------- */
+  .stat-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:0 0 26px; }
+  .st-block{
+    position:relative; overflow:hidden;
+    padding:15px 17px 16px; border-radius:18px;
+    background:var(--card); border:1px solid var(--line);
+    box-shadow:0 8px 24px rgba(31,45,61,.06);
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .st-block::after{
+    content:''; position:absolute; right:-42px; top:-48px;
+    width:132px; height:132px; border-radius:50%; pointer-events:none;
+    background:radial-gradient(circle, var(--sc), transparent 70%);
+  }
+  .st-block:hover{ transform:translateY(-3px); box-shadow:0 14px 34px rgba(31,45,61,.11); }
+  .st-1{ --sc:rgba(167,139,250,.30); }
+  .st-2{ --sc:rgba(111,179,210,.32); }
+  .st-3{ --sc:rgba(45,212,191,.28); }
+  .st-4{ --sc:rgba(232,145,60,.26); }
+  .st-k{
+    position:relative; z-index:1; margin:0;
+    display:flex; align-items:center; gap:7px;
+    font-family:var(--mono); font-size:11px; letter-spacing:.4px; color:var(--ink-3);
+  }
+  .st-i{ color:var(--brand); }
+  .st-v{
+    position:relative; z-index:1; margin:9px 0 2px;
+    font-family:var(--mono); font-size:27px; font-weight:800; line-height:1;
+    color:var(--brand-dk);
+  }
+  body.theme-dark .st-v{ color:var(--brand-lt); }
+  .st-d{ position:relative; z-index:1; margin:0; font-size:11.5px; color:var(--ink-3); }
+
+  /* ---------- 5 款速览 ---------- */
+  .rail-sec{ margin-bottom:6px; }
+  .rail-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:12px; }
+  .rail-head h3{ font-size:15px; font-weight:700; margin:0; }
+  .rail-hint{ font-family:var(--mono); font-size:11px; color:var(--ink-3); }
+
+  /* 全景速览 Rail：5 款工具横排迷你卡 */
+  .agent-rail{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+    margin:0 0 2px;
+  }
+  .rail-item{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:7px;
+    padding:16px 10px 13px;
+    border-radius:16px;
+    background:var(--card);
+    border:1px solid var(--line);
+    box-shadow:0 4px 14px rgba(31,45,61,.05);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    overflow:hidden;
+    text-decoration:none;
+    color:inherit;
+  }
+  .rail-item::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:radial-gradient(130px 64px at 50% 0%, color-mix(in srgb, var(--ac,var(--brand)) 26%, transparent), transparent 72%);
+    opacity:0;
+    transition: opacity .25s ease;
+    pointer-events:none;
+  }
+  .rail-item:hover{
+    transform:translateY(-4px);
+    box-shadow:var(--shadow-2);
+    border-color:color-mix(in srgb, var(--ac,var(--brand)) 48%, transparent);
+  }
+  .rail-item:hover::before{ opacity:1; }
+  .r-logo{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    font-size:19px;
+    font-weight:800;
+    color:#fff;
+    background:linear-gradient(135deg, var(--ac,#3B82F6), #3B82F6);
+    box-shadow:0 4px 12px color-mix(in srgb, var(--ac,#3B82F6) 42%, transparent);
+    transition: transform .2s ease;
+    position:relative;
+    z-index:1;
+  }
+  .rail-item:hover .r-logo{ transform:scale(1.1) rotate(-3deg); }
+  .r-name{ font-size:13px; font-weight:700; color:var(--ink); position:relative; z-index:1; }
+  .r-cat{ font-size:10.5px; color:var(--ink-3); font-family:var(--mono); letter-spacing:.5px; position:relative; z-index:1; }
+
+  /* ---------- 分类标题（更紧凑） ---------- */
+  .cat-section{
+    margin-top: 44px;
+  }
+  .cat-header{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:16px;
+  }
+  .cat-icon{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    font-size:20px;
+    flex-shrink:0;
+  }
+  .cat-icon.gen{
+    background: linear-gradient(135deg, rgba(47,125,168,.15), rgba(168,85,247,.15));
+    color: var(--brand);
+  }
+  .cat-icon.code{
+    background: linear-gradient(135deg, rgba(16,185,129,.15), rgba(59,130,246,.15));
+    color: var(--ok);
+  }
+  body.theme-dark .cat-icon.gen{
+    background: linear-gradient(135deg, rgba(34,211,238,.15), rgba(167,139,250,.15));
+  }
+  body.theme-dark .cat-icon.code{
+    background: linear-gradient(135deg, rgba(52,211,153,.15), rgba(34,211,238,.15));
+  }
+  .cat-text h3{
+    font-size:20px;
+    font-weight:700;
+    margin: 0 0 2px;
+  }
+  .cat-text p{
+    font-size:12.5px;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .cat-count{
+    margin-left: auto;
+    font-size:11.5px;
+    color: var(--ink-3);
+    background: var(--card);
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+  }
+
+  /* ---------- 卡片网格（更紧凑 + 信息密度更高） ---------- */
+  .card-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+    gap: 14px;
+  }
+  .agent-card{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px 18px 16px;
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  /* 顶部渐变光条 */
+  .agent-card::before{
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--accent));
+    opacity: 0;
+    transition: opacity .25s ease;
+    z-index:2;
+  }
+  /* 右下角光斑（hover 点亮） */
+  .agent-card::after{
+    content:'';
+    position:absolute;
+    right:-60px; bottom:-60px;
+    width:180px; height:180px;
+    border-radius:50%;
+    background: radial-gradient(circle, rgba(47,125,168,.16), transparent 68%);
+    opacity:0;
+    transition: opacity .3s ease;
+    pointer-events:none;
+  }
+  body.theme-dark .agent-card::after{
+    background: radial-gradient(circle, rgba(34,211,238,.14), transparent 68%);
+  }
+  .agent-card:hover{
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-2);
+    border-color: rgba(47,125,168,.35);
+  }
+  .agent-card:hover::before{ opacity: 1; }
+  .agent-card:hover::after{ opacity: 1; }
+  body.theme-dark .agent-card:hover{
+    border-color: rgba(34,211,238,.35);
+  }
+
+  /* 背景装饰字母（大号描边，hover 放大发光） */
+  .ac-deco{
+    position:absolute;
+    top:-16px; right:-8px;
+    font-size:98px;
+    font-weight:900;
+    line-height:1;
+    color:transparent;
+    -webkit-text-stroke:1.5px rgba(47,125,168,.13);
+    opacity:.75;
+    user-select:none;
+    pointer-events:none;
+    transition: transform .32s ease, opacity .32s ease, -webkit-text-stroke-color .32s ease;
+    font-family: var(--sans);
+  }
+  .agent-card:hover .ac-deco{
+    transform: scale(1.14) rotate(-6deg);
+    opacity:1;
+    -webkit-text-stroke-color: rgba(47,125,168,.3);
+  }
+  body.theme-dark .ac-deco{
+    -webkit-text-stroke-color: rgba(34,211,238,.16);
+  }
+  body.theme-dark .agent-card:hover .ac-deco{
+    -webkit-text-stroke-color: rgba(34,211,238,.4);
+  }
+
+  .card-top{
+    display:flex;
+    align-items:flex-start;
+    gap:13px;
+    margin-bottom:12px;
+    position:relative;
+    z-index:1;
+  }
+  .card-logo{
+    width:46px;
+    height:46px;
+    border-radius:13px;
+    display:grid;
+    place-items:center;
+    font-size:22px;
+    flex-shrink:0;
+    font-weight:700;
+    position:relative;
+    transition: transform .22s ease, box-shadow .22s ease;
+  }
+  .card-logo.workbuddy{ background: linear-gradient(135deg, #06B6D4, #3B82F6); color:#fff; }
+  .card-logo.traework{ background: linear-gradient(135deg, #22D3EE, #818CF8); color:#fff; }
+  .card-logo.zcode{ background: linear-gradient(135deg, #2DD4BF, #3B82F6); color:#fff; }
+  .card-logo.codex{ background: linear-gradient(135deg, #10B981, #059669); color:#fff; }
+  .card-logo.codearts{ background: linear-gradient(135deg, #EF4444, #F59E0B); color:#fff; }
+  .agent-card:hover .card-logo{
+    transform: scale(1.08) rotate(-4deg);
+    box-shadow: 0 8px 20px rgba(47,125,168,.3);
+  }
+
+  .card-name{
+    flex:1;
+    min-width:0;
+  }
+  .card-name h4{
+    font-size:17px;
+    font-weight:700;
+    margin:0 0 2px;
+    color: var(--ink);
+  }
+  .card-name .brand-line{
+    font-size:11.5px;
+    color: var(--ink-3);
+    margin:0;
+  }
+  .card-rating{
+    position:absolute;
+    top:18px;
+    right:16px;
+    font-size:11px;
+    color: var(--warn);
+    font-weight:600;
+    letter-spacing:.5px;
+  }
+
+  .card-slogan{
+    font-size:13.5px;
+    color: var(--ink-2);
+    line-height:1.6;
+    margin: 0 0 12px;
+    min-height: 42px;
+    position:relative;
+    z-index:1;
+  }
+
+  .card-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    margin-bottom:12px;
+    position:relative;
+    z-index:1;
+  }
+  .card-tag{
+    font-size:10.5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--card-2);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+  }
+  .card-tag.hot{
+    background: var(--brand-bg);
+    color: var(--brand);
+    border-color: transparent;
+  }
+  .card-tag.free{
+    background: rgba(16,185,129,.1);
+    color: var(--ok);
+    border-color: transparent;
+  }
+  body.theme-dark .card-tag.free{
+    background: rgba(52,211,153,.12);
+  }
+  .card-tag.cn{
+    background: rgba(245,158,11,.1);
+    color: #F59E0B;
+    border-color: transparent;
+  }
+  body.theme-dark .card-tag.cn{
+    background: rgba(251,191,36,.1);
+  }
+
+  /* 特性区：2x2 网格，信息密度更高 */
+  .card-features{
+    list-style:none;
+    padding: 12px 0 0;
+    margin: 0 0 12px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px 12px;
+    position:relative;
+    z-index:1;
+  }
+  .card-features li{
+    font-size:12px;
+    color: var(--ink-2);
+    display:flex;
+    align-items:flex-start;
+    gap:7px;
+    line-height:1.5;
+  }
+  .card-features li::before{
+    content:'';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--brand);
+    flex-shrink: 0;
+    margin-top: 7px;
+    box-shadow: 0 0 6px rgba(47,125,168,.5);
+  }
+
+  .card-bottom{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    position:relative;
+    z-index:1;
+  }
+  .card-price{
+    font-size:12.5px;
+    color: var(--ink-3);
+  }
+  .card-price b{
+    color: var(--ok);
+    font-weight:700;
+  }
+  .card-arrow{
+    font-size:13px;
+    color: var(--brand);
+    font-weight:600;
+    transition: transform .2s ease;
+  }
+  .agent-card:hover .card-arrow{
+    transform: translateX(4px);
+  }
+
+  /* ---------- 底部说明（更紧凑） ---------- */
+  .gallery-foot{
+    text-align:center;
+    margin-top: 48px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+  }
+  .gallery-foot p{
+    font-size:13px;
+    color: var(--ink-3);
+    margin: 0 0 10px;
+  }
+  .gallery-foot .pill{
+    font-size: 13px;
+  }
+
+  @media (max-width: 1080px){
+    .stat-row{ grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width: 860px){
+    .page-head{ padding:14px 0 18px; }
+    .cat-section{ margin-top: 22px; }
+    .agent-rail{ grid-template-columns: repeat(3,1fr); }
+  }
+  @media (max-width: 560px){
+    .stat-row{ grid-template-columns:1fr; }
+    .agent-rail{ grid-template-columns: repeat(2,1fr); }
+  }
+
+  /* ============================================================
+     图鉴 2.0 · 面板化分区 + 卡片升级
+     目标：消除宽屏空洞与页面单调感，保持雾面玻璃蓝
+     ============================================================ */
+  /* 内容限宽：宽屏下卡片不再被拉成一排留半行空 */
+  body[data-page="gallery"] .wrap{ max-width:1180px; margin:0 auto; padding:0 28px; }
+
+  /* ---------- 分区玻璃面板 ---------- */
+  .cat-section{ margin-top:26px; }
+  .cat-panel{
+    position:relative; overflow:hidden;
+    border-radius:24px;
+    padding:20px 22px 22px;
+    background:linear-gradient(158deg, rgba(255,255,255,.70), rgba(255,255,255,.38));
+    border:1px solid var(--line);
+    box-shadow:0 14px 40px rgba(31,45,61,.07);
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  }
+  .cat-panel::before{
+    content:''; position:absolute; left:0; right:0; top:0; height:3px;
+    background:linear-gradient(90deg, var(--pc1), var(--pc2));
+    opacity:.9;
+  }
+  .cat-panel::after{
+    content:''; position:absolute; right:-80px; top:-80px; width:250px; height:250px;
+    border-radius:50%; pointer-events:none;
+    background:radial-gradient(circle, var(--pc-glow), transparent 70%);
+  }
+  .cat-panel > *{ position:relative; z-index:1; }
+  .cat-panel.gen{    --pc1:#6FB3D2; --pc2:#A78BFA; --pc-glow:rgba(111,179,210,.22); }
+  .cat-panel.code{   --pc1:#2DD4BF; --pc2:#3B82F6; --pc-glow:rgba(45,212,191,.20); }
+  .cat-panel.nocode{ --pc1:#F59E0B; --pc2:#EF4444; --pc-glow:rgba(245,158,11,.20); }
+  body.theme-dark .cat-panel{
+    background:linear-gradient(158deg, rgba(20,32,56,.66), rgba(20,32,56,.34));
+    box-shadow:0 14px 40px rgba(0,0,0,.45);
+  }
+
+  /* 分类头：图标升级 + 适合/不适合提示条 */
+  .cat-header{ margin-bottom:12px; }
+  .cat-icon.gen{    background:linear-gradient(135deg,#6FB3D2,#A78BFA); color:#fff; box-shadow:0 6px 16px rgba(111,179,210,.35); }
+  .cat-icon.code{   background:linear-gradient(135deg,#2DD4BF,#3B82F6); color:#fff; box-shadow:0 6px 16px rgba(45,212,191,.32); }
+  .cat-icon.nocode{ background:linear-gradient(135deg,#F59E0B,#EF4444); color:#fff; box-shadow:0 6px 16px rgba(245,158,11,.32); }
+  .cat-count{ font-family:var(--mono); }
+  .cat-meta{ display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px; }
+  .cm{
+    font-size:11.5px; color:var(--ink-2);
+    padding:5px 12px; border-radius:999px;
+    background:var(--card-2); border:1px solid var(--line);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  }
+  .cm b{ font-weight:700; margin-right:6px; }
+  .cm.ok b{ color:var(--ok); }
+  .cm.no b{ color:var(--danger); }
+  .cm.ok{ border-color:rgba(62,158,118,.22); }
+  .cm.no{ border-color:rgba(210,86,79,.18); }
+
+  /* ---------- 网格：两列铺满，不再留空洞 ---------- */
+  .card-grid{ grid-template-columns:repeat(2,1fr); gap:18px; }
+  .card-grid.one{ grid-template-columns:1fr; }
+
+  /* ---------- 卡片升级 ---------- */
+  .agent-card{
+    border-radius:20px;
+    padding:18px 18px 15px;
+    background:linear-gradient(158deg, rgba(255,255,255,.86), rgba(255,255,255,.58));
+    border:1px solid rgba(255,255,255,.85);
+    box-shadow:0 8px 26px rgba(31,45,61,.07);
+    transition:transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, border-color .25s ease;
+  }
+  .agent-card::before{
+    height:3px;
+    background:linear-gradient(90deg, var(--ac,var(--brand)), var(--pc2,#A78BFA));
+  }
+  .agent-card:hover{ transform:translateY(-6px); box-shadow:0 18px 44px rgba(31,45,61,.14); }
+  body.theme-dark .agent-card{
+    background:linear-gradient(158deg, rgba(20,32,56,.92), rgba(20,32,56,.62));
+    border:1px solid rgba(148,163,184,.16);
+    box-shadow:0 8px 26px rgba(0,0,0,.35);
+  }
+  body.theme-dark .agent-card:hover{ box-shadow:0 18px 44px rgba(0,0,0,.5); }
+  /* 鼠标跟随光晕（JS 写入 --mx/--my） */
+  .agent-card .spot{
+    position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0;
+    transition:opacity .3s ease;
+    background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%),
+               color-mix(in srgb, var(--ac,var(--brand)) 18%, transparent), transparent 68%);
+  }
+  .agent-card:hover .spot{ opacity:1; }
+  .ac-deco{ z-index:0; }
+  .card-top,.card-slogan,.card-tags,.card-features,.card-bars,.card-bottom{ z-index:2; }
+
+  .card-rating{
+    top:16px; right:14px;
+    padding:3px 9px; border-radius:999px;
+    background:var(--card-2); border:1px solid var(--line);
+    font-size:10.5px; letter-spacing:0;
+  }
+  .card-features{ padding-top:11px; margin-bottom:11px; }
+
+  /* 四条相对评分进度条：分开展示编程与通用任务能力 */
+  .card-bars{ display:flex; flex-direction:column; gap:6px; margin:0 0 12px; position:relative; z-index:2; }
+  .cb{ display:flex; align-items:center; gap:8px; }
+  .ck{ flex:none; width:72px; font-size:10.5px; color:var(--ink-3); font-family:var(--mono); letter-spacing:.1px; }
+  .cbar{ flex:1; height:5px; border-radius:99px; background:var(--line-2); overflow:hidden; }
+  .cbar i{
+    display:block; height:100%; border-radius:99px;
+    background:linear-gradient(90deg, var(--ac,var(--brand)), var(--brand-lt));
+    box-shadow:0 0 8px color-mix(in srgb, var(--ac,var(--brand)) 45%, transparent);
+    animation:barGrow .9s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes barGrow{ from{ width:0; } to{ width:var(--v); } }
+  .cv{ flex:none; width:22px; text-align:right; font-family:var(--mono); font-size:11px; font-weight:700; color:var(--ink-2); }
+  body.theme-dark .cbar{ background:rgba(148,163,184,.16); }
+  body.theme-dark .cbar i{ background:linear-gradient(90deg,#22D3EE,#38BDF8); }
+
+  /* 宽卡：研发与数字创造类别单卡横向铺满整行 */
+  .agent-card.wide{ display:grid; grid-template-columns:212px 1fr; gap:20px; align-items:start; padding:20px 20px 16px; }
+  .agent-card.wide .w-left{
+    display:flex; flex-direction:column; align-items:flex-start; gap:8px;
+    padding-right:20px; border-right:1px solid var(--line); position:relative; z-index:2;
+  }
+  .agent-card.wide .card-logo{ width:52px; height:52px; font-size:24px; border-radius:15px; }
+  .agent-card.wide .card-name h4{ font-size:18px; }
+  .agent-card.wide .card-rating{ position:static; }
+  .agent-card.wide .w-left .card-price{ font-size:12px; }
+  .agent-card.wide .w-right{ position:relative; z-index:2; min-width:0; }
+  .agent-card.wide .card-slogan{ min-height:0; }
+  .agent-card.wide .card-features{ grid-template-columns:repeat(2,1fr); }
+  .agent-card.wide:hover .card-logo{ transform:scale(1.08) rotate(-4deg); }
+
+  /* 入场动画：用 translate 属性，避免覆盖 hover 的 transform */
+  .card-grid > *{ animation:cardIn .55s cubic-bezier(.22,1,.36,1) both; }
+  .card-grid > *:nth-child(2){ animation-delay:.09s; }
+  .cat-panel{ animation:panelIn .6s cubic-bezier(.22,1,.36,1) both; }
+  .cat-section:nth-of-type(3) .cat-panel{ animation-delay:.06s; }
+  .cat-section:nth-of-type(4) .cat-panel{ animation-delay:.12s; }
+  @keyframes cardIn{  from{ opacity:0; translate:0 14px; } to{ opacity:1; translate:0 0; } }
+  @keyframes panelIn{ from{ opacity:0; translate:0 10px; } to{ opacity:1; translate:0 0; } }
+  @media (prefers-reduced-motion:reduce){
+    .card-grid > *,.cat-panel,.cbar i{ animation:none; }
+  }
+
+  /* 评分口径说明 */
+  .scale-note{
+    margin:12px 0 0;
+    font-size:12px; color:var(--ink-3); line-height:1.7;
+  }
+  .scale-note b{ color:var(--ink-2); }
+  .scale-note a{ color:var(--brand); font-weight:600; border-bottom:1px dashed rgba(47,125,168,.4); }
+
+  /* 三步走：同样面板化 */
+  .path{
+    margin-top:30px; padding:20px 22px 22px; border-radius:24px;
+    background:linear-gradient(158deg, rgba(255,255,255,.62), rgba(255,255,255,.34));
+    border:1px solid var(--line);
+    box-shadow:0 14px 40px rgba(31,45,61,.06);
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  }
+  body.theme-dark .path{ background:linear-gradient(158deg, rgba(20,32,56,.60), rgba(20,32,56,.30)); }
+  .path .cat-header{ margin-bottom:16px; }
+  .path-links{ display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+
+  /* 响应式 */
+  @media (max-width:980px){
+    .card-grid{ grid-template-columns:1fr; }
+    .agent-card.wide{ grid-template-columns:1fr; }
+    .agent-card.wide .w-left{
+      flex-direction:row; align-items:center; flex-wrap:wrap;
+      border-right:none; border-bottom:1px solid var(--line); padding:0 0 14px;
+    }
+  }
+  @media (max-width:640px){
+    body[data-page="gallery"] .wrap{ padding:0 16px; }
+    .cat-panel{ padding:16px 14px 18px; border-radius:18px; }
+  }
+
+  /* ---------- 图鉴首屏：让入口、分类和动效形成一条清晰路径 ---------- */
+  .gallery-hero{
+    position:relative;
+    isolation:isolate;
+    display:grid;
+    grid-template-columns:minmax(0,1.35fr) minmax(250px,.65fr);
+    align-items:center;
+    gap:16px;
+    padding:26px 8px 30px;
+    margin:0 0 24px;
+    border:0;
+  }
+  .gallery-hero::after{
+    content:''; position:absolute; z-index:-1; pointer-events:none;
+    width:48%; height:100%; right:0; top:0; border-radius:42px;
+    background:radial-gradient(ellipse at 55% 46%, rgba(111,179,210,.14), transparent 68%);
+  }
+  .gh-eyebrow{ display:flex; align-items:center; gap:14px; margin-bottom:8px; }
+  .gh-eyebrow .ph-kicker{ margin:0; }
+  .gh-live{
+    display:inline-flex; align-items:center; gap:7px; padding:4px 9px;
+    border:1px solid rgba(62,158,118,.2); border-radius:999px;
+    background:rgba(62,158,118,.07); color:var(--ok);
+    font-size:10.5px; line-height:1.3; white-space:nowrap;
+  }
+  .gh-live i{ width:6px; height:6px; border-radius:50%; background:var(--ok); box-shadow:0 0 0 3px rgba(62,158,118,.13); }
+  .gallery-hero .ph-title{ font-size:clamp(34px,3.5vw,48px); letter-spacing:-1.3px; margin-bottom:12px; }
+  .gallery-hero .ph-sub{ max-width:680px; font-size:14px; }
+  .gh-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:19px; }
+  .gh-actions .ph-btn{ padding:9px 15px; }
+  .gh-actions .ph-btn span{ display:inline-block; margin-left:7px; transition:transform .2s ease; }
+  .gh-actions .ph-btn:hover span{ transform:translate(2px,-2px); }
+  .gh-shortcuts{ display:flex; gap:8px; flex-wrap:wrap; margin-top:22px; }
+  .gh-shortcuts a{
+    display:flex; align-items:center; gap:8px; padding:7px 10px;
+    border-radius:10px; border:1px solid var(--line); background:var(--card-2);
+    color:var(--ink-2); font-size:11.5px;
+    transition:transform .2s ease, border-color .2s ease, background .2s ease;
+  }
+  .gh-shortcuts a:hover{ transform:translateY(-2px); border-color:rgba(47,125,168,.3); background:var(--card); color:var(--brand-dk); }
+  .gh-shortcuts b{ font:10px var(--mono); color:var(--ink-3); }
+  .gh-dot{ width:7px; height:7px; border-radius:50%; background:#A78BFA; box-shadow:0 0 10px currentColor; }
+  .gh-dot.code{ background:#2DD4BF; }
+  .gh-dot.nocode{ background:#F59E0B; }
+  .gh-visual{ position:relative; justify-self:end; width:300px; height:264px; margin-right:8px; animation:heroDrift 6s ease-in-out infinite; }
+  .gh-orbit{ position:absolute; left:50%; top:47%; border:1px solid rgba(47,125,168,.17); border-radius:50%; transform:translate(-50%,-50%); }
+  .gh-orbit-a{ width:236px; height:236px; border-style:dashed; animation:orbitSpin 38s linear infinite; }
+  .gh-orbit-b{ width:184px; height:184px; border-color:rgba(167,139,250,.24); animation:orbitSpin 28s linear infinite reverse; }
+  .gh-orbit-c{ width:132px; height:132px; border-color:rgba(232,145,60,.27); border-style:dotted; animation:orbitSpin 22s linear infinite; }
+  .gh-core{
+    position:absolute; left:50%; top:47%; transform:translate(-50%,-50%);
+    width:94px; height:94px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    border-radius:29px; border:1px solid rgba(255,255,255,.86);
+    background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(226,239,247,.75));
+    box-shadow:0 16px 38px rgba(47,125,168,.18), inset 0 1px 0 #fff;
+    transform-origin:center; rotate:-6deg;
+  }
+  .gh-core b{ color:var(--brand-dk); font:800 25px/1 var(--mono); letter-spacing:-2px; }
+  .gh-core small{ margin-top:5px; color:var(--ink-3); font:8px/1.2 var(--mono); letter-spacing:1px; text-align:center; }
+  .gh-core span{ position:absolute; right:12px; top:9px; color:var(--accent); font-size:12px; }
+  .gh-node{
+    position:absolute; z-index:2; display:flex; align-items:center; gap:7px;
+    padding:8px 11px; border:1px solid rgba(255,255,255,.86); border-radius:12px;
+    background:var(--card); box-shadow:0 8px 22px rgba(31,45,61,.10); backdrop-filter:blur(10px);
+    color:var(--ink-2); font-size:11px; font-weight:700; white-space:nowrap;
+  }
+  .gh-node i{ display:grid; place-items:center; width:23px; height:23px; border-radius:8px; background:var(--brand-bg); color:var(--brand); font:700 10px var(--mono); font-style:normal; }
+  .gh-node-work{ left:6px; top:25px; animation:nodeBob 4.5s ease-in-out infinite; }
+  .gh-node-code{ right:-5px; top:82px; animation:nodeBob 5s ease-in-out -1.2s infinite; }
+  .gh-node-code i{ background:rgba(45,212,191,.14); color:#179E8B; }
+  .gh-node-flow{ left:28px; bottom:21px; animation:nodeBob 5.2s ease-in-out -2.1s infinite; }
+  .gh-node-flow i{ background:rgba(232,145,60,.14); color:var(--accent); }
+  .gh-star{ position:absolute; color:var(--accent); text-shadow:0 0 16px rgba(232,145,60,.38); }
+  .gh-star-one{ right:28px; bottom:30px; font-size:17px; animation:starPulse 2.8s ease-in-out infinite; }
+  .gh-star-two{ left:29px; top:102px; color:var(--brand); font-size:13px; animation:starPulse 3.4s ease-in-out -1s infinite; }
+  .gh-visual-note{ position:absolute; right:3px; bottom:1px; color:var(--ink-3); font:10px var(--mono); letter-spacing:.4px; }
+  body.theme-dark .gallery-hero::after{ background:radial-gradient(ellipse at 55% 46%,rgba(34,211,238,.12),transparent 68%); }
+  body.theme-dark .gh-core{ background:linear-gradient(145deg,rgba(25,42,68,.96),rgba(17,26,46,.88)); border-color:rgba(148,163,184,.2); box-shadow:0 16px 38px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.08); }
+  body.theme-dark .gh-core b{ color:var(--brand); }
+  body.theme-dark .gh-node{ border-color:rgba(148,163,184,.18); box-shadow:0 8px 22px rgba(0,0,0,.28); }
+
+  /* 分类随滚动进入视野，卡片依次轻轻浮现 */
+  .cat-panel{ animation:none; transition:opacity .55s ease, translate .55s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
+  .cat-panel.reveal-pending,.path.reveal-pending{ opacity:0; translate:0 18px; }
+  .cat-panel.reveal-visible,.path.reveal-visible{ opacity:1; translate:0 0; }
+  .cat-panel.reveal-pending .card-grid > *{ opacity:0; translate:0 12px; animation:none; }
+  .cat-panel.reveal-visible .card-grid > *{ animation:cardIn .55s cubic-bezier(.22,1,.36,1) both; }
+  .cat-panel.reveal-visible .card-grid > *:nth-child(2){ animation-delay:.1s; }
+  .cat-panel.reveal-visible .card-grid > *:nth-child(3){ animation-delay:.18s; }
+  .cat-panel.reveal-visible .card-grid > *:nth-child(4){ animation-delay:.26s; }
+  .cat-panel:hover{ box-shadow:0 18px 48px rgba(31,45,61,.10); }
+  body.theme-dark .cat-panel:hover{ box-shadow:0 18px 48px rgba(0,0,0,.48); }
+  @keyframes heroDrift{ 0%,100%{ translate:0 0; } 50%{ translate:0 -7px; } }
+  @keyframes orbitSpin{ to{ rotate:360deg; } }
+  @keyframes nodeBob{ 0%,100%{ translate:0 0; } 50%{ translate:0 -5px; } }
+  @keyframes starPulse{ 0%,100%{ opacity:.55; scale:.88; } 50%{ opacity:1; scale:1.12; } }
+  @media (max-width:900px){
+    .gallery-hero{ grid-template-columns:minmax(0,1fr) 230px; gap:4px; }
+    .gh-visual{ scale:.83; transform-origin:center right; margin-right:-10px; }
+    .gallery-hero .ph-title{ font-size:clamp(32px,5vw,42px); }
+  }
+  @media (max-width:1000px){ .gallery-hero{ padding-top:58px; } }
+  @media (max-width:700px){
+    .gallery-hero{ grid-template-columns:1fr; gap:0; padding-top:56px; }
+    .gallery-hero .ph-title{ font-size:clamp(32px,8vw,40px); }
+    .gh-visual{ justify-self:center; width:min(300px,calc(100vw - 40px)); height:220px; margin:-4px 0 -8px; scale:.78; transform-origin:top center; }
+    .gh-shortcuts{ margin-top:16px; }
+    .gh-shortcuts a{ flex:1 1 auto; justify-content:center; }
+    .stat-row{ grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:18px; }
+    .st-block{ padding:13px 14px; }
+    .gh-visual-note{ display:none; }
+  }
+  @media (max-width:420px){
+    .gh-eyebrow{ gap:8px; }
+    .gh-live{ font-size:9.5px; }
+    .gh-actions .ph-btn{ flex:1; text-align:center; }
+    .gh-shortcuts a{ gap:6px; padding:7px 8px; font-size:10.5px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .gh-visual,.gh-orbit,.gh-node,.gh-star{ animation:none !important; }
+    .cat-panel,.path,.gh-shortcuts a,.gh-actions .ph-btn span{ transition:none; }
+    .cat-panel.reveal-pending,.path.reveal-pending{ opacity:1; translate:none; }
+  }
+</style>
+</head>
+<body data-page="gallery">
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow a" aria-hidden="true"></div>
+<div class="glow b" aria-hidden="true"></div>
+
+<!-- ===== 顶部导航：工具图鉴 / 对比 / 实践 / 能力立方图 + 5 个 Agent 详解 ===== -->
+<aside class="sidebar">
+  <a class="sb-brand" href="index.html">
+    <span class="logo-dot"></span>
+    <span class="sb-brand-txt"><b>AI AGENTS</b><i>选型讲义 · 2026</i></span>
+  </a>
+
+  <p class="sb-label"><span>主导航</span></p>
+  <a class="sb-item active" href="index.html" title="工具图鉴"><span class="ico">&#9672;</span><span class="txt">工具图鉴</span></a>
+  <a class="sb-item" href="compare.html" title="对比矩阵"><span class="ico">&#9636;</span><span class="txt">对比矩阵</span></a>
+  <a class="sb-item" href="quadrant.html" title="能力立方图"><span class="ico">&#9715;</span><span class="txt">能力立方图</span></a>
+  <a class="sb-item" href="practice.html" title="选型决策器"><span class="ico">&#9670;</span><span class="txt">选型决策器</span></a>
+  <a class="sb-item" href="pk.html" title="双雄 PK"><span class="ico">&#9876;</span><span class="txt">双雄 PK</span></a>
+
+  <p class="sb-label"><span>工具详解</span></p>
+  <a class="sb-item sm" href="agents/workbuddy.html" title="WorkBuddy"><span class="dot wb">W</span><span class="txt">WorkBuddy</span></a>
+  <a class="sb-item sm" href="agents/traework.html" title="TraeWork"><span class="dot tw">T</span><span class="txt">TraeWork</span></a>
+  <a class="sb-item sm" href="agents/zcode.html" title="ZCode"><span class="dot zc">Z</span><span class="txt">ZCode</span></a>
+  <a class="sb-item sm" href="agents/codex.html" title="Codex"><span class="dot cx">C</span><span class="txt">Codex</span></a>
+  <a class="sb-item sm" href="agents/codearts.html" title="码道CodeArts"><span class="dot ca">&#30721;</span><span class="txt">码道CodeArts</span></a>
+
+  <div class="sb-foot">
+    <button class="sb-collapse" id="sbCollapse" type="button" title="收起侧栏" aria-expanded="true">
+      <span class="ico">&#171;</span><span class="txt">收起</span>
+    </button>
+    <div class="sb-ctl">
+      <button class="pill" id="themeToggle" type="button">&#9790; DARK</button>
+      <button class="pill" id="gridToggle" type="button">GRID: ON</button>
+    </div>
+    <p class="sb-note">数据更新 2026-09<br>价格以官网为准</p>
+  </div>
+</aside>
+<button class="sb-toggle" id="sbToggle" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="sb-mask" id="sbMask"></div>
+
+<div class="wrap">
+<!-- ===== 页面头（左对齐，替代原居中 Hero） ===== -->
+<section class="page-head gallery-hero">
+  <div class="ph-left">
+    <div class="gh-eyebrow">
+      <p class="ph-kicker">AI Agent Gallery · 2026</p>
+      <span class="gh-live"><i></i> 已收录 5 款</span>
+    </div>
+    <h1 class="ph-title">AI 智能体分类图鉴</h1>
+    <p class="ph-sub">5 款主流 AI 智能体，按主要工作方式分成三类：通用工作台 · 编程智能体 · 研发与数字创造工作台。先看清它的定位，再分别比较编程工程和通用任务能力——点开卡片看完整详解。</p>
+    <div class="gh-actions">
+      <a class="ph-btn primary" href="compare.html">去横向对比 <span aria-hidden="true">↗</span></a>
+      <a class="ph-btn" href="practice.html">帮我选型 <span aria-hidden="true">→</span></a>
+    </div>
+    <nav class="gh-shortcuts" aria-label="快速浏览分类">
+      <a href="#general"><i class="gh-dot gen"></i><span>通用工作台</span><b>01</b></a>
+      <a href="#coding"><i class="gh-dot code"></i><span>编程智能体</span><b>02</b></a>
+      <a href="#devcreation"><i class="gh-dot nocode"></i><span>研发与数字创造</span><b>03</b></a>
+    </nav>
+  </div>
+  <div class="gh-visual" aria-hidden="true">
+    <div class="gh-orbit gh-orbit-a"></div>
+    <div class="gh-orbit gh-orbit-b"></div>
+    <div class="gh-orbit gh-orbit-c"></div>
+    <div class="gh-core"><span>✦</span><b>AI</b><small>AGENT<br>GALLERY</small></div>
+    <div class="gh-node gh-node-work"><i>✳</i><span>工作</span></div>
+    <div class="gh-node gh-node-code"><i>&lt;/&gt;</i><span>编程</span></div>
+    <div class="gh-node gh-node-flow"><i>↗</i><span>自动化</span></div>
+    <span class="gh-star gh-star-one">✦</span>
+    <span class="gh-star gh-star-two">✧</span>
+    <span class="gh-visual-note">找到适合的 AI 搭子</span>
+  </div>
+</section>
+
+<!-- ===== 数据块 ===== -->
+<section class="stat-row">
+  <div class="st-block st-1">
+    <p class="st-k"><span class="st-i">&#9672;</span>计入对比</p>
+    <p class="st-v">5</p>
+    <p class="st-d">款主流智能体</p>
+  </div>
+  <div class="st-block st-2">
+    <p class="st-k"><span class="st-i">&#9636;</span>分类维度</p>
+    <p class="st-v">3</p>
+    <p class="st-d">通用工作 / 编程工程 / 数字创造</p>
+  </div>
+  <div class="st-block st-3">
+    <p class="st-k"><span class="st-i">&#9715;</span>对比视角</p>
+    <p class="st-v">2</p>
+    <p class="st-d">矩阵 + 三维立方图</p>
+  </div>
+  <div class="st-block st-4">
+    <p class="st-k"><span class="st-i">&#9670;</span>数据版本</p>
+    <p class="st-v">2026</p>
+    <p class="st-d">09 月更新 · 以官网为准</p>
+  </div>
+</section>
+
+<!-- ===== 5 款速览 ===== -->
+<section class="rail-sec">
+  <div class="rail-head">
+    <h3>5 款工具速览</h3>
+    <span class="rail-hint">点任意一款进入详解</span>
+  </div>
+  <div class="agent-rail">
+    <a class="rail-item" href="agents/workbuddy.html" style="--ac:#06B6D4">
+      <span class="r-logo">W</span>
+      <span class="r-name">WorkBuddy</span>
+      <span class="r-cat">通用工作台</span>
+    </a>
+    <a class="rail-item" href="agents/traework.html" style="--ac:#22D3EE">
+      <span class="r-logo">T</span>
+      <span class="r-name">TraeWork</span>
+      <span class="r-cat">通用工作台</span>
+    </a>
+    <a class="rail-item" href="agents/zcode.html" style="--ac:#2DD4BF">
+      <span class="r-logo">Z</span>
+      <span class="r-name">ZCode</span>
+      <span class="r-cat">编程智能体</span>
+    </a>
+    <a class="rail-item" href="agents/codex.html" style="--ac:#10B981">
+      <span class="r-logo">C</span>
+      <span class="r-name">Codex</span>
+      <span class="r-cat">编程智能体</span>
+    </a>
+    <a class="rail-item" href="agents/codearts.html" style="--ac:#EF4444">
+      <span class="r-logo">码</span>
+      <span class="r-name">码道CodeArts</span>
+      <span class="r-cat">研发与数字创造工作台</span>
+    </a>
+  </div>
+  <p class="scale-note"><b>评分说明：</b>本站所有评分和星级均为结合实际试用与公开资料作出的主观判断，仅供参考，不是标准化测试结果。卡片分开展示学生可用性 / 编程工程能力 / 通用任务能力 / 持续免费用量（0–100 相对分，非跑分）；依据见 <a href="quadrant.html">能力立方图 →</a></p>
+</section>
+
+<!-- 通用工作台 -->
+<section class="cat-section" id="general">
+  <div class="cat-panel gen">
+    <div class="cat-header">
+      <div class="cat-icon gen">🌐</div>
+      <div class="cat-text">
+        <h3>通用工作台 · General Workspace</h3>
+        <p>不只是写代码——文档、数据、设计、办公全能型 AI 工作台</p>
+      </div>
+      <span class="cat-count">2 款</span>
+    </div>
+    <div class="cat-meta">
+      <span class="cm ok"><b>适合</b> 日常学习、写文档做 PPT、一个工具想全覆盖</span>
+      <span class="cm no"><b>不适合</b> 大型工程的代码重构与团队协作流程</span>
+    </div>
+
+    <div class="card-grid">
+      <!-- WorkBuddy -->
+      <a class="agent-card" href="agents/workbuddy.html" style="--ac:#06B6D4">
+        <span class="spot"></span>
+        <span class="ac-deco">W</span>
+        <div class="card-top">
+          <div class="card-logo workbuddy">W</div>
+          <div class="card-name">
+            <h4>WorkBuddy</h4>
+            <p class="brand-line">腾讯 · 全场景办公工作台</p>
+          </div>
+          <span class="card-rating">★★★★☆</span>
+        </div>
+        <p class="card-slogan">最懂职场的 AI 搭子，Word / Excel / PPT / PDF 一把梭，中文办公场景完整体验最佳。</p>
+        <div class="card-tags">
+          <span class="card-tag hot">🔥 推荐</span>
+          <span class="card-tag free">🆓 免费可用</span>
+          <span class="card-tag cn">🇨🇳 国内直连</span>
+        </div>
+        <ul class="card-features">
+          <li>Office 深度集成</li>
+          <li>MCP 生态丰富</li>
+          <li>技能市场扩展</li>
+          <li>学生免费会员</li>
+        </ul>
+        <div class="card-bars">
+          <div class="cb"><span class="ck">学生可用</span><span class="cbar"><i style="--v:98%"></i></span><span class="cv">98</span></div>
+          <div class="cb"><span class="ck">编程工程</span><span class="cbar"><i style="--v:45%"></i></span><span class="cv">45</span></div>
+          <div class="cb"><span class="ck">通用任务</span><span class="cbar"><i style="--v:95%"></i></span><span class="cv">95</span></div>
+          <div class="cb"><span class="ck">免费额度</span><span class="cbar"><i style="--v:78%"></i></span><span class="cv">78</span></div>
+        </div>
+        <div class="card-bottom">
+          <span class="card-price">起步价：<b>免费</b></span>
+          <span class="card-arrow">查看详情 →</span>
+        </div>
+      </a>
+
+      <!-- TraeWork -->
+      <a class="agent-card" href="agents/traework.html" style="--ac:#22D3EE">
+        <span class="spot"></span>
+        <span class="ac-deco">T</span>
+        <div class="card-top">
+          <div class="card-logo traework">T</div>
+          <div class="card-name">
+            <h4>TraeWork</h4>
+            <p class="brand-line">字节跳动 · AI 原生工作台</p>
+          </div>
+          <span class="card-rating">★★★★☆</span>
+        </div>
+        <p class="card-slogan">Work / Code / Design 三模式 + 桌面·网页·手机三端同步，手机语音就能派任务。</p>
+        <div class="card-tags">
+          <span class="card-tag hot">🔥 三端同步</span>
+          <span class="card-tag">💳 积分计费</span>
+          <span class="card-tag cn">🇨🇳 国内直连</span>
+        </div>
+        <ul class="card-features">
+          <li>三端实时同步</li>
+          <li>云端免配置</li>
+          <li>语音讨论纪要</li>
+          <li>底层 Agent 登顶 SWE-Bench</li>
+        </ul>
+        <div class="card-bars">
+          <div class="cb"><span class="ck">学生可用</span><span class="cbar"><i style="--v:88%"></i></span><span class="cv">88</span></div>
+          <div class="cb"><span class="ck">编程工程</span><span class="cbar"><i style="--v:88%"></i></span><span class="cv">88</span></div>
+          <div class="cb"><span class="ck">通用任务</span><span class="cbar"><i style="--v:55%"></i></span><span class="cv">55</span></div>
+          <div class="cb"><span class="ck">免费额度</span><span class="cbar"><i style="--v:50%"></i></span><span class="cv">50</span></div>
+        </div>
+        <div class="card-bottom">
+          <span class="card-price">起步价：<b>免费</b></span>
+          <span class="card-arrow">查看详情 →</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 专业编码 -->
+<section class="cat-section" id="coding">
+  <div class="cat-panel code">
+    <div class="cat-header">
+      <div class="cat-icon code">💻</div>
+      <div class="cat-text">
+        <h3>编程智能体 · Coding Agent</h3>
+        <p>专注代码生成、调试、重构的 AI 编程助手，需要懂一点代码</p>
+      </div>
+      <span class="cat-count">2 款</span>
+    </div>
+    <div class="cat-meta">
+      <span class="cm ok"><b>适合</b> 课程项目、写脚本、改 bug、读别人的代码</span>
+      <span class="cm no"><b>不适合</b> 完全零基础、只想做文档或 PPT</span>
+    </div>
+
+    <div class="card-grid">
+      <!-- ZCode -->
+      <a class="agent-card" href="agents/zcode.html" style="--ac:#2DD4BF">
+        <span class="spot"></span>
+        <span class="ac-deco">Z</span>
+        <div class="card-top">
+          <div class="card-logo zcode">Z</div>
+          <div class="card-name">
+            <h4>ZCode</h4>
+            <p class="brand-line">智谱 AI · 开源编程助手</p>
+          </div>
+          <span class="card-rating">★★★★☆</span>
+        </div>
+        <p class="card-slogan">国产开源 AI 编程助手，GLM 深度适配，1M 长上下文，长文件大项目吃得下。</p>
+        <div class="card-tags">
+          <span class="card-tag hot">🔥 开源</span>
+          <span class="card-tag free">🆓 应用免费</span>
+          <span class="card-tag cn">🇨🇳 国内直连</span>
+        </div>
+        <ul class="card-features">
+          <li>1M 超长上下文</li>
+          <li>Goal 可验收模式</li>
+          <li>微信 / 飞书远程派单</li>
+          <li>桌面端三系统</li>
+        </ul>
+        <div class="card-bars">
+          <div class="cb"><span class="ck">学生可用</span><span class="cbar"><i style="--v:90%"></i></span><span class="cv">90</span></div>
+          <div class="cb"><span class="ck">编程工程</span><span class="cbar"><i style="--v:86%"></i></span><span class="cv">86</span></div>
+          <div class="cb"><span class="ck">通用任务</span><span class="cbar"><i style="--v:30%"></i></span><span class="cv">30</span></div>
+          <div class="cb"><span class="ck">免费额度</span><span class="cbar"><i style="--v:50%"></i></span><span class="cv">50</span></div>
+        </div>
+        <div class="card-bottom">
+          <span class="card-price">起步价：<b>免费</b></span>
+          <span class="card-arrow">查看详情 →</span>
+        </div>
+      </a>
+
+      <!-- Codex -->
+      <a class="agent-card" href="agents/codex.html" style="--ac:#10B981">
+        <span class="spot"></span>
+        <span class="ac-deco">C</span>
+        <div class="card-top">
+          <div class="card-logo codex">C</div>
+          <div class="card-name">
+            <h4>Codex</h4>
+            <p class="brand-line">OpenAI · 编程智能体</p>
+          </div>
+          <span class="card-rating">★★★★★</span>
+        </div>
+        <p class="card-slogan">OpenAI 官方编程智能体，已内置于 ChatGPT，代码质量天花板；默认需科学上网，也可改本地配置换成国产模型。</p>
+        <div class="card-tags">
+          <span class="card-tag hot">🔥 能力最强</span>
+          <span class="card-tag">🌍 国际版</span>
+          <span class="card-tag">🔌 可换模型</span>
+        </div>
+        <ul class="card-features">
+          <li>前沿编码模型</li>
+          <li>代码质量顶尖</li>
+          <li>终端全访问</li>
+          <li>多模型切换</li>
+        </ul>
+        <div class="card-bars">
+          <div class="cb"><span class="ck">学生可用</span><span class="cbar"><i style="--v:44%"></i></span><span class="cv">44</span></div>
+          <div class="cb"><span class="ck">编程工程</span><span class="cbar"><i style="--v:98%"></i></span><span class="cv">98</span></div>
+          <div class="cb"><span class="ck">通用任务</span><span class="cbar"><i style="--v:50%"></i></span><span class="cv">50</span></div>
+          <div class="cb"><span class="ck">免费额度</span><span class="cbar"><i style="--v:35%"></i></span><span class="cv">35</span></div>
+        </div>
+        <div class="card-bottom">
+          <span class="card-price">起步价：<b>$20/月起</b></span>
+          <span class="card-arrow">查看详情 →</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 研发与数字创造工作台 -->
+<section class="cat-section" id="devcreation">
+  <div class="cat-panel nocode">
+    <div class="cat-header">
+      <div class="cat-icon nocode">🧩</div>
+      <div class="cat-text">
+        <h3>研发与数字创造工作台 · R&D & Digital Creation</h3>
+        <p>覆盖全栈开发、代码质量管理，也支持文档、设计、分析与应用创造</p>
+      </div>
+      <span class="cat-count">1 款</span>
+    </div>
+    <div class="cat-meta">
+      <span class="cm ok"><b>适合</b> 想做出能用的东西但完全不想碰代码、课程小组作业</span>
+      <span class="cm no"><b>不适合</b> 需要精细控制代码细节的工程项目</span>
+    </div>
+
+    <div class="card-grid one">
+      <!-- 码道CodeArts（横向宽卡，填满整行） -->
+      <a class="agent-card wide" href="agents/codearts.html" style="--ac:#EF4444">
+        <span class="spot"></span>
+        <span class="ac-deco">码</span>
+        <div class="w-left">
+          <div class="card-logo codearts">码</div>
+          <div class="card-name">
+            <h4>码道CodeArts</h4>
+            <p class="brand-line">华为云 · 智能编码产品（代码智能体）</p>
+          </div>
+          <span class="card-rating">★★★☆☆</span>
+          <p class="card-price">起步价：<b>体验版免费</b></p>
+        </div>
+        <div class="w-right">
+          <p class="card-slogan">一句话需求直接产出可运行的应用、小工具、文稿、自动化流程，不用写代码也能落地。</p>
+          <div class="card-tags">
+            <span class="card-tag">🧩 数字创造</span>
+            <span class="card-tag free">🆓 体验版免费</span>
+            <span class="card-tag cn">🇨🇳 国内直连</span>
+          </div>
+          <ul class="card-features">
+            <li>自然语言造应用</li>
+            <li>桌面端 / IDE / CLI / 插件</li>
+            <li>文档设计数据一体</li>
+            <li>自然语言造应用</li>
+          </ul>
+          <div class="card-bars">
+            <div class="cb"><span class="ck">学生可用</span><span class="cbar"><i style="--v:95%"></i></span><span class="cv">95</span></div>
+            <div class="cb"><span class="ck">编程工程</span><span class="cbar"><i style="--v:30%"></i></span><span class="cv">30</span></div>
+            <div class="cb"><span class="ck">通用任务</span><span class="cbar"><i style="--v:78%"></i></span><span class="cv">78</span></div>
+            <div class="cb"><span class="ck">免费额度</span><span class="cbar"><i style="--v:60%"></i></span><span class="cv">60</span></div>
+          </div>
+          <div class="card-bottom">
+            <span class="card-price">上手难度最低 · 只需说清需求</span>
+            <span class="card-arrow">查看详情 →</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 学习路径 -->
+<section class="path">
+  <div class="cat-header">
+    <div class="cat-text">
+      <h3>怎么读这个站 · 三步走</h3>
+      <p>不确定从哪开始？按顺序走一遍就行</p>
+    </div>
+  </div>
+  <div class="path-grid">
+    <div class="path-step">
+      <span class="no">STEP 01</span>
+      <h4>看图鉴 · 找同类</h4>
+      <p>先看它偏通用工作、编程工程还是研发与数字创造，再点开卡片看完整详解。</p>
+      <a class="go" href="#general">从分类看起 →</a>
+    </div>
+    <div class="path-step">
+      <span class="no">STEP 02</span>
+      <h4>看对比 · 看清差异</h4>
+      <p>一表矩阵速览，外加可旋转的能力立方图，两种看法任选。</p>
+      <div class="path-links">
+        <a class="go" href="compare.html">去对比页 →</a>
+        <a class="go" href="quadrant.html">看立方图 →</a>
+      </div>
+    </div>
+    <div class="path-step">
+      <span class="no">STEP 03</span>
+      <h4>去实践 · 做出选择</h4>
+      <p>勾几个条件直接出推荐，或让两款正面对决。</p>
+      <div class="path-links">
+        <a class="go" href="practice.html">去选型 →</a>
+        <a class="go" href="pk.html">双雄 PK →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /.wrap -->
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="f-brand">
+      <span class="f-logo">AI AGENTS COMPASS</span>
+      <span class="f-tag">给学生的一份 AI 智能体选型讲义 · 图鉴 + 对比 + 详解 + 实践</span>
+    </div>
+    <div class="f-cols">
+      <div class="f-col">
+        <h4>详解 · 通用与编程</h4>
+        <a href="agents/workbuddy.html">WorkBuddy</a>
+        <a href="agents/traework.html">TraeWork</a>
+        <a href="agents/zcode.html">ZCode</a>
+      </div>
+      <div class="f-col">
+        <h4>详解 · 编程与数字创造</h4>
+        <a href="agents/codex.html">Codex</a>
+        <a href="agents/codearts.html">码道CodeArts</a>
+      </div>
+      <div class="f-col">
+        <h4>COMPARE</h4>
+        <a href="compare.html">对比矩阵</a>
+        <a href="quadrant.html">能力立方图</a>
+      </div>
+      <div class="f-col">
+        <h4>PRACTICE</h4>
+        <a class="warm" href="practice.html">选型决策器</a>
+        <a class="warm" href="pk.html">双雄 PK</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2026 AI AGENTS COMPASS — MADE FOR STUDENTS</span>
+    <span>数据更新 2026-09-30 · 价格以官网为准</span>
+    <span class="footer-made">本网站由所介绍的五种智能体协助搭建，图片资源部分来自网络</span>
+  </div>
+</footer>
+
+<script src="assets/js/site.js"></script>
+</body>
+</html>

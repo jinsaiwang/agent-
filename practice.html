@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 智能体对比 · 选型实践</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="practice" class="theme-warm">
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow a" aria-hidden="true"></div>
+<div class="glow b" aria-hidden="true"></div>
+
+<aside class="sidebar">
+  <a class="sb-brand" href="index.html">
+    <span class="logo-dot"></span>
+    <span class="sb-brand-txt"><b>AI AGENTS</b><i>选型讲义 · 2026</i></span>
+  </a>
+
+  <p class="sb-label"><span>主导航</span></p>
+  <a class="sb-item" href="index.html" title="工具图鉴"><span class="ico">&#9672;</span><span class="txt">工具图鉴</span></a>
+  <a class="sb-item" href="compare.html" title="对比矩阵"><span class="ico">&#9636;</span><span class="txt">对比矩阵</span></a>
+  <a class="sb-item" href="quadrant.html" title="能力立方图"><span class="ico">&#9715;</span><span class="txt">能力立方图</span></a>
+  <a class="sb-item active" href="practice.html" title="选型决策器"><span class="ico">&#9670;</span><span class="txt">选型决策器</span></a>
+  <a class="sb-item" href="pk.html" title="双雄 PK"><span class="ico">&#9876;</span><span class="txt">双雄 PK</span></a>
+
+  <p class="sb-label"><span>工具详解</span></p>
+  <a class="sb-item sm" href="agents/workbuddy.html" title="WorkBuddy"><span class="dot wb">W</span><span class="txt">WorkBuddy</span></a>
+  <a class="sb-item sm" href="agents/traework.html" title="TraeWork"><span class="dot tw">T</span><span class="txt">TraeWork</span></a>
+  <a class="sb-item sm" href="agents/zcode.html" title="ZCode"><span class="dot zc">Z</span><span class="txt">ZCode</span></a>
+  <a class="sb-item sm" href="agents/codex.html" title="Codex"><span class="dot cx">C</span><span class="txt">Codex</span></a>
+  <a class="sb-item sm" href="agents/codearts.html" title="码道CodeArts"><span class="dot ca">&#30721;</span><span class="txt">码道CodeArts</span></a>
+
+  <div class="sb-foot">
+    <button class="sb-collapse" id="sbCollapse" type="button" title="收起侧栏" aria-expanded="true">
+      <span class="ico">&#171;</span><span class="txt">收起</span>
+    </button>
+    <div class="sb-ctl">
+      <button class="pill" id="themeToggle" type="button">&#9790; DARK</button>
+      <button class="pill" id="gridToggle" type="button">GRID: ON</button>
+    </div>
+    <p class="sb-note">数据更新 2026-09<br>价格以官网为准</p>
+  </div>
+</aside>
+<button class="sb-toggle" id="sbToggle" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="sb-mask" id="sbMask"></div>
+
+<div class="wrap">
+<main class="prac-body">
+  <section class="page-head">
+    <div class="ph-left">
+      <p class="ph-kicker">PRACTICE // 选型实战</p>
+      <h1 class="ph-title">选型决策器</h1>
+      <p class="ph-sub">不用背参数。先勾选自己的真实情况，下面立刻给出该装哪个；再看场景对照卡，照着上手第一步。想看两款工具硬碰硬，去「双雄 PK」。</p>
+    </div>
+    <div class="ph-right">
+      <a class="ph-btn primary" href="pk.html">去双雄 PK</a>
+      <a class="ph-btn" href="index.html">回工具图鉴</a>
+    </div>
+  </section>
+
+  <!-- ① 决策面板 -->
+  <section class="decision">
+    <h3 class="sec-h">① 自身条件（可多选）</h3>
+    <div class="conds" id="conds">
+      <label class="cond"><input type="checkbox" value="domestic"> 国内直连、不想折腾代理</label>
+      <label class="cond"><input type="checkbox" value="free"> 免费优先、预算紧</label>
+      <label class="cond"><input type="checkbox" value="code"> 主要用来写代码 / 做开发</label>
+      <label class="cond"><input type="checkbox" value="frontier"> 要最强、最前沿的模型</label>
+      <label class="cond"><input type="checkbox" value="team"> 团队 / 课程大作业要协作</label>
+      <label class="cond"><input type="checkbox" value="mobile"> 手机也想随时派活</label>
+      <label class="cond"><input type="checkbox" value="skill"> 想自己搭技能 / 自动化流程</label>
+    </div>
+    <button class="submit" id="decideBtn">生成推荐</button>
+    <div class="decide-result" id="decideResult"></div>
+  </section>
+
+  <!-- ② 场景对照卡 -->
+  <section>
+    <h3 class="sec-h">② 常见场景 · 点开看推荐与上手</h3>
+
+    <details class="scene-card">
+      <summary>📚 想要一个覆盖学习+生活+办公的「万能搭子」<span class="tg">+</span></summary>
+      <div class="scene-body">
+        <p class="rec">推荐 <b>WorkBuddy</b></p>
+        <ol class="steps">
+          <li><span class="n">1</span><div>先用免费额度起步，不急着付费。</div></li>
+          <li><span class="n">2</span><div>从「写论文 / 做 PPT / 查资料 / 问生活办事」任一口子开始对话。</div></li>
+          <li><span class="n">3</span><div>常用流程可存成 <b>Skill</b> 一键复用，越用越顺手。</div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="scene-card">
+      <summary>💻 主要做开发项目，手机也想随时派活<span class="tg">+</span></summary>
+      <div class="scene-body">
+        <p class="rec">推荐 <b>TraeWork</b></p>
+        <ol class="steps">
+          <li><span class="n">1</span><div>下载桌面端，并用同一账号登录网页 / 手机端，三端实时同步。</div></li>
+          <li><span class="n">2</span><div>按任务切 <b>Work / Code / Design</b> 三模式，云端 Agent 自动拆解。</div></li>
+          <li><span class="n">3</span><div>手机「按住说话」即可派活，回电脑看结果，通勤也能推进。</div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="scene-card">
+      <summary>🧠 用国产大模型写代码、跑长任务（模型额度需另确认）<span class="tg">+</span></summary>
+      <div class="scene-body">
+        <p class="rec">推荐 <b>ZCode</b></p>
+        <ol class="steps">
+          <li><span class="n">1</span><div>应用可免费下载；新用户可试用 5 天。客户端显示 GLM-5.3 每日 300 万 Token、GLM-5.3-Flash 每日 500 万 Token。</div></li>
+          <li><span class="n">2</span><div>接模型：订阅 GLM Coding Plan，或自带 API Key 按量付费。</div></li>
+          <li><span class="n">3</span><div>用 1M 长上下文跑长程任务，或微信 / 飞书远程派单。</div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="scene-card">
+      <summary>👥 团队 / 课程大作业，要规范与协作<span class="tg">+</span></summary>
+      <div class="scene-body">
+        <p class="rec">推荐 <b>码道CodeArts</b></p>
+        <ol class="steps">
+          <li><span class="n">1</span><div>开通 <b>体验版</b>（免费），额度不够再上月付档。</div></li>
+          <li><span class="n">2</span><div>用自然语言描述需求，直接搭出应用 / 工具雏形，降低开发门槛。</div></li>
+          <li><span class="n">3</span><div>用任务看板分派、让 AI Agent 自动执行，统一进度与评审。</div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="scene-card">
+      <summary>🚀 追最前沿模型、愿意折腾配置<span class="tg">+</span></summary>
+      <div class="scene-body">
+        <p class="rec">推荐 <b>Codex</b></p>
+        <ol class="steps">
+          <li><span class="n">1</span><div>若走第三方模型，可在本地把 config.toml 的 provider 指向兼容端点（例如 DeepSeek）；这需要自行配置并按该服务商计费，不使用 OpenAI 账号额度。</div></li>
+          <li><span class="n">2</span><div>确实需要最强模型 + 云沙箱，再订阅 ChatGPT <b>Plus / Pro</b>（美元，且需科学上网）。</div></li>
+          <li><span class="n">3</span><div>用 Agent 跑复杂任务：多代理并行、自动写 PR、后台挂 Automation。</div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="scene-card">
+      <summary>🤔 还是拿不准<span class="tg">+</span></summary>
+      <div class="scene-body">
+        <p class="rec">组合：<b>WorkBuddy</b> + <b>ZCode / TraeWork</b></p>
+        <ol class="steps">
+          <li><span class="n">1</span><div>日常学习 / 办公可先用 <b>WorkBuddy</b> 体验版，每月有 500 积分。</div></li>
+          <li><span class="n">2</span><div>写代码可比较 <b>ZCode</b>（5 天试用：GLM-5.3 每日 300 万、GLM-5.3-Flash 每日 500 万 Token）与 <b>TraeWork</b>（积分制，具体权益看账号套餐）。</div></li>
+          <li><span class="n">3</span><div>三款均可国内使用、支持中文；免费额度和模型费用不同，长期使用前先核对当前用量与计费规则。</div></li>
+        </ol>
+      </div>
+    </details>
+  </section>
+
+  <!-- ③ 掌握度自查 -->
+  <section>
+    <h3 class="sec-h">③ 掌握度自查（不是考试，勾勾看）</h3>
+    <div class="selfcheck" id="selfcheck">
+      <label><input type="checkbox"> 能说出这 5 个工具各自最适合的场景</label>
+      <label><input type="checkbox"> 能按预算 / 需求给同学推荐合适的工具</label>
+      <label><input type="checkbox"> 知道 Codex 默认需代理（跑 GPT 模型就少不了；改本地配置换国产模型才能绕开）</label>
+      <label><input type="checkbox"> 会给团队 / 课程大作业选码道CodeArts</label>
+    </div>
+    <div class="score-bar" id="selfText"></div>
+  </section>
+
+  <div class="callout tip"><span class="lbl">提醒</span> 所有 AI 产出需人工核验；关键作业、实验、论文请勿直接照搬。价格为公开信息，以官网为准。</div>
+</main>
+</div>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="f-brand">
+      <span class="f-logo">AI AGENTS COMPASS</span>
+      <span class="f-tag">给学生的一份 AI 智能体选型讲义 · 图鉴 + 对比 + 详解 + 实践</span>
+    </div>
+    <div class="f-cols">
+      <div class="f-col">
+        <h4>详解 · 通用与编程</h4>
+        <a href="agents/workbuddy.html">WorkBuddy</a>
+        <a href="agents/traework.html">TraeWork</a>
+        <a href="agents/zcode.html">ZCode</a>
+      </div>
+      <div class="f-col">
+        <h4>详解 · 编程与数字创造</h4>
+        <a href="agents/codex.html">Codex</a>
+        <a href="agents/codearts.html">码道CodeArts</a>
+      </div>
+      <div class="f-col">
+        <h4>COMPARE</h4>
+        <a href="compare.html">对比矩阵</a>
+        <a href="quadrant.html">能力立方图</a>
+      </div>
+      <div class="f-col">
+        <h4>PRACTICE</h4>
+        <a class="warm" href="practice.html">选型决策器</a>
+        <a class="warm" href="pk.html">双雄 PK</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2026 AI AGENTS COMPASS — MADE FOR STUDENTS</span>
+    <span>数据更新 2026-09-30 · 价格以官网为准</span>
+    <span class="footer-made">本网站由所介绍的五种智能体协助搭建，图片资源部分来自网络</span>
+  </div>
+</footer>
+
+<script src="assets/js/site.js"></script>
+</body>
+</html>
